@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Create this file at res/xml/file_paths.xml -->
+<paths>
+    <external-path
+        name="external_files"
+        path="." />
+    <external-files-path
+        name="external_files"
+        path="Pictures" />
+    <external-path
+        name="external_pictures"
+        path="Pictures" />
+</paths>
