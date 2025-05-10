@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Skake v1</string>
+    <string name="waiting_for_shake">Waiting for shake...</string>
+</resources>
