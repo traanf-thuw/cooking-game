@@ -1,0 +1,48 @@
+# === Android Studio ===
+*.iml
+.gradle/
+.idea/
+local.properties
+captures/
+.externalNativeBuild/
+
+# === Build outputs ===
+build/
+app/build/
+*/build/
+
+# === OS Files ===
+.DS_Store
+Thumbs.db
+
+# === Log files ===
+*.log
+
+# === Gradle ===
+.gradle/
+**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# === Kotlin/Java ===
+*.class
+*.jar
+*.war
+*.ear
+
+# === Sign/key files ===
+*.jks
+*.keystore
+*.key
+*.pem
+
+# === Jetpack Compose previews ===
+.idea/*/uiDesigner.xml
+
+# === Misc ===
+*.swp
+*.bak
+*.tmp
+
+# === VS Code (if ever used) ===
+.vscode/

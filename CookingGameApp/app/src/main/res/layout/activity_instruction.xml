@@ -1,0 +1,92 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FEDEB7"
+    tools:context=".MainActivity">
+
+    <!-- Centered container -->
+    <FrameLayout
+        android:layout_width="500dp"
+        android:layout_height="390dp"
+        android:layout_gravity="center">
+
+        <!-- Background image -->
+        <ImageView
+            android:id="@+id/centerImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/recipebackground"
+            android:contentDescription="@null" />
+
+        <!-- Title: Instruction -->
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:paddingTop="90dp"
+            android:text="Instruction"
+            android:textColor="#FFFFFF"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:fontFamily="@font/baloo" />
+
+        <!-- Subtitle: How to Play? -->
+        <TextView
+            android:id="@+id/subtitleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:paddingTop="125dp"
+            android:text="How to Play?"
+            android:textColor="#F75526"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:fontFamily="@font/baloo" />
+
+        <!-- Instruction steps -->
+        <TextView
+            android:id="@+id/instructionText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:fontFamily="@font/baloo"
+            android:paddingStart="120dp"
+            android:paddingTop="170dp"
+            android:paddingEnd="32dp"
+            android:text="1. Host player creates a room\n2. Other players enter the game code\n3. Host player starts the game\n4. Play together and have fun!"
+            android:textColor="#9D5A40"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <!-- Start Game button styled as text -->
+        <TextView
+            android:id="@+id/startGameButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="40dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/baloo"
+            android:text="Start Game"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+    <!-- Back Button (bottom-left) -->
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="80dp"
+        android:layout_height="30dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@null"
+        android:contentDescription="Back"
+        android:scaleType="fitCenter"
+        android:src="@drawable/back" />
+</FrameLayout>
