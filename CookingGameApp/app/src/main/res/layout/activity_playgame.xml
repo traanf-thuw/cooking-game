@@ -7,14 +7,15 @@
     tools:context=".MainActivity">
 
     <!-- Background -->
+
+    <!-- Draggable Ingredients / Cookingware -->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/background"
+        android:contentDescription="@null"
         android:scaleType="centerCrop"
-        android:contentDescription="@null" />
+        android:src="@drawable/background" />
 
-    <!-- Draggable Ingredients / Cookingware -->
     <ImageView
         android:id="@+id/imageCuttingboard"
         android:layout_width="100dp"
@@ -50,14 +51,15 @@
         android:src="@drawable/lemon"
         android:contentDescription="Lemon" />
 
+    <!-- Bottom Center Timer with overlay text -->
+
     <ImageView
         android:id="@+id/imageStove"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/stove"
-        android:contentDescription="Stove" />
+        android:contentDescription="Stove"
+        android:src="@drawable/stove" />
 
-    <!-- Bottom Center Timer with overlay text -->
     <FrameLayout
         android:layout_width="250dp"
         android:layout_height="160dp"
@@ -156,16 +158,16 @@
             android:id="@+id/player2Label"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Player 3"
-            android:gravity="bottom|center"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:textStyle="bold"
             android:fontFamily="@font/baloo"
+            android:gravity="bottom|center"
             android:shadowColor="#9C1D2E"
             android:shadowDx="0"
             android:shadowDy="0"
-            android:shadowRadius="2" />
+            android:shadowRadius="2"
+            android:text="Player 3"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold" />
     </FrameLayout>
 
 </FrameLayout>
