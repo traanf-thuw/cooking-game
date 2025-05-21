@@ -24,6 +24,7 @@ class MenuActivity : AppCompatActivity() {
 
         findViewById<ImageButton>(R.id.buttonInstruction).setOnClickListener {
             // Show instructions
+            startActivity(Intent(this, SettingsActivity::class.java))
         }
     }
 }
