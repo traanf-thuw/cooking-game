@@ -26,7 +26,7 @@
         </activity>
 
         <activity android:name=".InstructionActivity" android:exported="false" />
-        <activity android:name=".JoinActivity" android:exported="false" />
+        <activity android:name=".JoinRoomActivity" android:exported="false" />
         <activity android:name=".CreateRoomActivity" android:exported="false" />
         <activity android:name=".MainActivity" android:exported="false" />
 <!--        <activity android:name=".MenuActivity" android:exported="false" />-->

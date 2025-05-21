@@ -19,6 +19,7 @@ class MenuActivity : AppCompatActivity() {
 
         findViewById<ImageButton>(R.id.buttonJoin).setOnClickListener {
             // Handle join logic or navigate
+            startActivity(Intent(this, JoinRoomActivity::class.java))
         }
 
         findViewById<ImageButton>(R.id.buttonInstruction).setOnClickListener {
