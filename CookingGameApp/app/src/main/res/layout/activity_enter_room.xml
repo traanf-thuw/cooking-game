@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MenuActivity">
+
+    <!-- Background Image -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/hostbackground"
+        android:scaleType="centerCrop"
+        android:contentDescription="@null" />
+
+    <!-- Join Button -->
+    <ImageButton
+        android:id="@+id/buttonStart"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="start|center_vertical"
+        android:layout_marginStart="40dp"
+        android:translationY="-80dp"
+        android:src="@drawable/joinbotton"
+        android:scaleType="fitXY"
+        android:background="@null"
+        android:contentDescription="Join" />
+
+    <!-- Kirby Image -->
+    <ImageView
+        android:id="@+id/imageKirby"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_gravity="end|center_vertical"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/kirby"
+        android:scaleType="fitCenter"
+        android:contentDescription="Kirby Character" />
+
+    <!-- Room Code Input Block -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/textJoinRoomLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Join a room"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:textColor="#FF5722"
+            android:fontFamily="@font/baloo" />
+
+        <EditText
+            android:id="@+id/editRoomCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Please enter room code"
+            android:textColor="#FFB6B3"
+            android:textColorHint="#FFB6B3"
+            android:textSize="20sp"
+            android:fontFamily="@font/baloo"
+            android:background="@drawable/rounded_room_code_bg"
+            android:padding="10dp"
+            android:inputType="text"
+            android:maxLength="6"
+            android:gravity="center"
+            android:importantForAutofill="no" />
+    </LinearLayout>
+</FrameLayout>
