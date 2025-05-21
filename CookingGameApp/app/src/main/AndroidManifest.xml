@@ -16,7 +16,7 @@
 
         <!-- Make MainActivity the launcher for testing the drag screen -->
         <activity
-            android:name=".MainActivity"
+            android:name=".MenuActivity"
             android:theme="@style/Theme.CookingGameApp"
             android:exported="true">
             <intent-filter>
@@ -28,7 +28,8 @@
         <activity android:name=".InstructionActivity" android:exported="false" />
         <activity android:name=".JoinActivity" android:exported="false" />
         <activity android:name=".CreateRoomActivity" android:exported="false" />
-        <activity android:name=".MenuActivity" android:exported="false" />
+        <activity android:name=".MainActivity" android:exported="false" />
+<!--        <activity android:name=".MenuActivity" android:exported="false" />-->
 
     </application>
 
