@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5DC"
+    android:gravity="center">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="@drawable/congrats"
+        android:paddingTop="100dp">
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/btnExit"
+        style="@style/Tabletext"
+        android:layout_width="109dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/back_button_selector"
+        android:backgroundTint="#C50050"
+        android:text="Exit"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/btnSelfie"
+        style="@style/Tabletext"
+        android:layout_width="109dp"
+        android:layout_height="109dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="48dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/selfie_button_selector"
+        android:backgroundTint="#F73365"
+        android:text="Take Selfie"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
+
+</FrameLayout>

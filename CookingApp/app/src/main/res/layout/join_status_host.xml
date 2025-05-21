@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:paddingBottom="20dp"
+    android:background="#FEDEB7">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/empty_board"
+        android:paddingTop="100dp">
+
+        <LinearLayout
+            android:layout_width="326dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/baloo_regular"
+                android:gravity="center"
+                android:text="@string/status_header"
+                android:textColor="#F75526"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:orientation="vertical">
+
+                <!-- Table Rows -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/Tabletext"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/join_status"
+                        android:textColor="#FF8FAD"
+                        android:textSize="24sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/btnRoomCode"
+        style="@style/Tabletext"
+        android:layout_width="109dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/back_button_selector"
+        android:backgroundTint="#C50050"
+        android:text="Room Code"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/btnStartGame"
+        style="@style/Tabletext"
+        android:layout_width="109dp"
+        android:layout_height="109dp"
+        android:layout_marginTop="30dp"
+        android:layout_gravity="end|center"
+        android:layout_marginEnd="48dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/selfie_button_selector"
+        android:backgroundTint="#F73365"
+        android:text="Start Game"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
+
+</FrameLayout>

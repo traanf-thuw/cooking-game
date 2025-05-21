@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">CookingApp</string>
+    <string name="recipe_header">Avocado Egg Toast</string>
+    <string name="ingredient_header">Ingredient</string>
+    <string name="cookware_header">Required Cookware</string>
+    <string name="ingredient_row_1">Beef</string>
+    <string name="ingredient_row_2">Carrot</string>
+    <string name="ingredient_row_3">Onion</string>
+    <string name="ingredient_row_4">Tomato</string>
+    <string name="cookware_row_1">Pan</string>
+    <string name="cookware_row_2">Cutting board</string>
+    <string name="cookware_row_3">Oven</string>
+    <string name="cookware_row_4">Knife</string>
+    <string name="status_header">Current Room</string>
+    <string name="join_status">4 Players Joined</string>
+    <string name="others_header">Hello</string>
+    <string name="join_status_others">Please wait for the game to start</string>
+    <string name="code_header">Your Room Code</string>
+    <string name="room_code">PGADMIN</string>
+</resources>
