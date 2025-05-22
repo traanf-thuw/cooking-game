@@ -35,6 +35,8 @@ class CreateRoomActivity : AppCompatActivity() {
         roomCode = generateRoomCode()
         createRoomInFirestore(roomCode)
 
+        joinRoom(roomCode)
+
         // 2. Start listening for player joins
         listenForPlayerUpdates(roomCode)
 
@@ -53,7 +55,8 @@ class CreateRoomActivity : AppCompatActivity() {
     private fun createRoomInFirestore(code: String) {
         val roomData = hashMapOf(
             "createdAt" to System.currentTimeMillis(),
-            "players" to listOf<String>()
+            "players" to listOf<String>(),
+            "ongoing" to false
         )
 
         db.collection("rooms").document(code)
@@ -106,5 +109,13 @@ class CreateRoomActivity : AppCompatActivity() {
         // Start the game activity
         startActivity(Intent(this, MainActivity::class.java))
         finish()
+    }
+
+    private fun joinRoom(roomCode: String) {
+        val roomRef = db.collection("rooms").document(roomCode)
+        roomRef.get().addOnSuccessListener { doc ->
+            val assignedSlot = "Player 1"
+            roomRef.update("players",listOf<String>(assignedSlot))
+        }
     }
 }
