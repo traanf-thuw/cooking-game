@@ -9,21 +9,22 @@ import androidx.appcompat.app.AppCompatActivity
 class MenuActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_menu) // Assuming the layout filename is activity_menu.xml
+        setContentView(R.layout.activity_menu)
 
         // Set up button actions
         findViewById<ImageButton>(R.id.buttonCreateRoom).setOnClickListener {
-            // Launch your PlayGame activity or room creation
             startActivity(Intent(this, CreateRoomActivity::class.java))
         }
 
         findViewById<ImageButton>(R.id.buttonJoin).setOnClickListener {
-            // Handle join logic or navigate
             startActivity(Intent(this, JoinRoomActivity::class.java))
         }
 
         findViewById<ImageButton>(R.id.buttonInstruction).setOnClickListener {
-            // Show instructions
+            startActivity(Intent(this, InstructionActivity::class.java))
+        }
+
+        findViewById<ImageButton>(R.id.buttonSettings).setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
     }

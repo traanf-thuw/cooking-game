@@ -56,7 +56,12 @@ class SettingsActivity : AppCompatActivity() {
 
         // Handle track selection
         musicSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 val selectedTrack = musicNames[position]
                 sharedPrefs.edit().putString(KEY_MUSIC, selectedTrack).apply()
 
@@ -67,11 +72,15 @@ class SettingsActivity : AppCompatActivity() {
                 val resId = musicTracks[selectedTrack]
                 if (resId != null) {
                     mediaPlayer = MediaPlayer.create(applicationContext, resId)
-                    mediaPlayer?.setVolume(volumeSeekBar.progress / 100f, volumeSeekBar.progress / 100f)
+                    mediaPlayer?.setVolume(
+                        volumeSeekBar.progress / 100f,
+                        volumeSeekBar.progress / 100f
+                    )
                     mediaPlayer?.start()
                 }
 
-                Toast.makeText(applicationContext, "Playing: $selectedTrack", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Playing: $selectedTrack", Toast.LENGTH_SHORT)
+                    .show()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
