@@ -1,8 +1,10 @@
 package com.example.cookinggameapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -35,6 +37,12 @@ class CreateRoomActivity : AppCompatActivity() {
 
         // 2. Start listening for player joins
         listenForPlayerUpdates(roomCode)
+
+        // 3. Start the game when all players have joined
+        val joinButton = findViewById<ImageButton>(R.id.buttonStart)
+        joinButton.setOnClickListener {
+            this.startGame()
+        }
     }
 
     private fun generateRoomCode(): String {
@@ -92,5 +100,11 @@ class CreateRoomActivity : AppCompatActivity() {
                 button.visibility = View.INVISIBLE
             }
         }
+    }
+
+    private fun startGame() {
+        // Start the game activity
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 }

@@ -35,7 +35,7 @@ class JoinRoomActivity : AppCompatActivity() {
 
             if (players.size < 4) {
                 roomRef.update("players", players + assignedSlot)
-                val intent = Intent(this, MainActivity::class.java)
+                val intent = Intent(this, WaitingActivity::class.java)
                 startActivity(intent)
                 finish()
             }
