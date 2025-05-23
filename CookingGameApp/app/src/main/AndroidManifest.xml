@@ -3,6 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.cookinggameapp">
 
+
+    <uses-permission android:name="android.permission.BLUETOOTH"
+        tools:ignore="CoarseFineLocation" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,6 +24,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CookingGameApp"
         tools:targetApi="31">
+
+        <!-- Optional for Nearby in older devices -->
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
 
         <!-- All Activities -->
         <activity android:name=".InstructionActivity" android:exported="false" />
@@ -30,12 +44,12 @@
             </intent-filter>
         </activity>
 
-        <!-- Disable MenuActivity as launcher for now -->
         <activity
             android:name=".MenuActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.CookingGameApp" />
+            android:theme="@style/Theme.CookingGameApp"
+            tools:ignore="RedundantLabel" />
 
     </application>
 

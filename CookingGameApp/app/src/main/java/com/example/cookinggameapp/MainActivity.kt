@@ -4,6 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import android.Manifest
+
 
 class MenuActivity : AppCompatActivity() {
 
@@ -24,6 +27,12 @@ class MenuActivity : AppCompatActivity() {
             val intent = Intent(this, JoinActivity::class.java)
             startActivity(intent)
         }
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+            1
+        )
+
 
         // Instruction button → InstructionActivity
         val instructionButton = findViewById<ImageButton>(R.id.buttonInstruction)

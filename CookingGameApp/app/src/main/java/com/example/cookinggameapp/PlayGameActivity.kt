@@ -8,13 +8,26 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.nearby.Nearby
+import com.google.android.gms.nearby.connection.*
+import android.util.Log
 
 class PlayGameActivity : AppCompatActivity() {
+
+    // 🔌 Nearby API variables
+    private lateinit var connectionsClient: ConnectionsClient
+    private var endpointId: String? = null
+    private val SERVICE_ID = "com.example.cookinggameapp.NEARBY"
+    private val STRATEGY = Strategy.P2P_CLUSTER
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_playgame)
+
+        // Initialize Nearby API
+        connectionsClient = Nearby.getConnectionsClient(this)
+        startAdvertising() //  Start advertising on Phone A
 
         // Get draggable items
         val chicken = findViewById<ImageView>(R.id.imageChicken)
@@ -24,18 +37,18 @@ class PlayGameActivity : AppCompatActivity() {
         val cuttingboard = findViewById<ImageView>(R.id.imageCuttingboard)
         val stove = findViewById<ImageView>(R.id.imageStove)
 
-        // Get baskets
+        // Get basket areas
         val basketLeft = findViewById<ImageView>(R.id.imageBasketLeft)
         val basketRight = findViewById<ImageView>(R.id.imageBasketRight)
 
-        // Apply drag logic to all items
+        // Enable drag on all items
         val allItems = listOf(chicken, knife, lemon, avocado, cuttingboard, stove)
         allItems.forEach { item ->
             enableDrag(item, basketLeft, basketRight)
         }
     }
 
-    // Drag-and-drop with basket drop detection
+    // ✋ Drag-and-drop logic
     private fun enableDrag(view: ImageView, basketLeft: View, basketRight: View) {
         view.setOnTouchListener { v, event ->
             val parent = v.parent as View
@@ -50,7 +63,6 @@ class PlayGameActivity : AppCompatActivity() {
 
                 MotionEvent.ACTION_UP -> {
                     v.performClick()
-
                     val itemBox = Rect()
                     val leftBox = Rect()
                     val rightBox = Rect()
@@ -60,12 +72,8 @@ class PlayGameActivity : AppCompatActivity() {
                     basketRight.getGlobalVisibleRect(rightBox)
 
                     when {
-                        Rect.intersects(itemBox, leftBox) -> {
-                            animateIntoBasket(v, basketLeft)
-                        }
-                        Rect.intersects(itemBox, rightBox) -> {
-                            animateIntoBasket(v, basketRight)
-                        }
+                        Rect.intersects(itemBox, leftBox) -> animateIntoBasket(v, basketLeft)
+                        Rect.intersects(itemBox, rightBox) -> animateIntoBasket(v, basketRight)
                     }
                 }
             }
@@ -73,7 +81,7 @@ class PlayGameActivity : AppCompatActivity() {
         }
     }
 
-    // Animate into basket and hide
+    // 🧺 Drop item into basket + send payload
     private fun animateIntoBasket(view: View, basket: View) {
         val basketLocation = IntArray(2)
         basket.getLocationOnScreen(basketLocation)
@@ -91,7 +99,54 @@ class PlayGameActivity : AppCompatActivity() {
             .withEndAction {
                 view.visibility = View.INVISIBLE
                 Toast.makeText(this, "Item placed!", Toast.LENGTH_SHORT).show()
+                sendChicken() // ✅ Send message to Phone B
             }
             .start()
+    }
+
+    // 📡 Start advertising (host)
+    private fun startAdvertising() {
+        val advertisingOptions = AdvertisingOptions.Builder().setStrategy(STRATEGY).build()
+        connectionsClient.startAdvertising(
+            "Phone A",
+            SERVICE_ID,
+            connectionLifecycleCallback,
+            advertisingOptions
+        )
+    }
+
+    // 🐔 Send payload to receiver
+    private fun sendChicken() {
+        val payload = Payload.fromBytes("chicken_sent".toByteArray())
+        endpointId?.let {
+            connectionsClient.sendPayload(it, payload)
+        }
+    }
+
+    // 🔁 Handle connection lifecycle
+    private val connectionLifecycleCallback = object : ConnectionLifecycleCallback() {
+        override fun onConnectionInitiated(endpointId: String, info: ConnectionInfo) {
+            connectionsClient.acceptConnection(endpointId, payloadCallback)
+        }
+
+        override fun onConnectionResult(endpointId: String, result: ConnectionResolution) {
+            if (result.status.isSuccess) {
+                this@PlayGameActivity.endpointId = endpointId
+                Toast.makeText(this@PlayGameActivity, "Connected to $endpointId", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        override fun onDisconnected(endpointId: String) {
+            Toast.makeText(this@PlayGameActivity, "Disconnected", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // 📦 Payload callback (receive on Phone A, not used here)
+    private val payloadCallback = object : PayloadCallback() {
+        override fun onPayloadReceived(endpointId: String, payload: Payload) {
+            // Not expecting payloads here, but could handle replies
+        }
+
+        override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate) {}
     }
 }
