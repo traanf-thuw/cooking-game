@@ -41,7 +41,7 @@ class CreateRoomActivity : AppCompatActivity() {
         // 3. Start the game when all players have joined
         val joinButton = findViewById<ImageButton>(R.id.buttonStart)
         joinButton.setOnClickListener {
-            this.startGame()
+            this.startGame(roomCode)
         }
     }
 
@@ -53,7 +53,8 @@ class CreateRoomActivity : AppCompatActivity() {
     private fun createRoomInFirestore(code: String) {
         val roomData = hashMapOf(
             "createdAt" to System.currentTimeMillis(),
-            "players" to listOf<String>()
+            "players" to listOf("Player 1"),
+            "gameStarted" to false
         )
 
         db.collection("rooms").document(code)
@@ -87,7 +88,7 @@ class CreateRoomActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.player1Button),
             findViewById<TextView>(R.id.player2Button),
             findViewById<TextView>(R.id.player3Button),
-            findViewById<TextView>(R.id.player4Button)
+            findViewById<TextView>(R.id.player4Button   )
         )
 
         playersJoinedText.text = "${players.size} players\n  joined"
@@ -102,9 +103,12 @@ class CreateRoomActivity : AppCompatActivity() {
         }
     }
 
-    private fun startGame() {
-        // Start the game activity
-        startActivity(Intent(this, MainActivity::class.java))
-        finish()
+    private fun startGame(roomCode: String) {
+        val roomRef = db.collection("rooms").document(roomCode)
+        roomRef.update("gameStarted", true).addOnSuccessListener {
+            startActivity(Intent(this, MainActivity::class.java))
+            intent.putExtra("roomCode", roomCode)
+            finish()
+        }
     }
 }
