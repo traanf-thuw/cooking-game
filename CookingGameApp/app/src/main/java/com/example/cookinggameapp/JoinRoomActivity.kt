@@ -35,7 +35,8 @@ class JoinRoomActivity : AppCompatActivity() {
             if (doc.exists()) {
                 val players = doc.get("players") as? List<String> ?: emptyList()
 
-                if (players.size < 4) {
+                if (players.size < 4)
+                {
                     val assignedSlot = "Player ${players.size + 1}"
                     roomRef.update("players", players + assignedSlot)
 
@@ -43,10 +44,13 @@ class JoinRoomActivity : AppCompatActivity() {
                     intent.putExtra("roomCode", roomCode) // Pass it forward
                     startActivity(intent)
                     finish()
-                } else {
+                }
+                else {
                     Toast.makeText(this, "Room is full", Toast.LENGTH_SHORT).show()
                 }
-            } else {
+            }
+            else
+            {
                 Toast.makeText(this, "Room not found", Toast.LENGTH_SHORT).show()
             }
         }
