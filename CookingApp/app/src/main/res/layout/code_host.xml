@@ -1,58 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5DC"
-    android:gravity="center">
+    android:background="@drawable/baby_background">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:background="@drawable/baby_background">
+    <TextView
+        android:id="@+id/codeHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="156dp"
+        android:fontFamily="@font/baloo_regular"
+        android:gravity="center"
+        android:text="@string/code_header"
+        android:textColor="#F75526"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <LinearLayout
-            android:layout_width="326dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="70dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/baloo_regular"
-                android:gravity="center"
-                android:text="@string/code_header"
-                android:textColor="#F75526"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
-            <TextView
-                style="@style/RoomCodeBase"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/room_code"
-                android:textColor="#FA3167" />
-        </LinearLayout>
-
-    </FrameLayout>
+    <TextView
+        android:id="@+id/roomCode"
+        style="@style/RoomCodeBase"
+        android:layout_width="480dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/room_code"
+        android:textColor="#FA3167"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/codeHeader" />
 
     <Button
         android:id="@+id/btnStatus"
         style="@style/Tabletext"
-        android:layout_width="109dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="start|center"
-        android:layout_marginTop="30dp"
-        android:layout_marginStart="20dp"
         android:background="@drawable/back_button_selector"
         android:backgroundTint="#C50050"
         android:text="Join Status"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
-        android:textSize="20sp" />
-
-</FrameLayout>
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.054"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.581" />
+</androidx.constraintlayout.widget.ConstraintLayout>

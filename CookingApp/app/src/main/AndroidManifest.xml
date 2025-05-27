@@ -50,6 +50,22 @@
             android:exported="false"
             tools:ignore="DiscouragedApi" />
 
+        <activity
+            android:name=".InstructionActivity"
+            android:label="Game Instruction"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape"
+            android:exported="false"
+            tools:ignore="DiscouragedApi" />
+
+        <activity
+            android:name=".EndScreenActivity"
+            android:label="Game Ending"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape"
+            android:exported="false"
+            tools:ignore="DiscouragedApi" />
+
     </application>
 
 </manifest>
