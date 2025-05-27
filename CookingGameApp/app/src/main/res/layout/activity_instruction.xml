@@ -19,27 +19,13 @@
             android:src="@drawable/recipebackground"
             android:contentDescription="@null" />
 
-        <!-- Title: Instruction -->
-        <TextView
-            android:id="@+id/titleText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|center_horizontal"
-            android:paddingTop="90dp"
-            android:text="Instruction"
-            android:textColor="#FFFFFF"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:fontFamily="@font/baloo" />
-
         <!-- Subtitle: How to Play? -->
         <TextView
             android:id="@+id/subtitleText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center_horizontal"
-            android:paddingTop="125dp"
+            android:paddingTop="140dp"
             android:text="How to Play?"
             android:textColor="#F75526"
             android:textSize="32sp"
@@ -47,7 +33,8 @@
             android:gravity="center"
             android:fontFamily="@font/baloo" />
 
-        <!-- Instruction steps -->
+        <!-- Start Game button styled as text -->
+
         <TextView
             android:id="@+id/instructionText"
             android:layout_width="match_parent"
@@ -55,14 +42,13 @@
             android:layout_gravity="top|center_horizontal"
             android:fontFamily="@font/baloo"
             android:paddingStart="120dp"
-            android:paddingTop="170dp"
+            android:paddingTop="190dp"
             android:paddingEnd="32dp"
             android:text="1. Host player creates a room\n2. Other players enter the game code\n3. Host player starts the game\n4. Play together and have fun!"
             android:textColor="#9D5A40"
             android:textSize="15sp"
             android:textStyle="bold" />
 
-        <!-- Start Game button styled as text -->
         <TextView
             android:id="@+id/startGameButton"
             android:layout_width="wrap_content"

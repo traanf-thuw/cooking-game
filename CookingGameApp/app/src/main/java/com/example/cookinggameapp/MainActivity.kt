@@ -1,35 +1,59 @@
 package com.example.cookinggameapp
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.ImageButton
+import android.view.MotionEvent
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
-class MenuActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
+
+    private var dX = 0f
+    private var dY = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_menu)
+        setContentView(R.layout.activity_playgame)
 
-        // Create Room button → CreateRoomActivity
-        val createRoomButton = findViewById<ImageButton>(R.id.buttonCreateRoom)
-        createRoomButton.setOnClickListener {
-            val intent = Intent(this, CreateRoomActivity::class.java)
-            startActivity(intent)
+        // Optional: Toast to confirm screen loaded
+        Toast.makeText(this, "Game Screen Loaded", Toast.LENGTH_SHORT).show()
+
+        tryMakeDraggable(R.id.imageAvocado)
+        tryMakeDraggable(R.id.imageChicken)
+        tryMakeDraggable(R.id.imageKnife)
+        tryMakeDraggable(R.id.imageCuttingboard)
+        tryMakeDraggable(R.id.imageLemon)
+        tryMakeDraggable(R.id.imageStove)
+    }
+
+    private fun tryMakeDraggable(viewId: Int) {
+        val view = findViewById<View?>(viewId)
+        if (view != null) {
+            makeDraggable(view)
+        } else {
+            Toast.makeText(this, "Missing view: $viewId", Toast.LENGTH_SHORT).show()
         }
+    }
 
-        // Join button → JoinActivity
-        val joinButton = findViewById<ImageButton>(R.id.buttonJoin)
-        joinButton.setOnClickListener {
-            val intent = Intent(this, JoinActivity::class.java)
-            startActivity(intent)
-        }
-
-        // Instruction button → InstructionActivity
-        val instructionButton = findViewById<ImageButton>(R.id.buttonInstruction)
-        instructionButton.setOnClickListener {
-            val intent = Intent(this, InstructionActivity::class.java)
-            startActivity(intent)
+    private fun makeDraggable(view: View) {
+        view.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    dX = v.x - event.rawX
+                    dY = v.y - event.rawY
+                    v.performClick() // Accessibility
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    v.animate()
+                        .x(event.rawX + dX)
+                        .y(event.rawY + dY)
+                        .setDuration(0)
+                        .start()
+                    true
+                }
+                else -> false
+            }
         }
     }
 }
