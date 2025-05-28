@@ -1,78 +1,140 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FEDEB7"
-    tools:context=".MainActivity">
+    android:background="#F5F5DC">
 
-    <!-- Centered container -->
-    <FrameLayout
-        android:layout_width="500dp"
-        android:layout_height="390dp"
-        android:layout_gravity="center">
+    <!-- Background Image -->
+    <ImageView
+        android:id="@+id/boardBackground"
+        android:layout_width="904dp"
+        android:layout_height="421dp"
+        android:layout_marginVertical="16dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/empty_board"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Background image -->
-        <ImageView
-            android:id="@+id/centerImage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/recipebackground"
-            android:contentDescription="@null" />
+    <!-- Centered table content -->
 
-        <!-- Subtitle: How to Play? -->
-        <TextView
-            android:id="@+id/subtitleText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|center_horizontal"
-            android:paddingTop="140dp"
-            android:text="How to Play?"
-            android:textColor="#F75526"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:fontFamily="@font/baloo" />
-
-        <!-- Start Game button styled as text -->
+    <LinearLayout
+        android:id="@+id/tableContent"
+        android:layout_width="376dp"
+        android:layout_height="243dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="32dp"
+        app:layout_constraintBottom_toBottomOf="@id/boardBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.521"
+        app:layout_constraintStart_toStartOf="@+id/boardBackground"
+        app:layout_constraintTop_toTopOf="@id/boardBackground">
 
         <TextView
-            android:id="@+id/instructionText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|center_horizontal"
-            android:fontFamily="@font/baloo"
-            android:paddingStart="120dp"
-            android:paddingTop="190dp"
-            android:paddingEnd="32dp"
-            android:text="1. Host player creates a room\n2. Other players enter the game code\n3. Host player starts the game\n4. Play together and have fun!"
-            android:textColor="#9D5A40"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/startGameButton"
+            style="@style/InstructionText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginBottom="40dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:fontFamily="@font/baloo"
-            android:text="Start Game"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:layout_marginBottom="12dp"
+            android:fontFamily="@font/baloo_regular"
+            android:text="Instruction"
+            android:textSize="24sp"
             android:textStyle="bold" />
-    </FrameLayout>
-    <!-- Back Button (bottom-left) -->
+
+        <!-- Table Header -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:fontFamily="@font/baloo_regular"
+            android:text="How to Play"
+            android:textColor="#F75526"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <!-- Instruction Rows -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Tabletext"
+                android:layout_width="323dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="1. Host player create a room"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Tabletext"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="2. Other players enter game code"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Tabletext"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="3. Host player starts game"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Tabletext"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="4. Play game together "
+                android:textSize="18sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
     <ImageButton
         android:id="@+id/backButton"
-        android:layout_width="80dp"
-        android:layout_height="30dp"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
         android:layout_gravity="bottom|start"
         android:layout_marginStart="20dp"
         android:layout_marginBottom="20dp"
         android:background="@null"
         android:contentDescription="Back"
         android:scaleType="fitCenter"
-        android:src="@drawable/back" />
-</FrameLayout>
+        android:src="@drawable/back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
