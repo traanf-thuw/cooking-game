@@ -13,10 +13,10 @@ class JoinRoomActivity : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        db = FirebaseFirestore.getInstance()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enter_room)
 
-        db = FirebaseFirestore.getInstance()
 
         val joinButton = findViewById<ImageButton>(R.id.buttonStart)
         val inputRoomCode = findViewById<EditText>(R.id.editRoomCode)

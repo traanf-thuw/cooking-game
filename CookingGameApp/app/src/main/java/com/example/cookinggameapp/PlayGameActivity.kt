@@ -132,7 +132,11 @@ class PlayGameActivity : AppCompatActivity() {
         override fun onConnectionResult(endpointId: String, result: ConnectionResolution) {
             if (result.status.isSuccess) {
                 this@PlayGameActivity.endpointId = endpointId
-                Toast.makeText(this@PlayGameActivity, "Connected to $endpointId", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@PlayGameActivity,
+                    "Connected to $endpointId",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 

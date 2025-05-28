@@ -106,7 +106,7 @@ class CreateRoomActivity : AppCompatActivity() {
     private fun startGame(roomCode: String) {
         val roomRef = db.collection("rooms").document(roomCode)
         roomRef.update("gameStarted", true).addOnSuccessListener {
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, PlayGameActivity::class.java))
             intent.putExtra("roomCode", roomCode)
             finish()
         }

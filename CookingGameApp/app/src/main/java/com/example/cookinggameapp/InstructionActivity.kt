@@ -20,7 +20,7 @@ class InstructionActivity : AppCompatActivity() {
         }
 
         findViewById<ImageButton>(R.id.backButton).setOnClickListener {
-            startActivity(Intent(this, MenuActivity::class.java))
+            startActivity(Intent(this, MainActivity::class.java))
         }
     }
 }

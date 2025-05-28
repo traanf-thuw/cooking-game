@@ -25,7 +25,7 @@ class WaitingActivity : AppCompatActivity() {
             val gameStarted = snapshot?.getBoolean("gameStarted") ?: false
             if (gameStarted) {
                 listener?.remove()
-                startActivity(Intent(this, MainActivity::class.java))
+                startActivity(Intent(this, PlayGameActivity::class.java))
                 finish()
             }
         }

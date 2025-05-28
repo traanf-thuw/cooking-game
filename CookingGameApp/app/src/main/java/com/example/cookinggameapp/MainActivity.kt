@@ -8,7 +8,7 @@ import androidx.core.app.ActivityCompat
 import android.Manifest
 
 
-class MenuActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +24,7 @@ class MenuActivity : AppCompatActivity() {
         // Join button → JoinActivity
         val joinButton = findViewById<ImageButton>(R.id.buttonJoin)
         joinButton.setOnClickListener {
-            val intent = Intent(this, JoinActivity::class.java)
+            val intent = Intent(this, JoinRoomActivity::class.java)
             startActivity(intent)
         }
         ActivityCompat.requestPermissions(
@@ -39,6 +39,10 @@ class MenuActivity : AppCompatActivity() {
         instructionButton.setOnClickListener {
             val intent = Intent(this, InstructionActivity::class.java)
             startActivity(intent)
+        }
+
+        findViewById<ImageButton>(R.id.buttonSettings).setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
         }
     }
 }
