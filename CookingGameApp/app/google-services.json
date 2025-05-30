@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "427142604312",
+    "project_id": "cooking-game-1f0d7",
+    "storage_bucket": "cooking-game-1f0d7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:427142604312:android:41bdf2f45a354b1b4f456d",
+        "android_client_info": {
+          "package_name": "com.example.cookinggameapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXGP5QBM4AgXdcBOg5fKGBDm5io0RuJUM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

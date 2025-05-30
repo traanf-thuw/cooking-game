@@ -7,6 +7,7 @@
 
     <!-- Background Image -->
     <ImageView
+        android:id="@+id/imageBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/hostbackground"
@@ -21,7 +22,7 @@
         android:layout_gravity="start|center_vertical"
         android:layout_marginStart="40dp"
         android:translationY="-80dp"
-        android:src="@drawable/joinbotton"
+        android:src="@drawable/joinbutton"
         android:scaleType="fitXY"
         android:background="@null"
         android:contentDescription="Join" />
