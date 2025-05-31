@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, JoinRoomActivity::class.java)
             startActivity(intent)
         }
+
         ActivityCompat.requestPermissions(
             this,
             arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),

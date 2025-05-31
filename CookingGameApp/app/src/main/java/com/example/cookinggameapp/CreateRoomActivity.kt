@@ -16,6 +16,7 @@ class CreateRoomActivity : AppCompatActivity() {
 
     private lateinit var roomCode: String
     private lateinit var db: FirebaseFirestore
+    private var timeLimit: Int = 60 // Default value if not passed
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +29,9 @@ class CreateRoomActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        // Receive selected difficulty time limit from SelectDifficultyActivity
+        timeLimit = intent.getIntExtra("timeLimit", 60)
 
         db = FirebaseFirestore.getInstance()
 
@@ -88,7 +92,7 @@ class CreateRoomActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.player1Button),
             findViewById<TextView>(R.id.player2Button),
             findViewById<TextView>(R.id.player3Button),
-            findViewById<TextView>(R.id.player4Button   )
+            findViewById<TextView>(R.id.player4Button)
         )
 
         playersJoinedText.text = "${players.size} players\n  joined"
@@ -106,8 +110,10 @@ class CreateRoomActivity : AppCompatActivity() {
     private fun startGame(roomCode: String) {
         val roomRef = db.collection("rooms").document(roomCode)
         roomRef.update("gameStarted", true).addOnSuccessListener {
-            startActivity(Intent(this, PlayGameActivity::class.java))
+            val intent = Intent(this, PlayGameActivity::class.java)
             intent.putExtra("roomCode", roomCode)
+            intent.putExtra("timeLimit", timeLimit) // Pass the selected difficulty
+            startActivity(intent)
             finish()
         }
     }

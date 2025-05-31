@@ -3,9 +3,12 @@ package com.example.cookinggameapp
 import android.annotation.SuppressLint
 import android.graphics.Rect
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.nearby.Nearby
@@ -41,12 +44,24 @@ class PlayGameActivity : AppCompatActivity() {
 
     private lateinit var redFillImage: ImageView
 
+    // Countdown
+    private var timeLimit: Int = 60
+    private var countdownTimer: CountDownTimer? = null
+    private lateinit var countdownText: TextView
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_playgame)
 
-        // Initialize Nearby API
+        // Get time limit from intent
+        timeLimit = intent.getIntExtra("timeLimit", 60)
+
+        // Setup countdown view
+        countdownText = findViewById(R.id.countdownText)
+        startCountdown(timeLimit)
+
+        // Nearby API
         connectionsClient = Nearby.getConnectionsClient(this)
         startAdvertising() //  Start advertising on Phone A
 
@@ -67,7 +82,16 @@ class PlayGameActivity : AppCompatActivity() {
         val basketRight = findViewById<ImageView>(R.id.imageBasketRight)
 
         // Enable drag on all items
-        val allItems = listOf(chickenImage, knife, lemon, avocado, cuttingboard, stoveImage, spoonImage, potImage)
+        val allItems = listOf(
+            chickenImage,
+            knife,
+            lemon,
+            avocado,
+            cuttingboard,
+            stoveImage,
+            spoonImage,
+            potImage
+        )
         allItems.forEach { item ->
             enableDrag(item, basketLeft, basketRight)
         }
@@ -90,7 +114,11 @@ class PlayGameActivity : AppCompatActivity() {
                     fireSeekBar.postDelayed({
                         if (fireSeekBar.progress == 2 && isCooking && currentCookingItem != null) {
                             isCookingDone = true
-                            Toast.makeText(this@PlayGameActivity, "Cooking done!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@PlayGameActivity,
+                                "Cooking done!",
+                                Toast.LENGTH_SHORT
+                            ).show()
                             currentCookingItem?.setImageResource(R.drawable.carrot)
                             hideFireSlider()
                         }
@@ -121,6 +149,7 @@ class PlayGameActivity : AppCompatActivity() {
         return Rect.intersects(rect1, rect2)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setupAdvancedStirring() {
         redFillImage = findViewById(R.id.imageRedFill)
         spoonImage = findViewById(R.id.imageSpoon)
@@ -182,137 +211,159 @@ class PlayGameActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupChopping() {
-        knife.setOnClickListener {
-            // Find what the knife is overlapping
-            val targets = listOf(avocado, lemon, chickenImage) // Add all items that can be chopped
+    private fun startCountdown(seconds: Int) {
+        countdownTimer = object : CountDownTimer(seconds * 1000L, 1000L) {
+            override fun onTick(millisUntilFinished: Long) {
+                val totalSeconds = millisUntilFinished / 1000
+                val minutes = totalSeconds / 60
+                val seconds = totalSeconds % 60
+                countdownText.text = String.format("%02d:%02d", minutes, seconds)
+            }
 
-            currentChopTarget = targets.firstOrNull { isViewOverlapping(knife, it) }
+    override fun onFinish() {
+        countdownText.text = "00:00"
+        Toast.makeText(this@PlayGameActivity, "Game Over!", Toast.LENGTH_SHORT).show()
+        // TODO: Add game over logic here
+    }
+}.start()
+}
 
-            if (currentChopTarget != null) {
-                chopCount++
-                if (chopCount >= 5) {
-                    currentChopTarget?.setImageResource(R.drawable.chickenleg) // or other result image
-                    chopCount = 0
-                }
-            } else {
-                Toast.makeText(this, "Place knife over an item to chop", Toast.LENGTH_SHORT).show()
+private fun setupChopping() {
+    knife.setOnClickListener {
+        // Find what the knife is overlapping
+        val targets = listOf(avocado, lemon, chickenImage) // Add all items that can be chopped
+
+        currentChopTarget = targets.firstOrNull { isViewOverlapping(knife, it) }
+
+        if (currentChopTarget != null) {
+            chopCount++
+            if (chopCount >= 5) {
+                currentChopTarget?.setImageResource(R.drawable.chickenleg) // or other result image
                 chopCount = 0
             }
+        } else {
+            Toast.makeText(this, "Place knife over an item to chop", Toast.LENGTH_SHORT).show()
+            chopCount = 0
         }
     }
+}
 
-    // ✋ Drag-and-drop logic
-    private fun enableDrag(view: ImageView, basketLeft: View, basketRight: View) {
-        view.setOnTouchListener { v, event ->
-            val parent = v.parent as View
-            val maxX = parent.width - v.width
-            val maxY = parent.height - v.height
+// ✋ Drag-and-drop logic
+private fun enableDrag(view: ImageView, basketLeft: View, basketRight: View) {
+    view.setOnTouchListener { v, event ->
+        val parent = v.parent as View
+        val maxX = parent.width - v.width
+        val maxY = parent.height - v.height
 
-            when (event.action) {
-                MotionEvent.ACTION_MOVE -> {
-                    v.translationX = (event.rawX - v.width / 2).coerceIn(0f, maxX.toFloat())
-                    v.translationY = (event.rawY - v.height / 2).coerceIn(0f, maxY.toFloat())
+        when (event.action) {
+            MotionEvent.ACTION_MOVE -> {
+                v.translationX = (event.rawX - v.width / 2).coerceIn(0f, maxX.toFloat())
+                v.translationY = (event.rawY - v.height / 2).coerceIn(0f, maxY.toFloat())
 
-                    if (v != stoveImage && isViewOverlapping(v, stoveImage)) {
-                        currentCookingItem = v as ImageView
-                        showFireSlider()
-                    } else if (currentCookingItem == v) {
-                        hideFireSlider()
-                        currentCookingItem = null
-                    }
-                }
-
-                MotionEvent.ACTION_UP -> {
-                    v.performClick()
-                    val itemBox = Rect()
-                    val leftBox = Rect()
-                    val rightBox = Rect()
-
-                    v.getGlobalVisibleRect(itemBox)
-                    basketLeft.getGlobalVisibleRect(leftBox)
-                    basketRight.getGlobalVisibleRect(rightBox)
-
-                    when {
-                        Rect.intersects(itemBox, leftBox) -> animateIntoBasket(v, basketLeft)
-                        Rect.intersects(itemBox, rightBox) -> animateIntoBasket(v, basketRight)
-                    }
+                if (v != stoveImage && isViewOverlapping(v, stoveImage)) {
+                    currentCookingItem = v as ImageView
+                    showFireSlider()
+                } else if (currentCookingItem == v) {
+                    hideFireSlider()
+                    currentCookingItem = null
                 }
             }
-            true
-        }
-    }
 
-    // 🧺 Drop item into basket + send payload
-    private fun animateIntoBasket(view: View, basket: View) {
-        val basketLocation = IntArray(2)
-        basket.getLocationOnScreen(basketLocation)
+            MotionEvent.ACTION_UP -> {
+                v.performClick()
+                val itemBox = Rect()
+                val leftBox = Rect()
+                val rightBox = Rect()
 
-        val viewLocation = IntArray(2)
-        view.getLocationOnScreen(viewLocation)
+                v.getGlobalVisibleRect(itemBox)
+                basketLeft.getGlobalVisibleRect(leftBox)
+                basketRight.getGlobalVisibleRect(rightBox)
 
-        val deltaX = (basketLocation[0] + basket.width / 2) - (viewLocation[0] + view.width / 2)
-        val deltaY = (basketLocation[1] + basket.height / 2) - (viewLocation[1] + view.height / 2)
-
-        view.animate()
-            .translationXBy(deltaX.toFloat())
-            .translationYBy(deltaY.toFloat())
-            .setDuration(300)
-            .withEndAction {
-                view.visibility = View.INVISIBLE
-                Toast.makeText(this, "Item placed!", Toast.LENGTH_SHORT).show()
-                sendChicken() // ✅ Send message to Phone B
-            }
-            .start()
-    }
-
-    // 📡 Start advertising (host)
-    private fun startAdvertising() {
-        val advertisingOptions = AdvertisingOptions.Builder().setStrategy(STRATEGY).build()
-        connectionsClient.startAdvertising(
-            "Phone A",
-            SERVICE_ID,
-            connectionLifecycleCallback,
-            advertisingOptions
-        )
-    }
-
-    // 🐔 Send payload to receiver
-    private fun sendChicken() {
-        val payload = Payload.fromBytes("chicken_sent".toByteArray())
-        endpointId?.let {
-            connectionsClient.sendPayload(it, payload)
-        }
-    }
-
-    // 🔁 Handle connection lifecycle
-    private val connectionLifecycleCallback = object : ConnectionLifecycleCallback() {
-        override fun onConnectionInitiated(endpointId: String, info: ConnectionInfo) {
-            connectionsClient.acceptConnection(endpointId, payloadCallback)
-        }
-
-        override fun onConnectionResult(endpointId: String, result: ConnectionResolution) {
-            if (result.status.isSuccess) {
-                this@PlayGameActivity.endpointId = endpointId
-                Toast.makeText(
-                    this@PlayGameActivity,
-                    "Connected to $endpointId",
-                    Toast.LENGTH_SHORT
-                ).show()
+                when {
+                    Rect.intersects(itemBox, leftBox) -> animateIntoBasket(v, basketLeft)
+                    Rect.intersects(itemBox, rightBox) -> animateIntoBasket(v, basketRight)
+                }
             }
         }
+        true
+    }
+}
 
-        override fun onDisconnected(endpointId: String) {
-            Toast.makeText(this@PlayGameActivity, "Disconnected", Toast.LENGTH_SHORT).show()
+// 🧺 Drop item into basket + send payload
+private fun animateIntoBasket(view: View, basket: View) {
+    val basketLocation = IntArray(2)
+    basket.getLocationOnScreen(basketLocation)
+
+    val viewLocation = IntArray(2)
+    view.getLocationOnScreen(viewLocation)
+
+    val deltaX = (basketLocation[0] + basket.width / 2) - (viewLocation[0] + view.width / 2)
+    val deltaY = (basketLocation[1] + basket.height / 2) - (viewLocation[1] + view.height / 2)
+
+    view.animate()
+        .translationXBy(deltaX.toFloat())
+        .translationYBy(deltaY.toFloat())
+        .setDuration(300)
+        .withEndAction {
+            view.visibility = View.INVISIBLE
+            Toast.makeText(this, "Item placed!", Toast.LENGTH_SHORT).show()
+            sendChicken() // ✅ Send message to Phone B
+        }
+        .start()
+}
+
+// 📡 Start advertising (host)
+private fun startAdvertising() {
+    val advertisingOptions = AdvertisingOptions.Builder().setStrategy(STRATEGY).build()
+    connectionsClient.startAdvertising(
+        "Phone A",
+        SERVICE_ID,
+        connectionLifecycleCallback,
+        advertisingOptions
+    )
+}
+
+// 🐔 Send payload to receiver
+private fun sendChicken() {
+    val payload = Payload.fromBytes("chicken_sent".toByteArray())
+    endpointId?.let {
+        connectionsClient.sendPayload(it, payload)
+    }
+}
+
+// 🔁 Handle connection lifecycle
+private val connectionLifecycleCallback = object : ConnectionLifecycleCallback() {
+    override fun onConnectionInitiated(endpointId: String, info: ConnectionInfo) {
+        connectionsClient.acceptConnection(endpointId, payloadCallback)
+    }
+
+    override fun onConnectionResult(endpointId: String, result: ConnectionResolution) {
+        if (result.status.isSuccess) {
+            this@PlayGameActivity.endpointId = endpointId
+            Toast.makeText(
+                this@PlayGameActivity,
+                "Connected to $endpointId",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
-    // 📦 Payload callback (receive on Phone A, not used here)
-    private val payloadCallback = object : PayloadCallback() {
-        override fun onPayloadReceived(endpointId: String, payload: Payload) {
-            // Not expecting payloads here, but could handle replies
-        }
-
-        override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate) {}
+    override fun onDisconnected(endpointId: String) {
+        Toast.makeText(this@PlayGameActivity, "Disconnected", Toast.LENGTH_SHORT).show()
     }
+}
+
+// 📦 Payload callback (receive on Phone A, not used here)
+private val payloadCallback = object : PayloadCallback() {
+    override fun onPayloadReceived(endpointId: String, payload: Payload) {
+        // Not expecting payloads here, but could handle replies
+    }
+
+    override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate) {}
+}
+
+override fun onDestroy() {
+    super.onDestroy()
+    countdownTimer?.cancel()
+}
 }
