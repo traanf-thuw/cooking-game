@@ -2,9 +2,9 @@ name: DTAP - Mobile App (Kotlin)
 
 on:
   push:
-    branches: [ room-creation ]
+    branches: [ development ]
   pull_request:
-    branches: [ room-creation ]
+    branches: [ development ]
 
 jobs:
   build-and-test:
