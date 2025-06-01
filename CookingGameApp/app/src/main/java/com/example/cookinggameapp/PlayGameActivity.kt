@@ -1,8 +1,16 @@
 package com.example.cookinggameapp
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Rect
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
@@ -10,10 +18,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import android.os.VibrationEffect
-import android.os.Vibrator
-import android.os.VibratorManager
-
 
 class PlayGameActivity : AppCompatActivity() {
 
@@ -30,6 +34,11 @@ class PlayGameActivity : AppCompatActivity() {
     private lateinit var cuttingBoard: ImageView
     private lateinit var basketLeft: ImageView
     private lateinit var basketRight: ImageView
+
+    private lateinit var sensorManager: SensorManager
+    private var accel = 0f
+    private var accelCurrent = 0f
+    private var accelLast = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,21 +58,31 @@ class PlayGameActivity : AppCompatActivity() {
         basketLeft = findViewById(R.id.imageBasketLeft)
         basketRight = findViewById(R.id.imageBasketRight)
 
-        // Sync logic for chicken
-        if (isHost) {
-            enableDrag(chicken, isChicken = true)
-        } else {
-            chicken.visibility = View.INVISIBLE
-        }
+        // 🔁 Start Firebase listener for state sync
+        listenToRoomState()
 
-        // Enable drag for other items
+        // ✅ Set drag for other items
         enableDrag(avocado)
         enableDrag(lemon)
         enableDrag(knife)
         enableDrag(cuttingBoard)
 
-        // Firebase listener
-        listenToRoomState()
+        if (isHost) {
+            // ✅ Only host will detect shake and send update
+            sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+            sensorManager.registerListener(
+                sensorListener,
+                sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_UI
+            )
+
+            accel = 10f
+            accelCurrent = SensorManager.GRAVITY_EARTH
+            accelLast = SensorManager.GRAVITY_EARTH
+        } else {
+            // ✅ Hide chicken on client phone
+            chicken.visibility = View.INVISIBLE
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -92,7 +111,7 @@ class PlayGameActivity : AppCompatActivity() {
                         animateIntoBasket(v)
 
                         if (isChicken && isHost) {
-                            updateFirebaseForDrop()
+                            Toast.makeText(this, "Now shake the phone to drop the chicken!", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -128,23 +147,21 @@ class PlayGameActivity : AppCompatActivity() {
                 }
             }
     }
+
     private fun vibrateDevice() {
         val vibrator = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-            val manager = getSystemService(VIBRATOR_MANAGER_SERVICE) as android.os.VibratorManager
+            val manager = getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
             manager.defaultVibrator
         } else {
             @Suppress("DEPRECATION")
-            getSystemService(VIBRATOR_SERVICE) as android.os.Vibrator
+            getSystemService(VIBRATOR_SERVICE) as Vibrator
         }
 
-        val duration = 1000L  // 1000 milliseconds = 1 second
+        val duration = 1500L  // Vibrate for 1.5 seconds
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             vibrator.vibrate(
-                android.os.VibrationEffect.createOneShot(
-                    duration,
-                    android.os.VibrationEffect.DEFAULT_AMPLITUDE
-                )
+                VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE)
             )
         } else {
             @Suppress("DEPRECATION")
@@ -152,8 +169,30 @@ class PlayGameActivity : AppCompatActivity() {
         }
     }
 
+    private val sensorListener = object : SensorEventListener {
+        override fun onSensorChanged(event: SensorEvent) {
+            val x = event.values[0]
+            val y = event.values[1]
+            val z = event.values[2]
+
+            accelLast = accelCurrent
+            accelCurrent = Math.sqrt((x * x + y * y + z * z).toDouble()).toFloat()
+            val delta = accelCurrent - accelLast
+            accel = accel * 0.9f + delta
+
+            if (accel > 12 && isHost) {  // Shake threshold
+                updateFirebaseForDrop()
+            }
+        }
+
+        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         roomListener?.remove()
+        if (isHost) {
+            sensorManager.unregisterListener(sensorListener)
+        }
     }
 }
