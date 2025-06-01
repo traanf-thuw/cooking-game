@@ -13,17 +13,16 @@ class JoinRoomActivity : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        db = FirebaseFirestore.getInstance()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enter_room)
 
+        db = FirebaseFirestore.getInstance()
 
         val joinButton = findViewById<ImageButton>(R.id.buttonStart)
         val inputRoomCode = findViewById<EditText>(R.id.editRoomCode)
 
         joinButton.setOnClickListener {
             val roomCode = inputRoomCode.text.toString().trim().uppercase()
-
             joinRoom(roomCode)
         }
     }
@@ -35,24 +34,22 @@ class JoinRoomActivity : AppCompatActivity() {
             if (doc.exists()) {
                 val players = doc.get("players") as? List<String> ?: emptyList()
 
-                if (players.size < 4)
-                {
+                if (players.size < 4) {
                     val assignedSlot = "Player ${players.size + 1}"
                     roomRef.update("players", players + assignedSlot)
 
                     val intent = Intent(this, WaitingActivity::class.java)
-                    intent.putExtra("roomCode", roomCode) // Pass it forward
+                    intent.putExtra("roomCode", roomCode)
                     startActivity(intent)
                     finish()
-                }
-                else {
+                } else {
                     Toast.makeText(this, "Room is full", Toast.LENGTH_SHORT).show()
                 }
-            }
-            else
-            {
+            } else {
                 Toast.makeText(this, "Room not found", Toast.LENGTH_SHORT).show()
             }
+        }.addOnFailureListener {
+            Toast.makeText(this, "Error joining room", Toast.LENGTH_SHORT).show()
         }
     }
 }
