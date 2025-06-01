@@ -44,6 +44,51 @@
         android:src="@drawable/knife"
         android:contentDescription="Knife" />
 
+    <SeekBar
+        android:id="@+id/fireSeekBar"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:max="2"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"/>
+
+    <!--    <ImageView-->
+<!--        android:id="@+id/imagePot"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:src="@drawable/pot"-->
+<!--        android:contentDescription="Pot" />-->
+    <FrameLayout
+        android:id="@+id/potContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <ImageView
+            android:id="@+id/imagePot"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/pot"
+            android:layout_gravity="center" />
+
+        <ImageView
+            android:id="@+id/imageRedFill"
+            android:layout_width="70dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:src="@drawable/filler"
+            android:translationY="-25dp"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/imageSpoon"
+            android:layout_width="50dp"
+            android:layout_height="70dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ladle" />
+    </FrameLayout>
+
     <ImageView
         android:id="@+id/imageLemon"
         android:layout_width="100dp"

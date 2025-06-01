@@ -4,6 +4,17 @@
     <selectionStates>
       <SelectionState runConfigName="Run Cooking Game App">
         <option name="selectionMode" value="DROPDOWN" />
+<<<<<<< HEAD
+=======
+        <DropdownSelection timestamp="2025-05-31T20:20:19.258831300Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=90892e54" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
+>>>>>>> 63908b15b07dde29bf1f708098aece310e0c6cc6
       </SelectionState>
     </selectionStates>
   </component>
