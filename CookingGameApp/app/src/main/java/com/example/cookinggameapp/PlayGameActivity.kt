@@ -10,6 +10,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
+
 
 class PlayGameActivity : AppCompatActivity() {
 
@@ -120,8 +124,32 @@ class PlayGameActivity : AppCompatActivity() {
                     chicken.visibility = View.VISIBLE
                     chicken.alpha = 1f
                     Toast.makeText(this, "Chicken appeared!", Toast.LENGTH_SHORT).show()
+                    vibrateDevice()
                 }
             }
+    }
+    private fun vibrateDevice() {
+        val vibrator = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            val manager = getSystemService(VIBRATOR_MANAGER_SERVICE) as android.os.VibratorManager
+            manager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            getSystemService(VIBRATOR_SERVICE) as android.os.Vibrator
+        }
+
+        val duration = 1000L  // 1000 milliseconds = 1 second
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            vibrator.vibrate(
+                android.os.VibrationEffect.createOneShot(
+                    duration,
+                    android.os.VibrationEffect.DEFAULT_AMPLITUDE
+                )
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            vibrator.vibrate(duration)
+        }
     }
 
     override fun onDestroy() {
