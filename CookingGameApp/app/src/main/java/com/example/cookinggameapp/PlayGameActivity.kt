@@ -140,10 +140,34 @@ class PlayGameActivity : AppCompatActivity() {
             .addSnapshotListener { snapshot, _ ->
                 val chickenDropped = snapshot?.getBoolean("chickenDropped") ?: false
                 if (!isHost && chickenDropped) {
+                    // Get basket position
+                    val basketX = basketLeft.x
+                    val basketY = basketLeft.y
+
+// Start from above screen, invisible and small
+                    chicken.translationX = basketX
+                    chicken.translationY = -300f
+                    chicken.alpha = 0f
+                    chicken.scaleX = 0.3f
+                    chicken.scaleY = 0.3f
+                    chicken.rotation = 0f
                     chicken.visibility = View.VISIBLE
-                    chicken.alpha = 1f
-                    Toast.makeText(this, "Chicken appeared!", Toast.LENGTH_SHORT).show()
-                    vibrateDevice()
+
+// Animate: spin + fly in
+                    chicken.animate()
+                        .translationY(basketY)
+                        .alpha(1f)
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .rotationBy(1440f) // 4 full spins (360 * 4)
+                        .setDuration(1000)
+                        .withEndAction {
+                            Toast.makeText(this, "🐔 Chicken flew in with style!", Toast.LENGTH_SHORT).show()
+                            vibrateDevice()
+                        }
+                        .start()
+
+
                 }
             }
     }
