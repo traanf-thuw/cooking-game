@@ -43,5 +43,4 @@
         <activity android:name=".PlayGameActivity" android:exported="false" />
 
     </application>
-
 </manifest>
