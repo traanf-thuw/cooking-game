@@ -128,7 +128,6 @@ class PlayGameActivity : AppCompatActivity() {
         }
 
         setupAdvancedStirring()
-        setupChopping()
     }
 
     private fun startCountdown(seconds: Int) {
@@ -147,17 +146,27 @@ class PlayGameActivity : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun enableDrag(view: ImageView, isChicken: Boolean = false) {
+        var isDragging = false
+        var startTime = 0L
+
         view.setOnTouchListener { v, event ->
             val parent = v.parent as View
             val maxX = parent.width - v.width
             val maxY = parent.height - v.height
 
             when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    isDragging = false
+                    startTime = System.currentTimeMillis()
+                }
+
                 MotionEvent.ACTION_MOVE -> {
+                    isDragging = true
                     v.translationX = (event.rawX - v.width / 2).coerceIn(0f, maxX.toFloat())
                     v.translationY = (event.rawY - v.height / 2).coerceIn(0f, maxY.toFloat())
 
-                    if (v != stoveImage && isViewOverlapping(v, stoveImage)) {
+                    // Handle cooking logic
+                    if (v != stoveImage && isViewOverlappingWithTranslation(v, stoveImage)) {
                         currentCookingItem = v as ImageView
                         showFireSlider()
                     } else if (currentCookingItem == v) {
@@ -167,11 +176,22 @@ class PlayGameActivity : AppCompatActivity() {
                 }
 
                 MotionEvent.ACTION_UP -> {
+                    val touchDuration = System.currentTimeMillis() - startTime
+
+                    // If it was a quick tap (not a drag), handle as a chop for knife
+                    if (!isDragging && touchDuration < 200 && v == knife) {
+                        handleChop()
+                        return@setOnTouchListener true
+                    }
+
+                    // Handle basket dropping logic
                     val itemBox = Rect()
                     val leftBox = Rect()
                     val rightBox = Rect()
 
                     v.getGlobalVisibleRect(itemBox)
+                    itemBox.offset(v.translationX.toInt(), v.translationY.toInt())
+
                     basketLeft.getGlobalVisibleRect(leftBox)
                     basketRight.getGlobalVisibleRect(rightBox)
 
@@ -186,6 +206,43 @@ class PlayGameActivity : AppCompatActivity() {
             }
             true
         }
+    }
+
+    private fun handleChop() {
+        val targets = listOf(avocado, lemon, chicken)
+        currentChopTarget = targets.firstOrNull { isViewOverlappingWithTranslation(knife, it) }
+
+        if (currentChopTarget != null) {
+            chopCount++
+            Toast.makeText(this, "Chop $chopCount/5", Toast.LENGTH_SHORT).show()
+
+            if (chopCount >= 5) {
+                currentChopTarget?.setImageResource(R.drawable.chickenleg)
+                Toast.makeText(this, "Item chopped!", Toast.LENGTH_LONG).show()
+                chopCount = 0
+                currentChopTarget = null
+            }
+        } else {
+            Toast.makeText(this, "Place knife over an item to chop", Toast.LENGTH_SHORT).show()
+            chopCount = 0
+        }
+    }
+
+    private fun isViewOverlappingWithTranslation(view1: View, view2: View): Boolean {
+        val rect1 = Rect()
+        val rect2 = Rect()
+
+        // Get the original global rectangles
+        view1.getGlobalVisibleRect(rect1)
+        view2.getGlobalVisibleRect(rect2)
+
+        // Adjust rect1 for translation (for the dragged knife)
+        rect1.offset(view1.translationX.toInt(), view1.translationY.toInt())
+
+        // Adjust rect2 for translation (in case the target is also dragged)
+        rect2.offset(view2.translationX.toInt(), view2.translationY.toInt())
+
+        return Rect.intersects(rect1, rect2)
     }
 
     private fun animateIntoBasket(view: View) {
@@ -302,24 +359,6 @@ class PlayGameActivity : AppCompatActivity() {
         if (redFillImage.visibility != View.VISIBLE) {
             redFillImage.visibility = View.VISIBLE
             Toast.makeText(this, "Stirring with spoon!", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun setupChopping() {
-        knife.setOnClickListener {
-            val targets = listOf(avocado, lemon, chicken)
-            currentChopTarget = targets.firstOrNull { isViewOverlapping(knife, it) }
-
-            if (currentChopTarget != null) {
-                chopCount++
-                if (chopCount >= 5) {
-                    currentChopTarget?.setImageResource(R.drawable.chickenleg)
-                    chopCount = 0
-                }
-            } else {
-                Toast.makeText(this, "Place knife over an item to chop", Toast.LENGTH_SHORT).show()
-                chopCount = 0
-            }
         }
     }
 
