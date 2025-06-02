@@ -13,7 +13,9 @@ import android.os.Vibrator
 import android.os.VibratorManager
 import android.view.MotionEvent
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.SeekBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,6 +36,21 @@ class PlayGameActivity : AppCompatActivity() {
     private lateinit var cuttingBoard: ImageView
     private lateinit var basketLeft: ImageView
     private lateinit var basketRight: ImageView
+
+    private lateinit var fireSeekBar: SeekBar
+    private lateinit var spoonImage: ImageView
+    private lateinit var stoveImage: ImageView
+    private lateinit var potImage: ImageView
+
+    private var chopCount = 0
+    private var currentChopTarget: ImageView? = null
+
+    private var currentCookingItem: ImageView? = null
+    private var cookingStartTime: Long = 0L
+    private var isCooking = false
+    private var isCookingDone = false
+
+    private lateinit var redFillImage: ImageView
 
     private lateinit var sensorManager: SensorManager
     private var accel = 0f
@@ -57,6 +74,11 @@ class PlayGameActivity : AppCompatActivity() {
         cuttingBoard = findViewById(R.id.imageCuttingboard)
         basketLeft = findViewById(R.id.imageBasketLeft)
         basketRight = findViewById(R.id.imageBasketRight)
+        stoveImage = findViewById<ImageView>(R.id.imageStove)
+        potImage = findViewById<ImageView>(R.id.imagePot)
+        spoonImage = findViewById(R.id.imageSpoon)
+        fireSeekBar = findViewById(R.id.fireSeekBar)
+        fireSeekBar.visibility = View.GONE
 
         // 🔁 Start Firebase listener for state sync
         listenToRoomState()
@@ -66,6 +88,10 @@ class PlayGameActivity : AppCompatActivity() {
         enableDrag(lemon)
         enableDrag(knife)
         enableDrag(cuttingBoard)
+        enableDrag(chicken)
+        enableDrag(potImage)
+        enableDrag(stoveImage)
+        enableDrag(spoonImage)
 
         if (isHost) {
             // ✅ Only host will detect shake and send update
@@ -83,6 +109,9 @@ class PlayGameActivity : AppCompatActivity() {
             // ✅ Hide chicken on client phone
             chicken.visibility = View.INVISIBLE
         }
+
+        setupAdvancedStirring()
+        setupChopping()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -96,6 +125,14 @@ class PlayGameActivity : AppCompatActivity() {
                 MotionEvent.ACTION_MOVE -> {
                     v.translationX = (event.rawX - v.width / 2).coerceIn(0f, maxX.toFloat())
                     v.translationY = (event.rawY - v.height / 2).coerceIn(0f, maxY.toFloat())
+
+                    if (v != stoveImage && isViewOverlapping(v, stoveImage)) {
+                        currentCookingItem = v as ImageView
+                        showFireSlider()
+                    } else if (currentCookingItem == v) {
+                        hideFireSlider()
+                        currentCookingItem = null
+                    }
                 }
 
                 MotionEvent.ACTION_UP -> {
@@ -134,6 +171,132 @@ class PlayGameActivity : AppCompatActivity() {
         db.collection("rooms").document(roomCode)
             .update("chickenDropped", true)
     }
+
+    private fun showFireSlider() {
+        if (fireSeekBar.visibility == View.VISIBLE) return
+
+        fireSeekBar.visibility = View.VISIBLE
+        fireSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (progress == 2 && !isCooking && currentCookingItem != null) {
+                    isCooking = true
+                    cookingStartTime = System.currentTimeMillis()
+
+                    fireSeekBar.postDelayed({
+                        if (fireSeekBar.progress == 2 && isCooking && currentCookingItem != null) {
+                            isCookingDone = true
+                            Toast.makeText(this@PlayGameActivity, "Cooking done!", Toast.LENGTH_SHORT).show()
+                            currentCookingItem?.setImageResource(R.drawable.carrot)
+                            hideFireSlider()
+                        }
+                    }, 3000)
+                } else {
+                    isCooking = false
+                    cookingStartTime = 0L
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+    }
+
+    private fun hideFireSlider() {
+        fireSeekBar.visibility = View.GONE
+        fireSeekBar.progress = 0
+        isCooking = false
+        isCookingDone = false
+    }
+
+    private fun isViewOverlapping(view1: View, view2: View): Boolean {
+        val rect1 = Rect()
+        val rect2 = Rect()
+        view1.getGlobalVisibleRect(rect1)
+        view2.getGlobalVisibleRect(rect2)
+        return Rect.intersects(rect1, rect2)
+    }
+
+    private fun setupAdvancedStirring() {
+        redFillImage = findViewById(R.id.imageRedFill)
+        spoonImage = findViewById(R.id.imageSpoon)
+        val potContainer = findViewById<FrameLayout>(R.id.potContainer)
+
+        var lastTouchX = 0f
+        var lastTouchY = 0f
+        var rotationAngle = 0f
+        var stirStartTime: Long = 0
+        var hasFilled = false
+
+        spoonImage.setOnTouchListener { view, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    lastTouchX = event.rawX - view.x
+                    lastTouchY = event.rawY - view.y
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    val newX = event.rawX - lastTouchX
+                    val newY = event.rawY - lastTouchY
+                    view.x = newX
+                    view.y = newY
+
+                    if (!hasFilled && isSpoonInsidePot()) {
+                        if (stirStartTime == 0L) stirStartTime = System.currentTimeMillis()
+
+                        val elapsed = System.currentTimeMillis() - stirStartTime
+                        rotationAngle += 10f
+                        spoonImage.rotation = rotationAngle
+
+                        if (elapsed >= 3000) { // 3 seconds
+                            triggerRedFill()
+                            hasFilled = true
+                        }
+                    } else {
+                        stirStartTime = 0 // reset if not inside
+                        if (!hasFilled) redFillImage.visibility = View.INVISIBLE
+                    }
+                }
+            }
+            true
+        }
+    }
+
+    private fun isSpoonInsidePot(): Boolean {
+        val potRect = Rect()
+        val spoonRect = Rect()
+        potImage.getGlobalVisibleRect(potRect)
+        spoonImage.getGlobalVisibleRect(spoonRect)
+
+        return Rect.intersects(potRect, spoonRect)
+    }
+
+    private fun triggerRedFill() {
+        if (redFillImage.visibility != View.VISIBLE) {
+            redFillImage.visibility = View.VISIBLE
+            Toast.makeText(this, "Stirring with spoon!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun setupChopping() {
+        knife.setOnClickListener {
+            // Find what the knife is overlapping
+            val targets = listOf(avocado, lemon, chicken) // Add all items that can be chopped
+
+            currentChopTarget = targets.firstOrNull { isViewOverlapping(knife, it) }
+
+            if (currentChopTarget != null) {
+                chopCount++
+                if (chopCount >= 5) {
+                    currentChopTarget?.setImageResource(R.drawable.chickenleg) // or other result image
+                    chopCount = 0
+                }
+            } else {
+                Toast.makeText(this, "Place knife over an item to chop", Toast.LENGTH_SHORT).show()
+                chopCount = 0
+            }
+        }
+    }
+
 
     private fun listenToRoomState() {
         roomListener = db.collection("rooms").document(roomCode)
