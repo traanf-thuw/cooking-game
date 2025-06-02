@@ -8,14 +8,17 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.SeekBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
@@ -28,7 +31,9 @@ class PlayGameActivity : AppCompatActivity() {
     private var roomListener: ListenerRegistration? = null
 
     private var isHost: Boolean = false
+    private var countdownTimer: CountDownTimer? = null
 
+    private lateinit var countdownText: TextView
     private lateinit var chicken: ImageView
     private lateinit var avocado: ImageView
     private lateinit var lemon: ImageView
@@ -61,10 +66,23 @@ class PlayGameActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_playgame)
 
-        // Get Firestore and intent info
         db = FirebaseFirestore.getInstance()
         roomCode = intent.getStringExtra("roomCode") ?: return
         isHost = intent.getBooleanExtra("isHost", false)
+
+        // 👇 Get difficulty and set timer
+        val difficulty = intent.getStringExtra("difficulty") ?: "easy"
+        val countdownSeconds = when (difficulty.lowercase()) {
+            "easy" -> 60
+            "medium" -> 45
+            "hard" -> 30
+            else -> 60
+        }
+        Log.d("PlayGame", "Starting game with $countdownSeconds seconds for difficulty: $difficulty")
+
+        // 🔔 Start countdown
+        countdownText = findViewById(R.id.countdownText)
+        startCountdown(countdownSeconds)
 
         // Grab UI
         chicken = findViewById(R.id.imageChicken)
@@ -74,27 +92,27 @@ class PlayGameActivity : AppCompatActivity() {
         cuttingBoard = findViewById(R.id.imageCuttingboard)
         basketLeft = findViewById(R.id.imageBasketLeft)
         basketRight = findViewById(R.id.imageBasketRight)
-        stoveImage = findViewById<ImageView>(R.id.imageStove)
-        potImage = findViewById<ImageView>(R.id.imagePot)
+        stoveImage = findViewById(R.id.imageStove)
+        potImage = findViewById(R.id.imagePot)
         spoonImage = findViewById(R.id.imageSpoon)
         fireSeekBar = findViewById(R.id.fireSeekBar)
+        redFillImage = findViewById(R.id.imageRedFill)
+
         fireSeekBar.visibility = View.GONE
 
-        // 🔁 Start Firebase listener for state sync
         listenToRoomState()
 
-        // ✅ Set drag for other items
+        // Enable dragging
         enableDrag(avocado)
         enableDrag(lemon)
         enableDrag(knife)
         enableDrag(cuttingBoard)
-        enableDrag(chicken)
+        enableDrag(chicken, isChicken = true)
         enableDrag(potImage)
         enableDrag(stoveImage)
         enableDrag(spoonImage)
 
         if (isHost) {
-            // ✅ Only host will detect shake and send update
             sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
             sensorManager.registerListener(
                 sensorListener,
@@ -106,12 +124,25 @@ class PlayGameActivity : AppCompatActivity() {
             accelCurrent = SensorManager.GRAVITY_EARTH
             accelLast = SensorManager.GRAVITY_EARTH
         } else {
-            // ✅ Hide chicken on client phone
             chicken.visibility = View.INVISIBLE
         }
 
         setupAdvancedStirring()
         setupChopping()
+    }
+
+    private fun startCountdown(seconds: Int) {
+        countdownTimer = object : CountDownTimer((seconds * 1000).toLong(), 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val secondsLeft = millisUntilFinished / 1000
+                countdownText.text = String.format("00:%02d", secondsLeft)
+            }
+
+            override fun onFinish() {
+                countdownText.text = "00:00"
+                Toast.makeText(this@PlayGameActivity, "Time's up!", Toast.LENGTH_SHORT).show()
+            }
+        }.start()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -217,8 +248,6 @@ class PlayGameActivity : AppCompatActivity() {
     }
 
     private fun setupAdvancedStirring() {
-        redFillImage = findViewById(R.id.imageRedFill)
-        spoonImage = findViewById(R.id.imageSpoon)
         val potContainer = findViewById<FrameLayout>(R.id.potContainer)
 
         var lastTouchX = 0f
@@ -247,12 +276,12 @@ class PlayGameActivity : AppCompatActivity() {
                         rotationAngle += 10f
                         spoonImage.rotation = rotationAngle
 
-                        if (elapsed >= 3000) { // 3 seconds
+                        if (elapsed >= 3000) {
                             triggerRedFill()
                             hasFilled = true
                         }
                     } else {
-                        stirStartTime = 0 // reset if not inside
+                        stirStartTime = 0
                         if (!hasFilled) redFillImage.visibility = View.INVISIBLE
                     }
                 }
@@ -266,7 +295,6 @@ class PlayGameActivity : AppCompatActivity() {
         val spoonRect = Rect()
         potImage.getGlobalVisibleRect(potRect)
         spoonImage.getGlobalVisibleRect(spoonRect)
-
         return Rect.intersects(potRect, spoonRect)
     }
 
@@ -279,15 +307,13 @@ class PlayGameActivity : AppCompatActivity() {
 
     private fun setupChopping() {
         knife.setOnClickListener {
-            // Find what the knife is overlapping
-            val targets = listOf(avocado, lemon, chicken) // Add all items that can be chopped
-
+            val targets = listOf(avocado, lemon, chicken)
             currentChopTarget = targets.firstOrNull { isViewOverlapping(knife, it) }
 
             if (currentChopTarget != null) {
                 chopCount++
                 if (chopCount >= 5) {
-                    currentChopTarget?.setImageResource(R.drawable.chickenleg) // or other result image
+                    currentChopTarget?.setImageResource(R.drawable.chickenleg)
                     chopCount = 0
                 }
             } else {
@@ -297,17 +323,14 @@ class PlayGameActivity : AppCompatActivity() {
         }
     }
 
-
     private fun listenToRoomState() {
         roomListener = db.collection("rooms").document(roomCode)
             .addSnapshotListener { snapshot, _ ->
                 val chickenDropped = snapshot?.getBoolean("chickenDropped") ?: false
                 if (!isHost && chickenDropped) {
-                    // Get basket position
                     val basketX = basketLeft.x
                     val basketY = basketLeft.y
 
-// Start from above screen, invisible and small
                     chicken.translationX = basketX
                     chicken.translationY = -300f
                     chicken.alpha = 0f
@@ -316,21 +339,18 @@ class PlayGameActivity : AppCompatActivity() {
                     chicken.rotation = 0f
                     chicken.visibility = View.VISIBLE
 
-// Animate: spin + fly in
                     chicken.animate()
                         .translationY(basketY)
                         .alpha(1f)
                         .scaleX(1f)
                         .scaleY(1f)
-                        .rotationBy(1440f) // 4 full spins (360 * 4)
+                        .rotationBy(1440f)
                         .setDuration(1000)
                         .withEndAction {
                             Toast.makeText(this, "🐔 Chicken flew in with style!", Toast.LENGTH_SHORT).show()
                             vibrateDevice()
                         }
                         .start()
-
-
                 }
             }
     }
@@ -344,12 +364,9 @@ class PlayGameActivity : AppCompatActivity() {
             getSystemService(VIBRATOR_SERVICE) as Vibrator
         }
 
-        val duration = 1500L  // Vibrate for 1.5 seconds
-
+        val duration = 1500L
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            vibrator.vibrate(
-                VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE)
-            )
+            vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
         } else {
             @Suppress("DEPRECATION")
             vibrator.vibrate(duration)
@@ -367,7 +384,7 @@ class PlayGameActivity : AppCompatActivity() {
             val delta = accelCurrent - accelLast
             accel = accel * 0.9f + delta
 
-            if (accel > 12 && isHost) {  // Shake threshold
+            if (accel > 12 && isHost) {
                 updateFirebaseForDrop()
             }
         }
@@ -377,6 +394,7 @@ class PlayGameActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        countdownTimer?.cancel()
         roomListener?.remove()
         if (isHost) {
             sensorManager.unregisterListener(sensorListener)
