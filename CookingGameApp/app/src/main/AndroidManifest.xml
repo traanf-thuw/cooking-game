@@ -43,6 +43,8 @@
         <activity android:name=".SettingsActivity" android:exported="false" />
         <activity android:name=".WaitingActivity" android:exported="false" />
         <activity android:name=".PlayGameActivity" android:exported="false" />
+        <activity android:name=".SelectDifficultyActivity" android:exported="false" />
+
 
     </application>
 
