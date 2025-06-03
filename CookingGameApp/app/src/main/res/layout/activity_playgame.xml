@@ -99,6 +99,7 @@
         android:contentDescription="Lemon" />
 
     <!-- Bottom Center Timer with overlay text -->
+
     <ImageView
         android:id="@+id/imageStove"
         android:layout_width="100dp"
