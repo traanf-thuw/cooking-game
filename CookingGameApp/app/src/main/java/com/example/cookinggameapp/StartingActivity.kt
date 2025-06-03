@@ -22,7 +22,7 @@ class StartingActivity : AppCompatActivity() {
         val imageDinner: ImageView = findViewById(R.id.imageDinner)
         val imageDish: ImageView = findViewById(R.id.imageDish)
 
-        // 🍳 Drop friedEgg into pan
+        // Drop friedEgg into pan
         friedEgg.post {
             val eggY = friedEgg.y
             val panY = longPan.y
@@ -34,7 +34,7 @@ class StartingActivity : AppCompatActivity() {
             friedEgg.startAnimation(dropAnimation)
         }
 
-        // 🌀 Continuous rotation
+        // Continuous rotation
         val rotateForever = RotateAnimation(
             0f, 360f,
             Animation.RELATIVE_TO_SELF, 0.5f,
