@@ -6,10 +6,12 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.firestore.FirebaseFirestore
 
-class CreateRoomActivity : AppCompatActivity() {
+class CreateRoomActivity : BaseActivity() {
 
     private lateinit var roomCode: String
     private lateinit var db: FirebaseFirestore

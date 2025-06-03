@@ -248,6 +248,8 @@ class PlayGameActivity : AppCompatActivity() {
     }
 
     private fun setupAdvancedStirring() {
+        redFillImage = findViewById(R.id.imageRedFill)
+        spoonImage = findViewById(R.id.imageSpoon)
         val potContainer = findViewById<FrameLayout>(R.id.potContainer)
 
         var lastTouchX = 0f

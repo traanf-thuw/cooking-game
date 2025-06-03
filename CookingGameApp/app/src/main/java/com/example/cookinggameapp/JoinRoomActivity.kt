@@ -5,10 +5,9 @@ import android.os.Bundle
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
 
-class JoinRoomActivity : AppCompatActivity() {
+class JoinRoomActivity : BaseActivity() {
 
     private lateinit var db: FirebaseFirestore
 
