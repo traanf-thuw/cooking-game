@@ -297,7 +297,6 @@ class PlayGameActivity : AppCompatActivity() {
     private fun setupAdvancedStirring() {
         redFillImage = findViewById(R.id.imageRedFill)
         spoonImage = findViewById(R.id.imageSpoon)
-        val potContainer = findViewById<FrameLayout>(R.id.potContainer)
 
         var lastTouchX = 0f
         var lastTouchY = 0f
@@ -325,7 +324,7 @@ class PlayGameActivity : AppCompatActivity() {
                         rotationAngle += 10f
                         spoonImage.rotation = rotationAngle
 
-                        if (elapsed >= 3000 && isCurrentStepInvolves("stirring")) { // 3 seconds
+                        if (elapsed >= 1000 && isCurrentStepInvolves("stirring")) { // 3 seconds
                             triggerRedFill()
                             hasFilled = true
                             advanceToNextStep()
@@ -357,25 +356,36 @@ class PlayGameActivity : AppCompatActivity() {
     }
 
     private fun setupChopping() {
-        knife.setOnClickListener {
-            // Find what the knife is overlapping
-            val targets = listOf(avocado, lemon, chicken) // Add all items that can be chopped
-
-            currentChopTarget = targets.firstOrNull { isViewOverlapping(knife, it) }
-
-            if (currentChopTarget != null) {
-                chopCount++
-                if (chopCount >= 5) {
-                    currentChopTarget?.setImageResource(R.drawable.chickenleg) // or other result image
-                    if (isCurrentStepInvolves("chopping")) {
-                        advanceToNextStep()
-                    }
-                    chopCount = 0
+        knife.setOnTouchListener { view, event ->
+            when (event.action) {
+                MotionEvent.ACTION_MOVE -> {
+                    val parent = view.parent as View
+                    val maxX = parent.width - view.width
+                    val maxY = parent.height - view.height
+                    view.translationX = (event.rawX - view.width / 2).coerceIn(0f, maxX.toFloat())
+                    view.translationY = (event.rawY - view.height / 2).coerceIn(0f, maxY.toFloat())
                 }
-            } else {
-                Toast.makeText(this, "Place knife over an item to chop", Toast.LENGTH_SHORT).show()
-                chopCount = 0
+
+                MotionEvent.ACTION_UP -> {
+                    val targets = listOf(avocado, lemon, chicken)
+                    currentChopTarget = targets.firstOrNull { isViewOverlapping(knife, it) }
+
+                    if (currentChopTarget != null) {
+                        chopCount++
+                        if (chopCount >= 2) {
+                            currentChopTarget?.setImageResource(R.drawable.chickenleg)
+                            if (isCurrentStepInvolves("chopping")) {
+                                advanceToNextStep()
+                            }
+                            chopCount = 0
+                        }
+                    } else {
+                        Toast.makeText(this, "Place knife over an item to chop", Toast.LENGTH_SHORT).show()
+                        chopCount = 0
+                    }
+                }
             }
+            true
         }
     }
 
