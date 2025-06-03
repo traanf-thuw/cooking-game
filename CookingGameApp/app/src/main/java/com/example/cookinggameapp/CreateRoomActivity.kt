@@ -92,13 +92,24 @@ class CreateRoomActivity : BaseActivity() {
 
     private fun startGame() {
         val ref = db.collection("rooms").document(roomCode)
-        ref.update("gameStarted", true).addOnSuccessListener {
+        val startTime = System.currentTimeMillis()
+
+        ref.update(
+            mapOf(
+                "gameStarted" to true,
+                "start_time" to startTime,
+                "difficulty" to selectedDifficulty
+            )
+        ).addOnSuccessListener {
             val intent = Intent(this, PlayGameActivity::class.java)
             intent.putExtra("roomCode", roomCode)
             intent.putExtra("isHost", true)
             intent.putExtra("difficulty", selectedDifficulty)
             startActivity(intent)
             finish()
+        }.addOnFailureListener {
+            Log.e("CreateRoom", " Failed to start game", it)
         }
     }
+
 }

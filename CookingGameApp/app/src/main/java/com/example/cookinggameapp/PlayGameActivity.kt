@@ -24,6 +24,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 
+
+
 class PlayGameActivity : AppCompatActivity() {
 
     private lateinit var db: FirebaseFirestore
@@ -70,19 +72,46 @@ class PlayGameActivity : AppCompatActivity() {
         roomCode = intent.getStringExtra("roomCode") ?: return
         isHost = intent.getBooleanExtra("isHost", false)
 
-        // 👇 Get difficulty and set timer
-        val difficulty = intent.getStringExtra("difficulty") ?: "easy"
-        val countdownSeconds = when (difficulty.lowercase()) {
-            "easy" -> 60
-            "medium" -> 40
-            "hard" -> 30
-            else -> 60
-        }
-        Log.d("PlayGame", "Starting game with $countdownSeconds seconds for difficulty: $difficulty")
-
-        // 🔔 Start countdown
         countdownText = findViewById(R.id.countdownText)
-        startCountdown(countdownSeconds)
+
+        scatterViewsWithoutOverlap(
+            listOf(
+                findViewById(R.id.imageChicken),
+                findViewById(R.id.imageAvocado),
+                findViewById(R.id.imageKnife),
+                findViewById(R.id.imageLemon),
+                findViewById(R.id.imageCuttingboard),
+                findViewById(R.id.imageStove)
+            )
+        )
+
+
+        db.collection("rooms").document(roomCode).get().addOnSuccessListener { document ->
+            val startTime = document.getLong("start_time") ?: return@addOnSuccessListener
+            val difficulty = document.getString("difficulty") ?: "easy"
+
+            val totalTimeMillis = when (difficulty.lowercase()) {
+                "easy" -> 60_000L
+                "medium" -> 45_000L
+                "hard" -> 30_000L
+                else -> 60_000L
+            }
+
+            val elapsed = System.currentTimeMillis() - startTime
+            val remaining = totalTimeMillis - elapsed //This is the calculated remaining time
+            val clampedRemaining = remaining.coerceAtLeast(0L)
+            val remainingSeconds = kotlin.math.ceil(clampedRemaining / 1000.0).toInt()
+
+            if (remainingSeconds > 0) {
+                Log.d("PlayGame", "Starting countdown: $remainingSeconds seconds left")
+                startCountdown(remainingSeconds)
+            } else {
+                countdownText.text = "00:00"
+                Toast.makeText(this, "Time's up!", Toast.LENGTH_SHORT).show()
+            }
+        }.addOnFailureListener {
+            Log.e("PlayGame", "Failed to fetch room data", it)
+        }
 
         // Grab UI
         chicken = findViewById(R.id.imageChicken)
@@ -440,6 +469,66 @@ class PlayGameActivity : AppCompatActivity() {
         roomListener?.remove()
         if (isHost) {
             sensorManager.unregisterListener(sensorListener)
+        }
+    }
+    private fun scatterViewsWithoutOverlap(views: List<View>) {
+        val parent = findViewById<FrameLayout>(R.id.gameCanvas)
+
+        parent.post {
+            val parentWidth = parent.width
+            val parentHeight = parent.height
+
+            val reservedBottomSpace = 350  // bottom off-limits
+            val reservedCenterWidth = 150  // width of center exclusion zone
+            val reservedCenterHeight = 300 // height of center exclusion zone
+
+            val centerX = parentWidth / 2
+            val centerY = parentHeight / 2
+            val centerRect = android.graphics.Rect(
+                centerX - reservedCenterWidth / 2,
+                centerY - reservedCenterHeight / 2,
+                centerX + reservedCenterWidth / 2,
+                centerY + reservedCenterHeight / 2
+            )
+
+            val placedRects = mutableListOf<android.graphics.Rect>()
+
+            views.forEach { view ->
+                val viewWidth = view.width
+                val viewHeight = view.height
+
+                var attempts = 0
+                var placed = false
+
+                while (!placed && attempts < 100) {
+                    val x = (0..(parentWidth - viewWidth)).random()
+                    val y = (0..(parentHeight - reservedBottomSpace - viewHeight)).random()
+
+                    val padding = 16  // Minimum distance between items in pixels
+                    val newRect = android.graphics.Rect(
+                        x - padding,
+                        y - padding,
+                        x + viewWidth + padding,
+                        y + viewHeight + padding
+                    )
+
+                    val overlapsPlaced = placedRects.any { it.intersect(newRect) }
+                    val overlapsCenter = android.graphics.Rect.intersects(newRect, centerRect)
+
+                    if (!overlapsPlaced && !overlapsCenter) {
+                        view.x = x.toFloat()
+                        view.y = y.toFloat()
+                        placedRects.add(newRect)
+                        placed = true
+                    }
+
+                    attempts++
+                }
+
+                if (!placed) {
+                    Log.w("Scatter", "⚠ Could not place ${view.contentDescription}")
+                }
+            }
         }
     }
 }
