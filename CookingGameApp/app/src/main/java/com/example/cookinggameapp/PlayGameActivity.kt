@@ -74,7 +74,7 @@ class PlayGameActivity : AppCompatActivity() {
         val difficulty = intent.getStringExtra("difficulty") ?: "easy"
         val countdownSeconds = when (difficulty.lowercase()) {
             "easy" -> 60
-            "medium" -> 45
+            "medium" -> 40
             "hard" -> 30
             else -> 60
         }
@@ -247,6 +247,7 @@ class PlayGameActivity : AppCompatActivity() {
         return Rect.intersects(rect1, rect2)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setupAdvancedStirring() {
         redFillImage = findViewById(R.id.imageRedFill)
         spoonImage = findViewById(R.id.imageSpoon)
