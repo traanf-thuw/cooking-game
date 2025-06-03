@@ -246,6 +246,7 @@ class PlayGameActivity : AppCompatActivity() {
                                 advanceToNextStep()
                             }
                             currentCookingItem?.setImageResource(R.drawable.carrot)
+                            vibrateDevice()
                             hideFireSlider()
                         }
                     }, 3000)
@@ -327,6 +328,7 @@ class PlayGameActivity : AppCompatActivity() {
                         if (elapsed >= 1000 && isCurrentStepInvolves("stirring")) { // 3 seconds
                             triggerRedFill()
                             hasFilled = true
+                            vibrateDevice()
                             advanceToNextStep()
                         }
                     } else {
@@ -374,6 +376,7 @@ class PlayGameActivity : AppCompatActivity() {
                         chopCount++
                         if (chopCount >= 2) {
                             currentChopTarget?.setImageResource(R.drawable.chickenleg)
+                            vibrateDevice()
                             if (isCurrentStepInvolves("chopping")) {
                                 advanceToNextStep()
                             }
