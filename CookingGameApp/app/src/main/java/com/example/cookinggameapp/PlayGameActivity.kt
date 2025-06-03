@@ -4,19 +4,17 @@ import android.annotation.SuppressLint
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
 import android.widget.FrameLayout
 import android.widget.SeekBar
 
-class PlayGameActivity : AppCompatActivity() {
+class PlayGameActivity : BaseActivity() {
 
     // 🔌 Nearby API variables
     private lateinit var connectionsClient: ConnectionsClient
