@@ -3,17 +3,17 @@ package com.example.cookinggameapp
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageButton
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import android.Manifest
 
-class MainActivity : AppCompatActivity() {
+
+class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
 
-        // Create Room button → SelectDifficultyActivity
+        // Create Room button → CreateRoomActivity
         val createRoomButton = findViewById<ImageButton>(R.id.buttonCreateRoom)
         createRoomButton.setOnClickListener {
             val intent = Intent(this, SelectDifficultyActivity::class.java)

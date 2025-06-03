@@ -6,10 +6,12 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.firestore.FirebaseFirestore
 
-class CreateRoomActivity : AppCompatActivity() {
+class CreateRoomActivity : BaseActivity() {
 
     private lateinit var roomCode: String
     private lateinit var db: FirebaseFirestore
@@ -90,13 +92,24 @@ class CreateRoomActivity : AppCompatActivity() {
 
     private fun startGame() {
         val ref = db.collection("rooms").document(roomCode)
-        ref.update("gameStarted", true).addOnSuccessListener {
+        val startTime = System.currentTimeMillis()
+
+        ref.update(
+            mapOf(
+                "gameStarted" to true,
+                "start_time" to startTime,
+                "difficulty" to selectedDifficulty
+            )
+        ).addOnSuccessListener {
             val intent = Intent(this, PlayGameActivity::class.java)
             intent.putExtra("roomCode", roomCode)
             intent.putExtra("isHost", true)
             intent.putExtra("difficulty", selectedDifficulty)
             startActivity(intent)
             finish()
+        }.addOnFailureListener {
+            Log.e("CreateRoom", " Failed to start game", it)
         }
     }
+
 }

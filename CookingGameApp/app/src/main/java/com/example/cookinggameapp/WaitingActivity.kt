@@ -2,11 +2,10 @@ package com.example.cookinggameapp
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 
-class WaitingActivity : AppCompatActivity() {
+class WaitingActivity : BaseActivity() {
 
     private lateinit var db: FirebaseFirestore
     private lateinit var roomCode: String
