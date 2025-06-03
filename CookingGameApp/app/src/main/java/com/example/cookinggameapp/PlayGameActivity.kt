@@ -8,14 +8,17 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.SeekBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
@@ -46,6 +49,8 @@ class PlayGameActivity : AppCompatActivity() {
 
     private var chopCount = 0
     private var currentChopTarget: ImageView? = null
+    private var countdownTimer: CountDownTimer? = null
+    private lateinit var countdownText: TextView
 
     private var currentCookingItem: ImageView? = null
     private var cookingStartTime: Long = 0L
@@ -374,6 +379,19 @@ class PlayGameActivity : AppCompatActivity() {
         }
     }
 
+    private fun startCountdown(seconds: Int) {
+        countdownTimer = object : CountDownTimer((seconds * 1000).toLong(), 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val secondsLeft = millisUntilFinished / 1000
+                countdownText.text = String.format("00:%02d", secondsLeft)
+            }
+
+            override fun onFinish() {
+                countdownText.text = "00:00"
+                Toast.makeText(this@PlayGameActivity, "Time's up!", Toast.LENGTH_SHORT).show()
+            }
+        }.start()
+    }
 
     private fun listenToRoomState() {
         roomListener = db.collection("rooms").document(roomCode)
@@ -454,6 +472,7 @@ class PlayGameActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        countdownTimer?.cancel()
         roomListener?.remove()
         if (isHost) {
             sensorManager.unregisterListener(sensorListener)
