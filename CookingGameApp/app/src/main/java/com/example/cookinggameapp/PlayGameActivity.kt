@@ -62,6 +62,9 @@ class PlayGameActivity : AppCompatActivity() {
     private var accelCurrent = 0f
     private var accelLast = 0f
 
+    private lateinit var currentRecipe: Recipe
+    private var currentStepIndex = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_playgame)
@@ -112,6 +115,10 @@ class PlayGameActivity : AppCompatActivity() {
         enableDrag(stoveImage)
         enableDrag(spoonImage)
 
+        currentRecipe = GameRecipes.allRecipes.random()
+        currentStepIndex = 0
+        showNextRecipeStep() // optional helper to show player what's next
+
         if (isHost) {
             sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
             sensorManager.registerListener(
@@ -142,6 +149,24 @@ class PlayGameActivity : AppCompatActivity() {
                 Toast.makeText(this@PlayGameActivity, "Time's up!", Toast.LENGTH_SHORT).show()
             }
         }.start()
+    }
+
+    private fun isCurrentStepInvolves(action: String): Boolean {
+        return currentRecipe.steps.getOrNull(currentStepIndex)?.involves?.contains(action) == true
+    }
+
+    private fun advanceToNextStep() {
+        currentStepIndex++
+        if (currentStepIndex >= currentRecipe.steps.size) {
+            Toast.makeText(this, "🎉 Recipe complete!", Toast.LENGTH_LONG).show()
+        } else {
+            showNextRecipeStep()
+        }
+    }
+
+    private fun showNextRecipeStep() {
+        val step = currentRecipe.steps[currentStepIndex]
+        Toast.makeText(this, "Next: ${step.step}", Toast.LENGTH_SHORT).show()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -219,6 +244,9 @@ class PlayGameActivity : AppCompatActivity() {
             if (chopCount >= 5) {
                 currentChopTarget?.setImageResource(R.drawable.chickenleg)
                 Toast.makeText(this, "Item chopped!", Toast.LENGTH_LONG).show()
+                if (isCurrentStepInvolves("chopping")) {
+                    advanceToNextStep()
+                }
                 chopCount = 0
                 currentChopTarget = null
             }
@@ -274,6 +302,9 @@ class PlayGameActivity : AppCompatActivity() {
                         if (fireSeekBar.progress == 2 && isCooking && currentCookingItem != null) {
                             isCookingDone = true
                             Toast.makeText(this@PlayGameActivity, "Cooking done!", Toast.LENGTH_SHORT).show()
+                            if (isCurrentStepInvolves("cooking")) {
+                                advanceToNextStep()
+                            }
                             currentCookingItem?.setImageResource(R.drawable.carrot)
                             hideFireSlider()
                         }
@@ -333,9 +364,10 @@ class PlayGameActivity : AppCompatActivity() {
                         rotationAngle += 10f
                         spoonImage.rotation = rotationAngle
 
-                        if (elapsed >= 3000) {
+                        if (elapsed >= 3000 && isCurrentStepInvolves("stirring")) {
                             triggerRedFill()
                             hasFilled = true
+                            advanceToNextStep()
                         }
                     } else {
                         stirStartTime = 0
