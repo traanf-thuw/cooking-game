@@ -24,9 +24,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 
-
-
-class PlayGameActivity : AppCompatActivity() {
+class PlayGameActivity : BaseActivity() {
 
     private lateinit var db: FirebaseFirestore
     private lateinit var roomCode: String
