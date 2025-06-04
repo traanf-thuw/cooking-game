@@ -56,11 +56,11 @@
         android:layout_marginTop="16dp"/>
 
     <!--    <ImageView-->
-<!--        android:id="@+id/imagePot"-->
-<!--        android:layout_width="100dp"-->
-<!--        android:layout_height="100dp"-->
-<!--        android:src="@drawable/pot"-->
-<!--        android:contentDescription="Pot" />-->
+    <!--        android:id="@+id/imagePot"-->
+    <!--        android:layout_width="100dp"-->
+    <!--        android:layout_height="100dp"-->
+    <!--        android:src="@drawable/pot"-->
+    <!--        android:contentDescription="Pot" />-->
     <FrameLayout
         android:id="@+id/potContainer"
         android:layout_width="wrap_content"
@@ -99,6 +99,7 @@
         android:contentDescription="Lemon" />
 
     <!-- Bottom Center Timer with overlay text -->
+
     <ImageView
         android:id="@+id/imageStove"
         android:layout_width="100dp"
