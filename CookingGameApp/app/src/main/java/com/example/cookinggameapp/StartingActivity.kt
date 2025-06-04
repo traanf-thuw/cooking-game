@@ -72,7 +72,7 @@ class StartingActivity : AppCompatActivity() {
             val distance = (fatY - titleY) / 2  // Move halfway toward fatBaby
 
             val boomerang = TranslateAnimation(0f, 0f, 0f, distance).apply {
-                duration = 1000
+                duration = 2000
                 repeatCount = Animation.INFINITE
                 repeatMode = Animation.REVERSE
             }
