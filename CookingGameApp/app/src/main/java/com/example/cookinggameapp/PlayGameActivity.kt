@@ -21,7 +21,6 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 
@@ -37,13 +36,10 @@ class PlayGameActivity : BaseActivity() {
     private lateinit var lemon: ImageView
     private lateinit var knife: ImageView
     private lateinit var cuttingBoard: ImageView
-    private lateinit var basketLeft: ImageView
-    private lateinit var basketRight: ImageView
 
     private lateinit var fireSeekBar: SeekBar
-    private lateinit var spoonImage: ImageView
-    private lateinit var stoveImage: ImageView
-    private lateinit var potImage: ImageView
+    private lateinit var stove: ImageView
+    private lateinit var pot: ImageView
 
     private var chopCount = 0
     private var currentChopTarget: ImageView? = null
@@ -82,15 +78,17 @@ class PlayGameActivity : BaseActivity() {
         isHost = intent.getBooleanExtra("isHost", false)
 
         // Init references
-//         val chicken = findViewById<ImageView>(R.id.imageChicken).apply { tag = "chicken" }
-//         val avocado = findViewById<ImageView>(R.id.imageAvocado).apply { tag = "avocado" }
-//         val lemon = findViewById<ImageView>(R.id.imageLemon).apply { tag = "lemon" }
-//         val knife = findViewById<ImageView>(R.id.imageKnife).apply { tag = "knife" }
-//         val cuttingBoard = findViewById<ImageView>(R.id.imageCuttingboard).apply { tag = "cuttingboard" }
-//         val pot = findViewById<ImageView>(R.id.imagePot).apply { tag = "pot" }
-//         val stove = findViewById<ImageView>(R.id.imageStove).apply { tag = "stove" }
-//         val spoon = findViewById<ImageView>(R.id.imageSpoon). apply {tag = "spoon"}
+        chicken = findViewById<ImageView>(R.id.imageChicken).apply { tag = "chicken" }
+        avocado = findViewById<ImageView>(R.id.imageAvocado).apply { tag = "avocado" }
+        lemon = findViewById<ImageView>(R.id.imageLemon).apply { tag = "lemon" }
+        knife = findViewById<ImageView>(R.id.imageKnife).apply { tag = "knife" }
+        cuttingBoard = findViewById<ImageView>(R.id.imageCuttingboard).apply { tag = "cuttingboard" }
+        pot = findViewById<ImageView>(R.id.imagePot).apply { tag = "pot" }
+        stove = findViewById<ImageView>(R.id.imageStove).apply { tag = "stove" }
+        spoon = findViewById<ImageView>(R.id.imageSpoon).apply { tag = "spoon" }
 
+        basketLeft = findViewById(R.id.imageBasketLeft)
+        basketRight = findViewById(R.id.imageBasketRight)
 
         countdownText = findViewById(R.id.countdownText)
 
@@ -133,18 +131,6 @@ class PlayGameActivity : BaseActivity() {
             Log.e("PlayGame", "Failed to fetch room data", it)
         }
 
-        // Grab UI
-        chicken = findViewById(R.id.imageChicken)
-        avocado = findViewById(R.id.imageAvocado)
-        lemon = findViewById(R.id.imageLemon)
-        knife = findViewById(R.id.imageKnife)
-        cuttingBoard = findViewById(R.id.imageCuttingboard)
-
-        basketLeft = findViewById(R.id.imageBasketLeft)
-        basketRight = findViewById(R.id.imageBasketRight)
-        stoveImage = findViewById<ImageView>(R.id.imageStove)
-        potImage = findViewById<ImageView>(R.id.imagePot)
-        spoonImage = findViewById(R.id.imageSpoon)
         fireSeekBar = findViewById(R.id.fireSeekBar)
         fireSeekBar.visibility = View.GONE
 
@@ -156,16 +142,6 @@ class PlayGameActivity : BaseActivity() {
         }
 
         listenToRoomState()
-
-        // ✅ Set drag for other items
-        enableDrag(avocado)
-        enableDrag(lemon)
-        enableDrag(knife)
-        enableDrag(cuttingBoard)
-        enableDrag(chicken)
-        enableDrag(potImage)
-        enableDrag(stoveImage)
-        enableDrag(spoonImage)
 
         currentRecipe = GameRecipes.allRecipes.random()
         currentStepIndex = 0
@@ -199,7 +175,7 @@ class PlayGameActivity : BaseActivity() {
                     v.translationX = (event.rawX - v.width / 2).coerceIn(0f, maxX.toFloat())
                     v.translationY = (event.rawY - v.height / 2).coerceIn(0f, maxY.toFloat())
 
-                    if (v != stoveImage && isViewOverlapping(v, stoveImage)) {
+                    if (v != stove && isViewOverlapping(v, stove)) {
                         currentCookingItem = v as ImageView
                         showFireSlider()
                     } else if (currentCookingItem == v) {
@@ -221,6 +197,9 @@ class PlayGameActivity : BaseActivity() {
                         Rect.intersects(itemBox, rightBox) -> {
                             animateIntoBasket(v)
                             lastDroppedItemTag = v.tag?.toString()
+                            if (lastDroppedItemTag == null) {
+                                Log.w("DragDrop", "Warning: View with no tag dropped!")
+                            }
                             if (isHost) {
                                 Toast.makeText(this, "Shake to send $lastDroppedItemTag!", Toast.LENGTH_SHORT).show()
                             }
@@ -229,6 +208,9 @@ class PlayGameActivity : BaseActivity() {
                         Rect.intersects(itemBox, leftBox) -> {
                             animateIntoBasket(v)
                             lastDroppedItemTag = v.tag?.toString()
+                            if (lastDroppedItemTag == null) {
+                                Log.w("DragDrop", "Warning: View with no tag dropped!")
+                            }
                             if (isHost) {
                                 Toast.makeText(this, "Shake to send $lastDroppedItemTag!", Toast.LENGTH_SHORT).show()
                             }
@@ -332,7 +314,7 @@ class PlayGameActivity : BaseActivity() {
     @SuppressLint("ClickableViewAccessibility")
     private fun setupAdvancedStirring() {
         redFillImage = findViewById(R.id.imageRedFill)
-        spoonImage = findViewById(R.id.imageSpoon)
+        spoon = findViewById(R.id.imageSpoon)
 
         var lastTouchX = 0f
         var lastTouchY = 0f
@@ -340,7 +322,7 @@ class PlayGameActivity : BaseActivity() {
         var stirStartTime: Long = 0
         var hasFilled = false
 
-        spoonImage.setOnTouchListener { view, event ->
+        spoon.setOnTouchListener { view, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     lastTouchX = event.rawX - view.x
@@ -358,7 +340,7 @@ class PlayGameActivity : BaseActivity() {
 
                         val elapsed = System.currentTimeMillis() - stirStartTime
                         rotationAngle += 10f
-                        spoonImage.rotation = rotationAngle
+                        spoon.rotation = rotationAngle
 
                         if (elapsed >= 1000 && isCurrentStepInvolves("stirring")) { // 3 seconds
                             triggerRedFill()
@@ -379,8 +361,8 @@ class PlayGameActivity : BaseActivity() {
     private fun isSpoonInsidePot(): Boolean {
         val potRect = Rect()
         val spoonRect = Rect()
-        potImage.getGlobalVisibleRect(potRect)
-        spoonImage.getGlobalVisibleRect(spoonRect)
+        pot.getGlobalVisibleRect(potRect)
+        spoon.getGlobalVisibleRect(spoonRect)
 
         return Rect.intersects(potRect, spoonRect)
     }
