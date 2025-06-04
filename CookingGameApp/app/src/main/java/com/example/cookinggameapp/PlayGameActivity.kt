@@ -7,10 +7,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.os.Bundle
-import android.os.VibrationEffect
-import android.os.Vibrator
-import android.os.VibratorManager
+import android.os.*
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
@@ -24,69 +21,68 @@ class PlayGameActivity : AppCompatActivity() {
     private lateinit var db: FirebaseFirestore
     private lateinit var roomCode: String
     private var roomListener: ListenerRegistration? = null
-
     private var isHost: Boolean = false
-
-    private lateinit var chicken: ImageView
-    private lateinit var avocado: ImageView
-    private lateinit var lemon: ImageView
-    private lateinit var knife: ImageView
-    private lateinit var cuttingBoard: ImageView
-    private lateinit var basketLeft: ImageView
-    private lateinit var basketRight: ImageView
 
     private lateinit var sensorManager: SensorManager
     private var accel = 0f
     private var accelCurrent = 0f
     private var accelLast = 0f
 
+    private var lastDroppedItemTag: String? = null
+
+    // All draggable items
+    private lateinit var allItems: List<ImageView>
+    private lateinit var basketLeft: ImageView
+    private lateinit var basketRight: ImageView
+    private lateinit var spoon: ImageView
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_playgame)
 
-        // Get Firestore and intent info
         db = FirebaseFirestore.getInstance()
         roomCode = intent.getStringExtra("roomCode") ?: return
         isHost = intent.getBooleanExtra("isHost", false)
 
-        // Grab UI
-        chicken = findViewById(R.id.imageChicken)
-        avocado = findViewById(R.id.imageAvocado)
-        lemon = findViewById(R.id.imageLemon)
-        knife = findViewById(R.id.imageKnife)
-        cuttingBoard = findViewById(R.id.imageCuttingboard)
+        // Init references
+        val chicken = findViewById<ImageView>(R.id.imageChicken).apply { tag = "chicken" }
+        val avocado = findViewById<ImageView>(R.id.imageAvocado).apply { tag = "avocado" }
+        val lemon = findViewById<ImageView>(R.id.imageLemon).apply { tag = "lemon" }
+        val knife = findViewById<ImageView>(R.id.imageKnife).apply { tag = "knife" }
+        val cuttingBoard = findViewById<ImageView>(R.id.imageCuttingboard).apply { tag = "cuttingboard" }
+        val pot = findViewById<ImageView>(R.id.imagePot).apply { tag = "pot" }
+        val stove = findViewById<ImageView>(R.id.imageStove).apply { tag = "stove" }
+        val spoon = findViewById<ImageView>(R.id.imageSpoon). apply {tag = "spoon"}
+
+
         basketLeft = findViewById(R.id.imageBasketLeft)
         basketRight = findViewById(R.id.imageBasketRight)
 
-        // 🔁 Start Firebase listener for state sync
+        allItems = listOf(chicken, avocado, lemon, knife, cuttingBoard, pot, stove, spoon)
+
+        allItems.forEach { item ->
+            enableDrag(item)
+            if (!isHost) item.visibility = View.INVISIBLE
+        }
+
         listenToRoomState()
 
-        // ✅ Set drag for other items
-        enableDrag(avocado)
-        enableDrag(lemon)
-        enableDrag(knife)
-        enableDrag(cuttingBoard)
-
         if (isHost) {
-            // ✅ Only host will detect shake and send update
             sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
             sensorManager.registerListener(
                 sensorListener,
                 sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_UI
             )
-
             accel = 10f
             accelCurrent = SensorManager.GRAVITY_EARTH
             accelLast = SensorManager.GRAVITY_EARTH
-        } else {
-            // ✅ Hide chicken on client phone
-            chicken.visibility = View.INVISIBLE
         }
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun enableDrag(view: ImageView, isChicken: Boolean = false) {
+    private fun enableDrag(view: ImageView) {
         view.setOnTouchListener { v, event ->
             val parent = v.parent as View
             val maxX = parent.width - v.width
@@ -100,18 +96,15 @@ class PlayGameActivity : AppCompatActivity() {
 
                 MotionEvent.ACTION_UP -> {
                     val itemBox = Rect()
-                    val leftBox = Rect()
                     val rightBox = Rect()
-
                     v.getGlobalVisibleRect(itemBox)
-                    basketLeft.getGlobalVisibleRect(leftBox)
                     basketRight.getGlobalVisibleRect(rightBox)
 
-                    if (Rect.intersects(itemBox, leftBox) || Rect.intersects(itemBox, rightBox)) {
+                    if (Rect.intersects(itemBox, rightBox)) {
                         animateIntoBasket(v)
-
-                        if (isChicken && isHost) {
-                            Toast.makeText(this, "Now shake the phone to drop the chicken!", Toast.LENGTH_SHORT).show()
+                        lastDroppedItemTag = v.tag?.toString()
+                        if (isHost) {
+                            Toast.makeText(this, "Shake to send $lastDroppedItemTag!", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -131,49 +124,47 @@ class PlayGameActivity : AppCompatActivity() {
     }
 
     private fun updateFirebaseForDrop() {
-        db.collection("rooms").document(roomCode)
-            .update("chickenDropped", true)
+        lastDroppedItemTag?.let { tag ->
+            db.collection("rooms").document(roomCode)
+                .update("droppedItem", tag)
+        }
     }
 
     private fun listenToRoomState() {
         roomListener = db.collection("rooms").document(roomCode)
             .addSnapshotListener { snapshot, _ ->
-                val chickenDropped = snapshot?.getBoolean("chickenDropped") ?: false
-                if (!isHost && chickenDropped) {
-                    // Get basket position
+                val droppedTag = snapshot?.getString("droppedItem") ?: return@addSnapshotListener
+                if (!isHost) {
+                    val view = allItems.find { it.tag == droppedTag } ?: return@addSnapshotListener
+
                     val basketX = basketLeft.x
                     val basketY = basketLeft.y
 
-// Start from above screen, invisible and small
-                    chicken.translationX = basketX
-                    chicken.translationY = -300f
-                    chicken.alpha = 0f
-                    chicken.scaleX = 0.3f
-                    chicken.scaleY = 0.3f
-                    chicken.rotation = 0f
-                    chicken.visibility = View.VISIBLE
+                    view.translationX = basketX
+                    view.translationY = -300f
+                    view.alpha = 0f
+                    view.scaleX = 0.3f
+                    view.scaleY = 0.3f
+                    view.rotation = 0f
+                    view.visibility = View.VISIBLE
 
-// Animate: spin + fly in
-                    chicken.animate()
+                    view.animate()
                         .translationY(basketY)
                         .alpha(1f)
                         .scaleX(1f)
                         .scaleY(1f)
-                        .rotationBy(1440f) // 4 full spins (360 * 4)
+                        .rotationBy(1440f)
                         .setDuration(1000)
                         .withEndAction {
-                            Toast.makeText(this, "🐔 Chicken flew in with style!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "$droppedTag flew in!", Toast.LENGTH_SHORT).show()
                             vibrateDevice()
-                        }
-                        .start()
-
-
+                        }.start()
                 }
             }
     }
 
     private fun vibrateDevice() {
-        val vibrator = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+        val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val manager = getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
             manager.defaultVibrator
         } else {
@@ -181,12 +172,9 @@ class PlayGameActivity : AppCompatActivity() {
             getSystemService(VIBRATOR_SERVICE) as Vibrator
         }
 
-        val duration = 1500L  // Vibrate for 1.5 seconds
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            vibrator.vibrate(
-                VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE)
-            )
+        val duration = 1500L
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
         } else {
             @Suppress("DEPRECATION")
             vibrator.vibrate(duration)
@@ -204,7 +192,7 @@ class PlayGameActivity : AppCompatActivity() {
             val delta = accelCurrent - accelLast
             accel = accel * 0.9f + delta
 
-            if (accel > 12 && isHost) {  // Shake threshold
+            if (accel > 12 && isHost) {
                 updateFirebaseForDrop()
             }
         }
@@ -215,8 +203,6 @@ class PlayGameActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         roomListener?.remove()
-        if (isHost) {
-            sensorManager.unregisterListener(sensorListener)
-        }
+        if (isHost) sensorManager.unregisterListener(sensorListener)
     }
 }
