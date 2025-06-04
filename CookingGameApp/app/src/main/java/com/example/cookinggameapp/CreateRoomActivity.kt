@@ -6,19 +6,25 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.firestore.FirebaseFirestore
 
-class CreateRoomActivity : AppCompatActivity() {
+class CreateRoomActivity : BaseActivity() {
 
     private lateinit var roomCode: String
     private lateinit var db: FirebaseFirestore
+    private lateinit var selectedDifficulty: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_hostplayerpage)
 
         db = FirebaseFirestore.getInstance()
+
+        // Get difficulty from previous screen
+        selectedDifficulty = intent.getStringExtra("difficulty") ?: "easy"
 
         // 1. Generate unique room code
         roomCode = generateRoomCode()
@@ -43,7 +49,7 @@ class CreateRoomActivity : AppCompatActivity() {
             "createdAt" to System.currentTimeMillis(),
             "players" to listOf("Host"),
             "gameStarted" to false,
-            "chickenDropped" to false // 🐔 Required for syncing later
+            "chickenDropped" to false
         )
 
         db.collection("rooms").document(code)
@@ -86,12 +92,24 @@ class CreateRoomActivity : AppCompatActivity() {
 
     private fun startGame() {
         val ref = db.collection("rooms").document(roomCode)
-        ref.update("gameStarted", true).addOnSuccessListener {
+        val startTime = System.currentTimeMillis()
+
+        ref.update(
+            mapOf(
+                "gameStarted" to true,
+                "start_time" to startTime,
+                "difficulty" to selectedDifficulty
+            )
+        ).addOnSuccessListener {
             val intent = Intent(this, PlayGameActivity::class.java)
             intent.putExtra("roomCode", roomCode)
-            intent.putExtra("isHost", true) // ✅ This is the host
+            intent.putExtra("isHost", true)
+            intent.putExtra("difficulty", selectedDifficulty)
             startActivity(intent)
             finish()
+        }.addOnFailureListener {
+            Log.e("CreateRoom", " Failed to start game", it)
         }
     }
+
 }
