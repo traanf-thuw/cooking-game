@@ -96,22 +96,41 @@ class PlayGameActivity : AppCompatActivity() {
 
                 MotionEvent.ACTION_UP -> {
                     val itemBox = Rect()
+                    val leftBox = Rect()
                     val rightBox = Rect()
+
                     v.getGlobalVisibleRect(itemBox)
+                    basketLeft.getGlobalVisibleRect(leftBox)
                     basketRight.getGlobalVisibleRect(rightBox)
 
-                    if (Rect.intersects(itemBox, rightBox)) {
-                        animateIntoBasket(v)
-                        lastDroppedItemTag = v.tag?.toString()
-                        if (isHost) {
-                            Toast.makeText(this, "Shake to send $lastDroppedItemTag!", Toast.LENGTH_SHORT).show()
+                    when {
+                        Rect.intersects(itemBox, rightBox) -> {
+                            animateIntoBasket(v)
+                            lastDroppedItemTag = v.tag?.toString()
+                            if (isHost) {
+                                Toast.makeText(this, "Shake to send $lastDroppedItemTag!", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+
+                        Rect.intersects(itemBox, leftBox) -> {
+                            animateIntoBasket(v)
+                            lastDroppedItemTag = v.tag?.toString()
+                            if (isHost) {
+                                Toast.makeText(this, "Shake to send $lastDroppedItemTag!", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+
+                        else -> {
+                            Toast.makeText(this, "Drop it on a basket!", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
+
             }
             true
         }
     }
+
 
     private fun animateIntoBasket(view: View) {
         view.animate()
