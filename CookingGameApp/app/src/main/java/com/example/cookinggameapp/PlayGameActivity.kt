@@ -20,13 +20,15 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import android.os.Handler
+import android.os.Looper
+import android.content.Intent
 
 
 
-class PlayGameActivity : AppCompatActivity() {
+class PlayGameActivity : BaseActivity() {
 
     private lateinit var db: FirebaseFirestore
     private lateinit var roomCode: String
@@ -169,7 +171,14 @@ class PlayGameActivity : AppCompatActivity() {
             override fun onFinish() {
                 countdownText.text = "00:00"
                 Toast.makeText(this@PlayGameActivity, "Time's up!", Toast.LENGTH_SHORT).show()
+                vibrateDevice()
+
+                Handler(Looper.getMainLooper()).postDelayed({
+                    startActivity(Intent(this@PlayGameActivity, MainActivity::class.java))
+                }, 3000)
+
             }
+
         }.start()
     }
 

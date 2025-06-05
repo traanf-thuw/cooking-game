@@ -4,22 +4,32 @@ import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
+
 open class BaseActivity : AppCompatActivity() {
+
+    companion object {
+        private var activityCount = 0
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         initializeMusicIfNeeded(this)
     }
 
-    override fun onResume() {
-        super.onResume()
-        MusicManager.resume()
+    override fun onStart() {
+        super.onStart()
+        if (activityCount == 0) {
+            MusicManager.resume()
+        }
+        activityCount++
     }
 
-    override fun onPause() {
-        super.onPause()
-        MusicManager.pause()
+    override fun onStop() {
+        super.onStop()
+        activityCount--
+        if (activityCount == 0) {
+            MusicManager.pause()
+        }
     }
 
     private fun initializeMusicIfNeeded(context: Context) {
