@@ -8,11 +8,14 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.*
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 
@@ -30,12 +33,10 @@ class PlayGameActivity : AppCompatActivity() {
 
     private var lastDroppedItemTag: String? = null
 
-    // All draggable items
     private lateinit var allItems: List<ImageView>
     private lateinit var basketLeft: ImageView
     private lateinit var basketRight: ImageView
     private lateinit var spoon: ImageView
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +46,7 @@ class PlayGameActivity : AppCompatActivity() {
         roomCode = intent.getStringExtra("roomCode") ?: return
         isHost = intent.getBooleanExtra("isHost", false)
 
-        // Init references
+        // Initialize item views and tags
         val chicken = findViewById<ImageView>(R.id.imageChicken).apply { tag = "chicken" }
         val avocado = findViewById<ImageView>(R.id.imageAvocado).apply { tag = "avocado" }
         val lemon = findViewById<ImageView>(R.id.imageLemon).apply { tag = "lemon" }
@@ -53,8 +54,7 @@ class PlayGameActivity : AppCompatActivity() {
         val cuttingBoard = findViewById<ImageView>(R.id.imageCuttingboard).apply { tag = "cuttingboard" }
         val pot = findViewById<ImageView>(R.id.imagePot).apply { tag = "pot" }
         val stove = findViewById<ImageView>(R.id.imageStove).apply { tag = "stove" }
-        val spoon = findViewById<ImageView>(R.id.imageSpoon). apply {tag = "spoon"}
-
+        val spoon = findViewById<ImageView>(R.id.imageSpoon).apply { tag = "spoon" }
 
         basketLeft = findViewById(R.id.imageBasketLeft)
         basketRight = findViewById(R.id.imageBasketRight)
@@ -66,7 +66,7 @@ class PlayGameActivity : AppCompatActivity() {
             if (!isHost) item.visibility = View.INVISIBLE
         }
 
-        listenToRoomState()
+        listenToMyLogic()
 
         if (isHost) {
             sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -107,17 +107,15 @@ class PlayGameActivity : AppCompatActivity() {
                         Rect.intersects(itemBox, rightBox) -> {
                             animateIntoBasket(v)
                             lastDroppedItemTag = v.tag?.toString()
-                            if (isHost) {
-                                Toast.makeText(this, "Shake to send $lastDroppedItemTag!", Toast.LENGTH_SHORT).show()
-                            }
+                            Toast.makeText(this, "Shake to send $lastDroppedItemTag!", Toast.LENGTH_SHORT).show()
+                            Log.d("MyGameLogic", "Dropped on RIGHT: $lastDroppedItemTag")
                         }
 
                         Rect.intersects(itemBox, leftBox) -> {
                             animateIntoBasket(v)
                             lastDroppedItemTag = v.tag?.toString()
-                            if (isHost) {
-                                Toast.makeText(this, "Shake to send $lastDroppedItemTag!", Toast.LENGTH_SHORT).show()
-                            }
+                            Toast.makeText(this, "Shake to send $lastDroppedItemTag!", Toast.LENGTH_SHORT).show()
+                            Log.d("MyGameLogic", "Dropped on LEFT: $lastDroppedItemTag")
                         }
 
                         else -> {
@@ -125,12 +123,10 @@ class PlayGameActivity : AppCompatActivity() {
                         }
                     }
                 }
-
             }
             true
         }
     }
-
 
     private fun animateIntoBasket(view: View) {
         view.animate()
@@ -142,44 +138,72 @@ class PlayGameActivity : AppCompatActivity() {
             }.start()
     }
 
-    private fun updateFirebaseForDrop() {
-        lastDroppedItemTag?.let { tag ->
-            db.collection("rooms").document(roomCode)
-                .update("droppedItem", tag)
+    private fun saveMyLogicToFirestore() {
+        val item = lastDroppedItemTag ?: run {
+            Toast.makeText(this, "No item was dropped yet!", Toast.LENGTH_SHORT).show()
+            Log.w("MyGameLogic", "Skipped saving: no item dropped")
+            return
         }
+
+        val data = hashMapOf(
+            "roomID" to roomCode,
+            "playerID" to "player1",
+            "itemTag" to item,
+            "actionType" to "sendItem",
+            "timestamp" to FieldValue.serverTimestamp()
+        )
+
+        db.collection("myGameLogic")
+            .add(data)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Saved and sent: $item", Toast.LENGTH_SHORT).show()
+                Log.d("MyGameLogic", "✅ Saved & triggered: $item")
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Failed to save", Toast.LENGTH_SHORT).show()
+                Log.e("MyGameLogic", "❌ Firestore save failed", e)
+            }
     }
 
-    private fun listenToRoomState() {
-        roomListener = db.collection("rooms").document(roomCode)
-            .addSnapshotListener { snapshot, _ ->
-                val droppedTag = snapshot?.getString("droppedItem") ?: return@addSnapshotListener
-                if (!isHost) {
-                    val view = allItems.find { it.tag == droppedTag } ?: return@addSnapshotListener
-
-                    val basketX = basketLeft.x
-                    val basketY = basketLeft.y
-
-                    view.translationX = basketX
-                    view.translationY = -300f
-                    view.alpha = 0f
-                    view.scaleX = 0.3f
-                    view.scaleY = 0.3f
-                    view.rotation = 0f
-                    view.visibility = View.VISIBLE
-
-                    view.animate()
-                        .translationY(basketY)
-                        .alpha(1f)
-                        .scaleX(1f)
-                        .scaleY(1f)
-                        .rotationBy(1440f)
-                        .setDuration(1000)
-                        .withEndAction {
-                            Toast.makeText(this, "$droppedTag flew in!", Toast.LENGTH_SHORT).show()
-                            vibrateDevice()
-                        }.start()
+    private fun listenToMyLogic() {
+        roomListener = db.collection("myGameLogic")
+            .whereEqualTo("roomID", roomCode)
+            .addSnapshotListener { snapshots, _ ->
+                for (change in snapshots?.documentChanges ?: return@addSnapshotListener) {
+                    if (change.type == DocumentChange.Type.ADDED) {
+                        val itemTag = change.document.getString("itemTag") ?: continue
+                        Log.d("MyGameLogic", "📩 New item received: $itemTag")
+                        if (!isHost) animateItemFromTag(itemTag)
+                    }
                 }
             }
+    }
+
+    private fun animateItemFromTag(tag: String) {
+        val view = allItems.find { it.tag == tag } ?: return
+
+        val basketX = basketLeft.x
+        val basketY = basketLeft.y
+
+        view.translationX = basketX
+        view.translationY = -300f
+        view.alpha = 0f
+        view.scaleX = 0.3f
+        view.scaleY = 0.3f
+        view.rotation = 0f
+        view.visibility = View.VISIBLE
+
+        view.animate()
+            .translationY(basketY)
+            .alpha(1f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .rotationBy(1440f)
+            .setDuration(1000)
+            .withEndAction {
+                Toast.makeText(this, "$tag flew in!", Toast.LENGTH_SHORT).show()
+                vibrateDevice()
+            }.start()
     }
 
     private fun vibrateDevice() {
@@ -211,8 +235,9 @@ class PlayGameActivity : AppCompatActivity() {
             val delta = accelCurrent - accelLast
             accel = accel * 0.9f + delta
 
-            if (accel > 12 && isHost) {
-                updateFirebaseForDrop()
+            if (accel > 4 && isHost) {
+                Log.d("Sensor", "Shake detected! accel = $accel")
+                saveMyLogicToFirestore()
             }
         }
 
