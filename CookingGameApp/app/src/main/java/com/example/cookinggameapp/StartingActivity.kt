@@ -7,9 +7,8 @@ import android.view.animation.RotateAnimation
 import android.view.animation.TranslateAnimation
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 
-class StartingActivity : AppCompatActivity() {
+class StartingActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_animation)

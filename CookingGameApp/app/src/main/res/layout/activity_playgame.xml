@@ -98,41 +98,6 @@
         android:src="@drawable/stove"
         android:contentDescription="Stove" />
 
-    <ImageView
-        android:id="@+id/imagePot"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/pot"
-        android:contentDescription="Pot" />
-
-    <ImageView
-        android:id="@+id/imageSpoon"
-        android:layout_width="50dp"
-        android:layout_height="70dp"
-        android:layout_margin="8dp"
-        android:visibility="visible"
-        android:src="@drawable/ladle"
-        android:contentDescription="Spoon" />
-
-    <!-- Optional visual (inactive) -->
-    <ImageView
-        android:id="@+id/imageRedFill"
-        android:layout_width="70dp"
-        android:layout_height="100dp"
-        android:src="@drawable/filler"
-        android:translationY="-25dp"
-        android:visibility="invisible"
-        android:contentDescription="Fill Level" />
-
-    <SeekBar
-        android:id="@+id/fireSeekBar"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:max="2"
-        android:visibility="gone"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp" />
-
     <!-- Timer Section -->
     <FrameLayout
         android:layout_width="250dp"
