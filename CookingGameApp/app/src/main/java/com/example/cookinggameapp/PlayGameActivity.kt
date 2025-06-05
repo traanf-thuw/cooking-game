@@ -23,6 +23,9 @@ import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import android.os.Handler
+import android.os.Looper
+import android.content.Intent
 
 class PlayGameActivity : BaseActivity() {
 
@@ -161,6 +164,27 @@ class PlayGameActivity : BaseActivity() {
 
         setupAdvancedStirring()
         setupChopping()
+    }
+
+    private fun startCountdown(seconds: Int) {
+        countdownTimer = object : CountDownTimer((seconds * 1000).toLong(), 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val secondsLeft = millisUntilFinished / 1000
+                countdownText.text = String.format("00:%02d", secondsLeft)
+            }
+
+            override fun onFinish() {
+                countdownText.text = "00:00"
+                Toast.makeText(this@PlayGameActivity, "Time's up!", Toast.LENGTH_SHORT).show()
+                vibrateDevice()
+
+                Handler(Looper.getMainLooper()).postDelayed({
+                    startActivity(Intent(this@PlayGameActivity, MainActivity::class.java))
+                }, 3000)
+
+            }
+
+        }.start()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -407,20 +431,6 @@ class PlayGameActivity : BaseActivity() {
             }
             true
         }
-    }
-
-    private fun startCountdown(seconds: Int) {
-        countdownTimer = object : CountDownTimer((seconds * 1000).toLong(), 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                val secondsLeft = millisUntilFinished / 1000
-                countdownText.text = String.format("00:%02d", secondsLeft)
-            }
-
-            override fun onFinish() {
-                countdownText.text = "00:00"
-                Toast.makeText(this@PlayGameActivity, "Time's up!", Toast.LENGTH_SHORT).show()
-            }
-        }.start()
     }
 
     private fun listenToRoomState() {
