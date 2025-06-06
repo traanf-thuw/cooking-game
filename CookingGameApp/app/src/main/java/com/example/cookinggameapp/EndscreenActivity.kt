@@ -39,21 +39,6 @@ class EndscreenActivity : BaseActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_endscreen)
 
-//        // Initialize camera preview
-//        cameraPreview = findViewById(R.id.cameraPreview)
-//
-//        // Check and request permissions
-//        if (allPermissionsGranted()) {
-//            startCamera()
-//        } else {
-//            ActivityCompat.requestPermissions(
-//                this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
-//            )
-//        }
-//
-//        // Initialize camera executor
-//        cameraExecutor = Executors.newSingleThreadExecutor()
-
         try {
             // Initialize camera executor first
             cameraExecutor = Executors.newSingleThreadExecutor()

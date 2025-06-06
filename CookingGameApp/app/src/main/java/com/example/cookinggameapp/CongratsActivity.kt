@@ -1,4 +1,29 @@
 package com.example.cookinggameapp
 
-class CongratsActivity {
+import android.content.Intent
+import android.os.Bundle
+import android.widget.ImageButton
+import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+
+class CongratsActivity : BaseActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContentView(R.layout.activity_congrats)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.backButton)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
+        findViewById<ImageButton>(R.id.backButton).setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java))
+        }
+
+        findViewById<ImageButton>(R.id.takeSelfieBtn).setOnClickListener {
+            startActivity(Intent(this, EndscreenActivity::class.java))
+        }
+    }
 }

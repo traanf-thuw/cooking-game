@@ -87,12 +87,13 @@
         app:layout_constraintEnd_toEndOf="@id/flatBowl"
         app:layout_constraintTop_toBottomOf="@id/flatBowl" />
 
-    <ImageView
+    <ImageButton
         android:id="@+id/takeSelfieBtn"
         android:layout_width="115dp"
         android:layout_height="121dp"
         android:layout_marginStart="92dp"
         android:layout_marginTop="152dp"
+        android:background="@null"
         android:contentDescription="Take Selfie Button"
         android:src="@drawable/take_selfie_button"
         app:layout_constraintStart_toEndOf="@id/flatBowl"

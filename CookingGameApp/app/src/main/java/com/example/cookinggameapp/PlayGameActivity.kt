@@ -179,7 +179,7 @@ class PlayGameActivity : BaseActivity() {
                 vibrateDevice()
 
                 Handler(Looper.getMainLooper()).postDelayed({
-                    startActivity(Intent(this@PlayGameActivity, MainActivity::class.java))
+                    startActivity(Intent(this@PlayGameActivity, CongratsActivity::class.java))
                 }, 3000)
 
             }
