@@ -17,7 +17,7 @@
         android:layout_marginTop="68dp"
         android:fontFamily="@font/baloo_regular"
         android:text="Let Me Cook"
-        android:textColor="#4DA034"
+        android:textColor="#F44336"
         android:textSize="50sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"

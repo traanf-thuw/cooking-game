@@ -31,7 +31,7 @@
         <uses-library android:name="org.apache.http.legacy" android:required="false" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".OpeningScreen"
             android:theme="@style/Theme.CookingGameApp"
             android:screenOrientation="sensorLandscape"
             android:exported="true">
@@ -49,6 +49,8 @@
         <activity android:name=".PlayGameActivity" android:exported="false" android:screenOrientation="sensorLandscape" />
         <activity android:name=".SelectDifficultyActivity" android:exported="false" android:screenOrientation="sensorLandscape" />
         <activity android:name=".EndscreenActivity" android:exported="false" android:screenOrientation="sensorLandscape" />
+        <activity android:name=".CongratsActivity" android:exported="false" android:screenOrientation="sensorLandscape" />
+        <activity android:name=".MainActivity" android:exported="false" android:screenOrientation="sensorLandscape" />
 
     </application>
 

@@ -35,15 +35,9 @@ class MainActivity : BaseActivity() {
         )
 
         // Instruction button → InstructionActivity
-//        val instructionButton = findViewById<ImageButton>(R.id.buttonInstruction)
-//        instructionButton.setOnClickListener {
-//            val intent = Intent(this, InstructionActivity::class.java)
-//            startActivity(intent)
-//        }
-
         val instructionButton = findViewById<ImageButton>(R.id.buttonInstruction)
         instructionButton.setOnClickListener {
-            val intent = Intent(this, EndscreenActivity::class.java)
+            val intent = Intent(this, InstructionActivity::class.java)
             startActivity(intent)
         }
 
