@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/congratsLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/congrats_backround"
+    tools:context=".CongratsActivity">
+
+    <!-- Bowl with Fruits -->
+
+    <ImageView
+        android:id="@+id/babyCongrats"
+        android:layout_width="230dp"
+        android:layout_height="230dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="88dp"
+        android:contentDescription="Congrats Bubble"
+        android:src="@drawable/baby_congrats"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/flatBowl"
+        android:layout_width="200dp"
+        android:layout_height="190dp"
+        android:contentDescription="Bowl"
+        android:src="@drawable/flat_bowl"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.553"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.497" />
+
+    <ImageView
+        android:id="@+id/tomato"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="40dp"
+        android:contentDescription="Tomato"
+        android:src="@drawable/tomato"
+        app:layout_constraintEnd_toEndOf="@id/flatBowl"
+        app:layout_constraintTop_toTopOf="@+id/flatBowl" />
+
+    <ImageView
+        android:id="@+id/avocado"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="36dp"
+        android:contentDescription="Avocado"
+        android:src="@drawable/avocado"
+        app:layout_constraintStart_toStartOf="@id/flatBowl"
+        app:layout_constraintTop_toTopOf="@id/flatBowl" />
+
+    <ImageView
+        android:id="@+id/lemon"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="76dp"
+        android:layout_marginTop="92dp"
+        android:contentDescription="Lemon"
+        android:src="@drawable/lemon"
+        app:layout_constraintStart_toStartOf="@id/flatBowl"
+        app:layout_constraintTop_toTopOf="@id/flatBowl" />
+
+    <ImageView
+        android:id="@+id/greenBaby"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="28dp"
+        android:contentDescription="Green Baby"
+        android:src="@drawable/green_baby"
+        app:layout_constraintStart_toStartOf="@id/flatBowl"
+        app:layout_constraintTop_toBottomOf="@id/flatBowl" />
+
+    <ImageView
+        android:id="@+id/blueBaby"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="28dp"
+        android:contentDescription="Blue Baby"
+        android:src="@drawable/bluekirby"
+        app:layout_constraintEnd_toEndOf="@id/flatBowl"
+        app:layout_constraintTop_toBottomOf="@id/flatBowl" />
+
+    <ImageView
+        android:id="@+id/takeSelfieBtn"
+        android:layout_width="115dp"
+        android:layout_height="121dp"
+        android:layout_marginStart="92dp"
+        android:layout_marginTop="152dp"
+        android:contentDescription="Take Selfie Button"
+        android:src="@drawable/take_selfie_button"
+        app:layout_constraintStart_toEndOf="@id/flatBowl"
+        app:layout_constraintTop_toTopOf="@id/flatBowl" />
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@null"
+        android:contentDescription="Back"
+        android:scaleType="fitCenter"
+        android:src="@drawable/exit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

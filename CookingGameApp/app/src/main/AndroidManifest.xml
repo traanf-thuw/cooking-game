@@ -12,7 +12,10 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.VIBRATE" />
-
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -30,6 +33,7 @@
         <activity
             android:name=".MainActivity"
             android:theme="@style/Theme.CookingGameApp"
+            android:screenOrientation="sensorLandscape"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,12 +41,14 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".InstructionActivity" android:exported="false" />
-        <activity android:name=".JoinRoomActivity" android:exported="false" />
-        <activity android:name=".CreateRoomActivity" android:exported="false" />
-        <activity android:name=".SettingsActivity" android:exported="false" />
-        <activity android:name=".WaitingActivity" android:exported="false" />
-        <activity android:name=".PlayGameActivity" android:exported="false" />
+        <activity android:name=".InstructionActivity" android:exported="false" android:screenOrientation="sensorLandscape" />
+        <activity android:name=".JoinRoomActivity" android:exported="false" android:screenOrientation="sensorLandscape" />
+        <activity android:name=".CreateRoomActivity" android:exported="false" android:screenOrientation="sensorLandscape" />
+        <activity android:name=".SettingsActivity" android:exported="false" android:screenOrientation="sensorLandscape" />
+        <activity android:name=".WaitingActivity" android:exported="false" android:screenOrientation="sensorLandscape" />
+        <activity android:name=".PlayGameActivity" android:exported="false" android:screenOrientation="sensorLandscape" />
+        <activity android:name=".SelectDifficultyActivity" android:exported="false" android:screenOrientation="sensorLandscape" />
+        <activity android:name=".EndscreenActivity" android:exported="false" android:screenOrientation="sensorLandscape" />
 
     </application>
 
