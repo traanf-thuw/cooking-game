@@ -17,4 +17,7 @@
     <string name="join_status_others">Please wait for the game to start</string>
     <string name="code_header">Your Room Code</string>
     <string name="room_code">PGADMIN</string>
+    <string name="animation_heading">Let Me Cook</string>
+    <string name="kirby">Kirby</string>
+    <string name="back">Back</string>
 </resources>

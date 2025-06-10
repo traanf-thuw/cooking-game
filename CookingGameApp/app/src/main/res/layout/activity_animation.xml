@@ -5,7 +5,7 @@
     android:id="@+id/startPageLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/animation_background"
+    android:background="@drawable/hostbackground"
     tools:context=".StartingActivity">
 
     <!-- Food Images and Center Character -->
@@ -16,7 +16,7 @@
         android:layout_height="60dp"
         android:layout_marginTop="68dp"
         android:fontFamily="@font/baloo_regular"
-        android:text="Let Me Cook"
+        android:text="@string/animation_heading"
         android:textColor="#F44336"
         android:textSize="50sp"
         android:textStyle="bold"
@@ -30,7 +30,7 @@
         android:layout_width="193dp"
         android:layout_height="145dp"
         android:layout_marginTop="16dp"
-        android:contentDescription="Kirby"
+        android:contentDescription="@string/kirby"
         android:src="@drawable/fat_baby"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.539"
@@ -38,24 +38,26 @@
         app:layout_constraintTop_toBottomOf="@+id/titleText" />
 
     <ImageView
-        android:id="@+id/fried_egg"
-        android:layout_width="55dp"
-        android:layout_height="58dp"
-        android:layout_marginStart="492dp"
-        android:layout_marginBottom="112dp"
-        android:src="@drawable/fried_egg"
-        app:layout_constraintBottom_toBottomOf="@id/long_pan"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ImageView
         android:id="@+id/long_pan"
         android:layout_width="160dp"
         android:layout_height="80dp"
-        android:layout_marginStart="392dp"
-        android:layout_marginBottom="164dp"
+        android:layout_marginStart="83dp"
+        android:layout_marginBottom="152dp"
         android:src="@drawable/long_pan"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/fatBaby" />
+
+    <ImageView
+        android:id="@+id/fried_egg"
+        android:layout_width="55dp"
+        android:layout_height="58dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/fried_egg"
+        app:layout_constraintBottom_toBottomOf="@+id/long_pan"
+        app:layout_constraintStart_toStartOf="@+id/long_pan" />
 
     <ImageView
         android:id="@+id/imageBreakfast"
