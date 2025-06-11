@@ -5,8 +5,7 @@
     android:id="@+id/startPageLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/hostbackground"
-    tools:context=".StartingActivity">
+    android:background="@drawable/hostbackground">
 
     <!-- Food Images and Center Character -->
 
