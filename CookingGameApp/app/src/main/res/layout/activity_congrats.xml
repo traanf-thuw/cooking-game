@@ -89,8 +89,8 @@
 
     <ImageButton
         android:id="@+id/takeSelfieBtn"
-        android:layout_width="115dp"
-        android:layout_height="121dp"
+        android:layout_width="124dp"
+        android:layout_height="110dp"
         android:layout_marginStart="92dp"
         android:layout_marginTop="152dp"
         android:background="@null"

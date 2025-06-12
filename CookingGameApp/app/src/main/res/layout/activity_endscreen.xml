@@ -1,43 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/endScreenLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFE4C4">
 
-    <!-- Background image -->
     <ImageView
         android:id="@+id/imageBackground"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:contentDescription="@null"
         android:scaleType="centerCrop"
-        android:src="@drawable/hostbackground" />
+        android:src="@drawable/hostbackground"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
-    <!-- Green baby character -->
     <ImageView
         android:id="@+id/imgGreenBaby"
-        android:layout_width="150dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:contentDescription="Green sharing character"
-        android:src="@drawable/share" />
+        android:src="@drawable/share"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.25" />
 
-    <!-- Social media sharing buttons grid -->
+    <!-- Camera Preview -->
+
     <GridLayout
+        android:id="@+id/shareGrid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="170dp"
-        android:layout_marginTop="8dp"
-        android:alignmentMode="alignMargins"
+        android:layout_marginStart="44dp"
+        android:layout_marginEnd="17dp"
         android:columnCount="2"
         android:rowCount="2"
-        android:translationX="-90dp"
-        android:translationY="50dp"
-        android:useDefaultMargins="true">
+        android:useDefaultMargins="true"
+        app:layout_constraintBottom_toTopOf="@+id/btnHome"
+        app:layout_constraintEnd_toStartOf="@+id/cameraPreview"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgGreenBaby"
+        app:layout_constraintVertical_bias="0.477">
 
-        <!-- Twitter Button -->
         <ImageButton
             android:id="@+id/btnShareTwitter"
             android:layout_width="48dp"
@@ -46,7 +59,6 @@
             android:contentDescription="Share on Twitter"
             android:src="@drawable/twitter" />
 
-        <!-- Instagram Button -->
         <ImageButton
             android:id="@+id/btnShareInstagram"
             android:layout_width="48dp"
@@ -55,7 +67,6 @@
             android:contentDescription="Share on Instagram"
             android:src="@drawable/instagram" />
 
-        <!-- WhatsApp Button -->
         <ImageButton
             android:id="@+id/btnShareWhatsapp"
             android:layout_width="48dp"
@@ -64,7 +75,6 @@
             android:contentDescription="Share on WhatsApp"
             android:src="@drawable/whatsapp" />
 
-        <!-- Facebook Button -->
         <ImageButton
             android:id="@+id/btnShareFacebook"
             android:layout_width="48dp"
@@ -74,50 +84,76 @@
             android:src="@drawable/facebook" />
     </GridLayout>
 
-    <!-- Camera preview area for selfie -->
     <androidx.camera.view.PreviewView
         android:id="@+id/cameraPreview"
-        android:layout_width="380dp"
-        android:layout_height="220dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="60dp"
-        android:background="#C0C0C0" />
+        android:layout_width="406dp"
+        android:layout_height="269dp"
+        android:background="#C0C0C0"
+        app:layout_constraintDimensionRatio="16:9"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.529"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.9"
+        tools:layout_editor_absoluteY="71dp" />
 
-    <!-- Dish image in top right -->
-    <ImageView
-        android:id="@+id/dish"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:contentDescription="Dish"
-        android:src="@drawable/dish"
-        android:translationX="-40dp" />
-
-    <!-- Cloud with rainbow and character at bottom -->
-    <ImageView
-        android:id="@+id/imgCloud"
-        android:layout_width="200dp"
-        android:layout_height="120dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="80dp"
-        android:contentDescription="Cloud with rainbow"
-        android:src="@drawable/cloud"
-        android:translationX="10dp" />
+    <!-- Cloud with rainbow -->
 
     <!-- Home button -->
+
+    <ImageView
+        android:id="@+id/dish"
+        android:layout_width="113dp"
+        android:layout_height="108dp"
+        android:layout_marginTop="284dp"
+        android:layout_marginEnd="92dp"
+        android:contentDescription="Dish"
+        android:src="@drawable/dish"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.2" />
+
+    <ImageView
+        android:id="@+id/imgCloud"
+        android:layout_width="159dp"
+        android:layout_height="98dp"
+        android:layout_marginStart="92dp"
+        android:layout_marginTop="24dp"
+        android:contentDescription="Cloud with rainbow"
+        android:src="@drawable/cloud"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imgGreenBaby"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.4" />
+
+    <ImageButton
+        android:id="@+id/takeSelfieBtn"
+        android:layout_width="129dp"
+        android:layout_height="134dp"
+        android:layout_marginStart="8dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="Selfie"
+        android:src="@drawable/take_selfie_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/cameraPreview"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.498" />
+
     <ImageButton
         android:id="@+id/btnHome"
-        android:layout_width="80dp"
-        android:layout_height="40dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="30dp"
-        android:layout_marginBottom="20dp"
-        android:src="@drawable/back"
+        android:layout_width="161dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
         android:background="@android:color/transparent"
+        android:contentDescription="Home button"
         android:scaleType="centerInside"
-        android:contentDescription="Home button" />
+        android:src="@drawable/back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.2" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
