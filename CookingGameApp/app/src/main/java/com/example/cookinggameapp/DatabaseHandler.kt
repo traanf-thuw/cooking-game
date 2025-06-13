@@ -36,6 +36,8 @@ class DatabaseHandler {
             val cookwareItems = items.filter { it.startsWith("c") }.toMutableList()
             val ingredientItems = items.filter { it.startsWith("i") }.toMutableList()
 
+            updatedPlayers[playerIds[0]]?.add("c00001")
+
             if (playerIds.size == 1) {
                 updatedPlayers[playerIds[0]]?.addAll(cookwareItems + ingredientItems)
             } else {
