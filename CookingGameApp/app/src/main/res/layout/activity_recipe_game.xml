@@ -7,17 +7,17 @@
     android:background="#FEDEB7"
     tools:context=".MainActivity">
 
-    <!-- Optional: Guideline to control content height -->
+    <!-- Guideline to slightly raise content -->
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineTop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.33" />
+        app:layout_constraintGuide_percent="0.35" />
 
-    <!-- Recipe Board Background -->
+    <!-- Recipe Board Image -->
     <ImageView
-        android:id="@+id/centerImage"
+        android:id="@+id/recipeBoard"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:src="@drawable/recipebackground"
@@ -35,7 +35,7 @@
         android:id="@+id/subtitleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="How to Play?"
+        android:text="Boiled Chicken"
         android:textColor="#F75526"
         android:textSize="32sp"
         android:textStyle="bold"
@@ -50,7 +50,7 @@
         android:id="@+id/instructionText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1. Host player creates a room\n2. Other players enter the game code\n3. Host player starts the game\n4. Play together and have fun!"
+        android:text="1. Chop the chicken\n2. Put it in the pot\n3. Boil it\n4. Put a little salt"
         android:textColor="#9D5A40"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -64,8 +64,8 @@
     <!-- Back Button -->
     <ImageButton
         android:id="@+id/backButton"
-        android:layout_width="200dp"
-        android:layout_height="110dp"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
         android:background="@null"
         android:src="@drawable/back"
         android:scaleType="fitCenter"

@@ -14,6 +14,19 @@
         android:contentDescription="@null"
         android:src="@drawable/background" />
 
+    <!-- Recipe Button (Top Right) -->
+    <ImageButton
+        android:id="@+id/buttonRecipe"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@null"
+        android:src="@drawable/recipebutton"
+        android:scaleType="fitCenter"
+        android:contentDescription="Recipe" />
+
     <!-- Draggable Items -->
     <ImageView
         android:id="@+id/imageCuttingboard"
@@ -90,7 +103,7 @@
         android:layout_height="100dp"
         android:src="@drawable/lemon"
         android:contentDescription="Lemon" />
-  
+
     <ImageView
         android:id="@+id/imageStove"
         android:layout_width="100dp"
