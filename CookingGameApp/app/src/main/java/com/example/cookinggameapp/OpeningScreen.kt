@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.view.animation.LinearInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
@@ -43,18 +45,18 @@ class OpeningScreen : BaseActivity() {
         greenBaby.post {
 
             // Option 2: Stop at custom dp offset from left
-             val offsetPx = (120 * resources.displayMetrics.density)
-             val endX = offsetPx
+            val offsetPx = (120 * resources.displayMetrics.density)
+            val endX = offsetPx
 
             val startX = -greenBaby.width.toFloat()
-            val amplitude = 80
-            val waveLength = 2 * Math.PI
+            val amplitude = 100
+            val waveLength = 3 * Math.PI
 
             greenBaby.translationX = startX
             greenBaby.translationY = 0f
 
             ValueAnimator.ofFloat(0f, 1f).apply {
-                duration = 2500
+                duration = 3500
                 interpolator = LinearInterpolator()
                 addUpdateListener { animator ->
                     val fraction = animator.animatedFraction
@@ -79,13 +81,13 @@ class OpeningScreen : BaseActivity() {
             val endX = (parentWidth / 15f) - (pudding_Baby.width / 1f) // Middle of the screen
 
             val amplitude = 100
-            val waveLength = 2 * Math.PI
+            val waveLength = 3 * Math.PI
 
             pudding_Baby.translationX = startX
             pudding_Baby.translationY = 6f
 
             ValueAnimator.ofFloat(0f, 1f).apply {
-                duration = 2000
+                duration = 4000
                 interpolator = LinearInterpolator()
                 addUpdateListener { animator ->
                     val fraction = animator.animatedFraction
@@ -99,10 +101,31 @@ class OpeningScreen : BaseActivity() {
         }
 
 
-        lifecycleScope.launch {
-            delay(5000) // 5 seconds
-            startActivity(Intent(this@OpeningScreen, MainActivity::class.java))
-            finish()
+        val title = findViewById<TextView>(R.id.titleText)
+
+        title.post {
+            // Move it to the corner (off-screen, top left)
+            val originalX = title.x
+            val originalY = title.y
+
+            // Start position: way off top-left (adjust as needed)
+            title.translationX = -resources.displayMetrics.widthPixels.toFloat()
+            title.translationY = -200f
+
+            // Animate X to center (boomerang with overshoot)
+            title.animate()
+                .translationX(0f)
+                .translationY(0f)
+                .setInterpolator(OvershootInterpolator(2f)) // "spring" effect
+                .setDuration(3000)
+                .start()
+
+
+            lifecycleScope.launch {
+                delay(5000) // 5 seconds
+                startActivity(Intent(this@OpeningScreen, MainActivity::class.java))
+                finish()
+            }
         }
     }
 }
