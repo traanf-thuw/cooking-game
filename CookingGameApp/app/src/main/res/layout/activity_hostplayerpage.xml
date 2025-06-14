@@ -1,50 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MenuActivity">
 
-    <!-- Background Image -->
+    <!-- Background -->
     <ImageView
         android:id="@+id/imageBackground"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/hostbackground"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:scaleType="centerCrop"
-        android:contentDescription="@null" />
+        android:src="@drawable/hostbackground"
+        android:contentDescription="@null"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Start Button -->
     <ImageButton
         android:id="@+id/buttonStart"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:layout_gravity="start|center_vertical"
-        android:layout_marginStart="40dp"
+        android:layout_marginStart="24dp"
         android:translationY="-80dp"
         android:src="@drawable/start"
         android:scaleType="fitXY"
         android:background="@null"
-        android:contentDescription="Start" />
+        android:contentDescription="Start"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
 
-    <!-- Big Kirby on right side -->
+    <!-- Big Kirby on Right -->
     <ImageView
         android:id="@+id/imageKirby"
         android:layout_width="250dp"
         android:layout_height="250dp"
-        android:layout_gravity="end|center_vertical"
         android:layout_marginEnd="10dp"
         android:src="@drawable/kirby"
         android:scaleType="fitCenter"
-        android:contentDescription="Kirby Character" />
+        android:contentDescription="Kirby Character"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
 
     <!-- Room Code Block -->
     <LinearLayout
+        android:id="@+id/roomCodeBlock"
         android:orientation="vertical"
+        android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center_horizontal">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/textRoomLabel"
@@ -65,59 +80,63 @@
             android:textColor="#FFFFFF"
             android:fontFamily="@font/baloo"
             android:background="@drawable/rounded_room_code_bg"
-            android:padding="10dp" />
+            android:padding="10dp"
+            android:layout_marginTop="8dp" />
     </LinearLayout>
 
-    <!-- Bottom row -->
-    <LinearLayout
-        android:id="@+id/playerRow"
-        android:layout_width="match_parent"
+    <!-- Full Bottom Row (Anchored to bottom) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomRowContainer"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="bottom"
-        android:gravity="bottom"
-        android:paddingHorizontal="8dp"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Green Kirby (left) with overlay text in upper-right corner -->
-        <FrameLayout
+        <!-- Green Kirby Left -->
+        <ImageView
+            android:id="@+id/imageGreenKirbyBottom"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/greenkirby"
+            android:scaleType="fitCenter"
+            android:contentDescription="Green Kirby Bottom"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- Players Joined Overlay -->
+        <TextView
+            android:id="@+id/textPlayersJoined"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp">
+            android:text="4 players\n  joined"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/baloo"
+            android:padding="8dp"
+            app:layout_constraintTop_toTopOf="@id/imageGreenKirbyBottom"
+            app:layout_constraintEnd_toEndOf="@id/imageGreenKirbyBottom"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="12dp" />
 
-            <ImageView
-                android:id="@+id/imageGreenKirbyBottom"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:contentDescription="Green Kirby Bottom"
-                android:scaleType="fitCenter"
-                android:src="@drawable/greenkirby" />
-
-            <TextView
-                android:id="@+id/textPlayersJoined"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="4 players\n  joined"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:textColor="#FFFFFF"
-                android:fontFamily="@font/baloo"
-                android:padding="8dp"
-                android:layout_gravity="top|end"
-                android:layout_marginTop="2dp"
-                android:layout_marginEnd="12dp" />
-
-        </FrameLayout>
-
-
-        <!-- Player Buttons (TextView used as buttons for full background control) -->
+        <!-- Player Buttons -->
         <LinearLayout
+            android:id="@+id/playerButtonRow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:orientation="horizontal"
-            android:gravity="bottom"
-            android:weightSum="4">
+            android:gravity="center"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:weightSum="4"
+            app:layout_constraintStart_toEndOf="@id/imageGreenKirbyBottom"
+            app:layout_constraintEnd_toStartOf="@id/imageBlueKirbyBottom"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <TextView
                 android:id="@+id/player1Button"
@@ -179,21 +198,17 @@
                 android:focusable="true" />
         </LinearLayout>
 
-        <!-- Blue Kirby (right) -->
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="bottom|center_horizontal"
-            android:layout_marginStart="60dp">
+        <!-- Blue Kirby Right -->
+        <ImageView
+            android:id="@+id/imageBlueKirbyBottom"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/bluekirby"
+            android:scaleType="fitCenter"
+            android:contentDescription="Blue Kirby Bottom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <ImageView
-                android:id="@+id/imageBlueKirbyBottom"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@drawable/bluekirby"
-                android:scaleType="fitCenter"
-                android:contentDescription="Blue Kirby Bottom" />
-        </LinearLayout>
-    </LinearLayout>
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,6 +16,7 @@ import android.os.VibratorManager
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.widget.ImageButton
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.SeekBar
@@ -164,6 +165,12 @@ class PlayGameActivity : BaseActivity() {
 
         setupAdvancedStirring()
         setupChopping()
+
+        val recipeButton = findViewById<ImageButton>(R.id.buttonRecipe)
+        recipeButton.setOnClickListener {
+            val intent = Intent(this, RecipeGameActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun startCountdown(seconds: Int) {
