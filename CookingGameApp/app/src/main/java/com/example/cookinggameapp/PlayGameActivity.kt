@@ -281,6 +281,7 @@ class PlayGameActivity : BaseActivity() {
 
     private fun animateItemFromTag(tag: String) {
         val view = allItems.find { it.tag == tag } ?: return
+
     private fun showFireSlider() {
         if (fireSeekBar.visibility == View.VISIBLE) return
 
@@ -466,133 +467,144 @@ class PlayGameActivity : BaseActivity() {
                 if (!isHost) {
                     val view = allItems.find { it.tag == droppedTag } ?: return@addSnapshotListener
 
-        val basketX = basketLeft.x
-        val basketY = basketLeft.y
+                    val basketX = basketLeft.x
+                    val basketY = basketLeft.y
 
-        view.translationX = basketX
-        view.translationY = -300f
-        view.alpha = 0f
-        view.scaleX = 0.3f
-        view.scaleY = 0.3f
-        view.rotation = 0f
-        view.visibility = View.VISIBLE
+                    view.translationX = basketX
+                    view.translationY = -300f
+                    view.alpha = 0f
+                    view.scaleX = 0.3f
+                    view.scaleY = 0.3f
+                    view.rotation = 0f
+                    view.visibility = View.VISIBLE
 
-        view.animate()
-            .translationY(basketY)
-            .alpha(1f)
-            .scaleX(1f)
-            .scaleY(1f)
-            .rotationBy(1440f)
-            .setDuration(1000)
-            .withEndAction {
-                Toast.makeText(this, "$tag flew in!", Toast.LENGTH_SHORT).show()
-                vibrateDevice()
-            }.start()
-    }
+                    view.animate()
+                        .translationY(basketY)
+                        .alpha(1f)
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .rotationBy(1440f)
+                        .setDuration(1000)
+                        .withEndAction {
+                            Toast.makeText(this, "$tag flew in!", Toast.LENGTH_SHORT).show()
+                            vibrateDevice()
+                        }.start()
+                }
 
-    private fun vibrateDevice() {
-        val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val manager = getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
-            manager.defaultVibrator
-        } else {
-            @Suppress("DEPRECATION")
-            getSystemService(VIBRATOR_SERVICE) as Vibrator
-        }
+            }}
 
-        val duration = 1500L
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
-        } else {
-            @Suppress("DEPRECATION")
-            vibrator.vibrate(duration)
-        }
-    }
-
-    private val sensorListener = object : SensorEventListener {
-        override fun onSensorChanged(event: SensorEvent) {
-            val x = event.values[0]
-            val y = event.values[1]
-            val z = event.values[2]
-
-            accelLast = accelCurrent
-            accelCurrent = Math.sqrt((x * x + y * y + z * z).toDouble()).toFloat()
-            val delta = accelCurrent - accelLast
-            accel = accel * 0.9f + delta
-
-            if (accel > 4 && isHost) {
-                Log.d("Sensor", "Shake detected! accel = $accel")
-                saveMyLogicToFirestore()
-            }
-        }
-
-        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        countdownTimer?.cancel()
-        roomListener?.remove()
-        if (isHost) sensorManager.unregisterListener(sensorListener)
-    }
-
-    private fun scatterViewsWithoutOverlap(views: List<View>) {
-        val parent = findViewById<FrameLayout>(R.id.gameCanvas)
-
-        parent.post {
-            val parentWidth = parent.width
-            val parentHeight = parent.height
-
-            val reservedBottomSpace = 350  // bottom off-limits
-            val reservedCenterWidth = 150  // width of center exclusion zone
-            val reservedCenterHeight = 300 // height of center exclusion zone
-
-            val centerX = parentWidth / 2
-            val centerY = parentHeight / 2
-            val centerRect = android.graphics.Rect(
-                centerX - reservedCenterWidth / 2,
-                centerY - reservedCenterHeight / 2,
-                centerX + reservedCenterWidth / 2,
-                centerY + reservedCenterHeight / 2
-            )
-
-            val placedRects = mutableListOf<android.graphics.Rect>()
-
-            views.forEach { view ->
-                val viewWidth = view.width
-                val viewHeight = view.height
-
-                var attempts = 0
-                var placed = false
-
-                while (!placed && attempts < 100) {
-                    val x = (0..(parentWidth - viewWidth)).random()
-                    val y = (0..(parentHeight - reservedBottomSpace - viewHeight)).random()
-
-                    val padding = 16  // Minimum distance between items in pixels
-                    val newRect = android.graphics.Rect(
-                        x - padding,
-                        y - padding,
-                        x + viewWidth + padding,
-                        y + viewHeight + padding
-                    )
-
-                    val overlapsPlaced = placedRects.any { it.intersect(newRect) }
-                    val overlapsCenter = android.graphics.Rect.intersects(newRect, centerRect)
-
-                    if (!overlapsPlaced && !overlapsCenter) {
-                        view.x = x.toFloat()
-                        view.y = y.toFloat()
-                        placedRects.add(newRect)
-                        placed = true
+                private fun vibrateDevice() {
+                    val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        val manager = getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
+                        manager.defaultVibrator
+                    } else {
+                        @Suppress("DEPRECATION")
+                        getSystemService(VIBRATOR_SERVICE) as Vibrator
                     }
 
-                    attempts++
+                    val duration = 1500L
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        vibrator.vibrate(
+                            VibrationEffect.createOneShot(
+                                duration,
+                                VibrationEffect.DEFAULT_AMPLITUDE
+                            )
+                        )
+                    } else {
+                        @Suppress("DEPRECATION")
+                        vibrator.vibrate(duration)
+                    }
                 }
 
-                if (!placed) {
-                    Log.w("Scatter", "⚠ Could not place ${view.contentDescription}")
+                private val sensorListener = object : SensorEventListener {
+                    override fun onSensorChanged(event: SensorEvent) {
+                        val x = event.values[0]
+                        val y = event.values[1]
+                        val z = event.values[2]
+
+                        accelLast = accelCurrent
+                        accelCurrent = Math.sqrt((x * x + y * y + z * z).toDouble()).toFloat()
+                        val delta = accelCurrent - accelLast
+                        accel = accel * 0.9f + delta
+
+                        if (accel > 4 && isHost) {
+                            Log.d("Sensor", "Shake detected! accel = $accel")
+                            saveMyLogicToFirestore()
+                        }
+                    }
+
+                    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+                }
+
+                override fun onDestroy() {
+                    super.onDestroy()
+                    countdownTimer?.cancel()
+                    roomListener?.remove()
+                    if (isHost) sensorManager.unregisterListener(sensorListener)
+                }
+
+                private fun scatterViewsWithoutOverlap(views: List<View>) {
+                    val parent = findViewById<FrameLayout>(R.id.gameCanvas)
+
+                    parent.post {
+                        val parentWidth = parent.width
+                        val parentHeight = parent.height
+
+                        val reservedBottomSpace = 350  // bottom off-limits
+                        val reservedCenterWidth = 150  // width of center exclusion zone
+                        val reservedCenterHeight = 300 // height of center exclusion zone
+
+                        val centerX = parentWidth / 2
+                        val centerY = parentHeight / 2
+                        val centerRect = android.graphics.Rect(
+                            centerX - reservedCenterWidth / 2,
+                            centerY - reservedCenterHeight / 2,
+                            centerX + reservedCenterWidth / 2,
+                            centerY + reservedCenterHeight / 2
+                        )
+
+                        val placedRects = mutableListOf<android.graphics.Rect>()
+
+                        views.forEach { view ->
+                            val viewWidth = view.width
+                            val viewHeight = view.height
+
+                            var attempts = 0
+                            var placed = false
+
+                            while (!placed && attempts < 100) {
+                                val x = (0..(parentWidth - viewWidth)).random()
+                                val y =
+                                    (0..(parentHeight - reservedBottomSpace - viewHeight)).random()
+
+                                val padding = 16  // Minimum distance between items in pixels
+                                val newRect = android.graphics.Rect(
+                                    x - padding,
+                                    y - padding,
+                                    x + viewWidth + padding,
+                                    y + viewHeight + padding
+                                )
+
+                                val overlapsPlaced = placedRects.any { it.intersect(newRect) }
+                                val overlapsCenter =
+                                    android.graphics.Rect.intersects(newRect, centerRect)
+
+                                if (!overlapsPlaced && !overlapsCenter) {
+                                    view.x = x.toFloat()
+                                    view.y = y.toFloat()
+                                    placedRects.add(newRect)
+                                    placed = true
+                                }
+
+                                attempts++
+                            }
+
+                            if (!placed) {
+                                Log.w("Scatter", "⚠ Could not place ${view.contentDescription}")
+                            }
+                        }
+                    }
                 }
             }
-        }
     }
-}
+
