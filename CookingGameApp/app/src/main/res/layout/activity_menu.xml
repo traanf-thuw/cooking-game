@@ -5,7 +5,7 @@
     android:id="@+id/menuLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MenuActivity">
+    tools:context=".MainActivity">
 
     <!-- Background Image -->
     <ImageView
@@ -27,8 +27,8 @@
         android:layout_height="48dp"
         android:layout_margin="16dp"
         android:background="@null"
-        android:contentDescription="Settings"
         android:src="@drawable/settings"
+        android:contentDescription="Open settings menu"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -39,6 +39,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
+        android:weightSum="3"
         android:padding="16dp"
         android:baselineAligned="false"
         android:layout_marginTop="32dp"
@@ -48,59 +49,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Create Room -->
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="8dp">
-
-            <ImageButton
-                android:id="@+id/buttonCreateRoom"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:src="@drawable/createroom"
-                android:background="@null"
-                android:contentDescription="Create Room" />
-        </FrameLayout>
-
-        <!-- Join -->
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="8dp">
-
-            <ImageButton
-                android:id="@+id/buttonJoin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:src="@drawable/join"
-                android:background="@null"
-                android:contentDescription="Join" />
-        </FrameLayout>
-
-        <!-- Instruction -->
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="8dp">
-
-            <ImageButton
-                android:id="@+id/buttonInstruction"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:src="@drawable/instruction"
-                android:background="@null"
-                android:contentDescription="Instructions" />
-        </FrameLayout>
+        <include layout="@layout/reusable_menu_button" />
+        <include layout="@layout/reusable_menu_button" />
+        <include layout="@layout/reusable_menu_button" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

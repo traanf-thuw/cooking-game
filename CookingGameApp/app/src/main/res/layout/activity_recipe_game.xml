@@ -5,17 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FEDEB7"
-    tools:context=".MainActivity">
+    tools:context=".RecipeGameActivity">
 
-    <!-- Guideline to slightly raise content -->
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineTop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.35" />
-
-    <!-- Recipe Board Image -->
     <ImageView
         android:id="@+id/recipeBoard"
         android:layout_width="0dp"
@@ -30,38 +21,19 @@
         app:layout_constraintWidth_percent="1"
         app:layout_constraintHeight_percent="0.8" />
 
-    <!-- Title: How to Play? -->
-    <TextView
-        android:id="@+id/subtitleText"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/instructionContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Boiled Chicken"
-        android:textColor="#F75526"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:fontFamily="@font/baloo"
-        app:layout_constraintTop_toBottomOf="@id/guidelineTop"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/recipeBoard"
+        app:layout_constraintBottom_toBottomOf="@id/recipeBoard"
+        app:layout_constraintStart_toStartOf="@id/recipeBoard"
+        app:layout_constraintEnd_toEndOf="@id/recipeBoard"
+        app:layout_constraintVertical_bias="0.6">
 
-    <!-- Instructions -->
-    <TextView
-        android:id="@+id/instructionText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="1. Chop the chicken\n2. Put it in the pot\n3. Boil it\n4. Put a little salt"
-        android:textColor="#9D5A40"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:fontFamily="@font/baloo"
-        android:lineSpacingExtra="4dp"
-        app:layout_constraintTop_toBottomOf="@id/subtitleText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <include layout="@layout/reusable_instruction_block" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Back Button -->
     <ImageButton
         android:id="@+id/backButton"
         android:layout_width="120dp"

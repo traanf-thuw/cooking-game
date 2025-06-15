@@ -84,7 +84,7 @@
             android:layout_marginTop="8dp" />
     </LinearLayout>
 
-    <!-- Full Bottom Row (Anchored to bottom) -->
+    <!-- Full Bottom Row -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottomRowContainer"
         android:layout_width="0dp"
@@ -111,18 +111,22 @@
             android:id="@+id/textPlayersJoined"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="4 players\n  joined"
+            android:text="4 players\njoined"
             android:textSize="11sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
             android:fontFamily="@font/baloo"
-            android:padding="8dp"
+            android:maxWidth="60dp"
+            android:gravity="center"
+            android:padding="4dp"
+            android:lineSpacingExtra="0dp"
+            android:lineSpacingMultiplier="1.0"
             app:layout_constraintTop_toTopOf="@id/imageGreenKirbyBottom"
             app:layout_constraintEnd_toEndOf="@id/imageGreenKirbyBottom"
             android:layout_marginTop="2dp"
             android:layout_marginEnd="12dp" />
 
-        <!-- Player Buttons -->
+        <!-- Player Buttons Row -->
         <LinearLayout
             android:id="@+id/playerButtonRow"
             android:layout_width="0dp"
