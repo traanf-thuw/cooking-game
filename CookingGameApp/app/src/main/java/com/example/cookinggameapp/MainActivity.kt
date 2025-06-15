@@ -1,11 +1,12 @@
 package com.example.cookinggameapp
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
+import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import androidx.core.app.ActivityCompat
-import android.Manifest
-
 
 class MainActivity : BaseActivity() {
 
@@ -13,37 +14,44 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
 
-        // Create Room button → CreateRoomActivity
-        val createRoomButton = findViewById<ImageButton>(R.id.buttonCreateRoom)
-        createRoomButton.setOnClickListener {
-            val intent = Intent(this, SelectDifficultyActivity::class.java)
-            startActivity(intent)
+        val buttonRow = findViewById<LinearLayout>(R.id.buttonRow)
+
+        // Get each reused menuImageButton and assign actions
+        setupMenuButton(
+            buttonRow.getChildAt(0) as FrameLayout,
+            R.drawable.createroom
+        ) {
+            startActivity(Intent(this, SelectDifficultyActivity::class.java))
         }
 
-        // Join button → JoinRoomActivity
-        val joinButton = findViewById<ImageButton>(R.id.buttonJoin)
-        joinButton.setOnClickListener {
-            val intent = Intent(this, JoinRoomActivity::class.java)
-            startActivity(intent)
+        setupMenuButton(
+            buttonRow.getChildAt(1) as FrameLayout,
+            R.drawable.join
+        ) {
+            startActivity(Intent(this, JoinRoomActivity::class.java))
         }
 
-        // Request location permission
+        setupMenuButton(
+            buttonRow.getChildAt(2) as FrameLayout,
+            R.drawable.instruction
+        ) {
+            startActivity(Intent(this, InstructionActivity::class.java))
+        }
+
+        findViewById<ImageButton>(R.id.buttonSettings).setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
+        }
+
         ActivityCompat.requestPermissions(
             this,
             arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
             1
         )
+    }
 
-        // Instruction button → InstructionActivity
-        val instructionButton = findViewById<ImageButton>(R.id.buttonInstruction)
-        instructionButton.setOnClickListener {
-            val intent = Intent(this, InstructionActivity::class.java)
-            startActivity(intent)
-        }
-
-        // Settings button → SettingsActivity
-        findViewById<ImageButton>(R.id.buttonSettings).setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java))
-        }
+    private fun setupMenuButton(container: FrameLayout, iconRes: Int, onClick: () -> Unit) {
+        val button = container.findViewById<ImageButton>(R.id.menuImageButton)
+        button.setImageResource(iconRes)
+        button.setOnClickListener { onClick() }
     }
 }
