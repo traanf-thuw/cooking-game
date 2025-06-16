@@ -14,29 +14,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
 
-        val buttonRow = findViewById<LinearLayout>(R.id.buttonRow)
-
-        // Get each reused menuImageButton and assign actions
-        setupMenuButton(
-            buttonRow.getChildAt(0) as FrameLayout,
-            R.drawable.createroom
-        ) {
-            startActivity(Intent(this, SelectDifficultyActivity::class.java))
-        }
-
-        setupMenuButton(
-            buttonRow.getChildAt(1) as FrameLayout,
-            R.drawable.join
-        ) {
-            startActivity(Intent(this, JoinRoomActivity::class.java))
-        }
-
-        setupMenuButton(
-            buttonRow.getChildAt(2) as FrameLayout,
-            R.drawable.instruction
-        ) {
-            startActivity(Intent(this, InstructionActivity::class.java))
-        }
+        setupAllMenuButtons()
 
         findViewById<ImageButton>(R.id.buttonSettings).setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
@@ -49,9 +27,22 @@ class MainActivity : BaseActivity() {
         )
     }
 
-    private fun setupMenuButton(container: FrameLayout, iconRes: Int, onClick: () -> Unit) {
-        val button = container.findViewById<ImageButton>(R.id.menuImageButton)
-        button.setImageResource(iconRes)
-        button.setOnClickListener { onClick() }
+    private fun setupAllMenuButtons() {
+        val menuConfigs = listOf(
+            R.drawable.createroom to Intent(this, SelectDifficultyActivity::class.java),
+            R.drawable.join to Intent(this, JoinRoomActivity::class.java),
+            R.drawable.instruction to Intent(this, InstructionActivity::class.java)
+        )
+
+        val row = findViewById<LinearLayout>(R.id.buttonRow)
+
+        menuConfigs.forEachIndexed { index, (icon, intent) ->
+            val frame = row.getChildAt(index) as FrameLayout
+            val button = frame.findViewById<ImageButton>(R.id.menuImageButton)
+            button.setImageResource(icon)
+            button.setOnClickListener {
+                startActivity(intent)
+            }
+        }
     }
 }
