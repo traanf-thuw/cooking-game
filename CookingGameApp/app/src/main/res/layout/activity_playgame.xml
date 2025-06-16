@@ -14,46 +14,7 @@
         android:contentDescription="@null"
         android:src="@drawable/background" />
 
-    <!-- Draggable Items -->
-    <ImageView
-        android:id="@+id/imageCuttingboard"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/cuttingboard"
-        android:contentDescription="Cutting Board" />
-
-    <ImageView
-        android:id="@+id/imageAvocado"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/avocado"
-        android:contentDescription="Avocado" />
-
-    <ImageView
-        android:id="@+id/imageChicken"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:src="@drawable/chicken"
-        android:layout_margin="8dp"
-        android:visibility="visible"
-        android:contentDescription="Chicken" />
-
-    <ImageView
-        android:id="@+id/imageKnife"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/knife"
-        android:contentDescription="Knife" />
-
-    <SeekBar
-        android:id="@+id/fireSeekBar"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:max="2"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"/>
-
+    <!-- Pot + Spoon + Red Fill for stirring (keep!) -->
     <FrameLayout
         android:id="@+id/potContainer"
         android:layout_width="wrap_content"
@@ -84,19 +45,15 @@
             android:src="@drawable/ladle" />
     </FrameLayout>
 
-    <ImageView
-        android:id="@+id/imageLemon"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/lemon"
-        android:contentDescription="Lemon" />
-  
-    <ImageView
-        android:id="@+id/imageStove"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/stove"
-        android:contentDescription="Stove" />
+    <!-- SeekBar for cooking -->
+    <SeekBar
+        android:id="@+id/fireSeekBar"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:max="2"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp" />
 
     <!-- Timer Section -->
     <FrameLayout
