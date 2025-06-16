@@ -11,6 +11,7 @@ class WaitingActivity : BaseActivity() {
     private lateinit var roomCode: String
     private var listener: ListenerRegistration? = null
     private var isHost: Boolean = false
+    private lateinit var currentPlayerId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +23,7 @@ class WaitingActivity : BaseActivity() {
         // 🔐 Get room code and host info from previous screen
         roomCode = intent.getStringExtra("roomCode") ?: return
         isHost = intent.getBooleanExtra("isHost", false)
+        currentPlayerId = intent.getStringExtra("playerId") ?: "Unknown"
 
         // 👂 Start listening to game start signal from Firebase
         val roomRef = db.collection("rooms").document(roomCode)
@@ -35,6 +37,7 @@ class WaitingActivity : BaseActivity() {
                 val intent = Intent(this, PlayGameActivity::class.java)
                 intent.putExtra("roomCode", roomCode)
                 intent.putExtra("isHost", isHost)
+                intent.putExtra("playerId", currentPlayerId)
                 startActivity(intent)
                 finish()
             }

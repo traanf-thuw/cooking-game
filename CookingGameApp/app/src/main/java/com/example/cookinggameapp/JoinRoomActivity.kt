@@ -10,12 +10,14 @@ import com.google.firebase.firestore.FirebaseFirestore
 class JoinRoomActivity : BaseActivity() {
 
     private lateinit var db: FirebaseFirestore
+    private lateinit var currentPlayerId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enter_room)
 
         db = FirebaseFirestore.getInstance()
+        currentPlayerId = intent.getStringExtra("playerId") ?: "ddbie"
 
         val joinButton = findViewById<ImageButton>(R.id.buttonStart)
         val inputRoomCode = findViewById<EditText>(R.id.editRoomCode)
@@ -34,11 +36,13 @@ class JoinRoomActivity : BaseActivity() {
                 val players = doc.get("players") as? List<String> ?: emptyList()
 
                 if (players.size < 4) {
-                    val assignedSlot = "Player ${players.size + 1}"
-                    roomRef.update("players", players + assignedSlot)
+                    // Add this player to the room
+                    roomRef.update("players", players + currentPlayerId)
 
                     val intent = Intent(this, WaitingActivity::class.java)
                     intent.putExtra("roomCode", roomCode)
+                    intent.putExtra("playerId", currentPlayerId)
+                    intent.putExtra("isHost", false)
                     startActivity(intent)
                     finish()
                 } else {
