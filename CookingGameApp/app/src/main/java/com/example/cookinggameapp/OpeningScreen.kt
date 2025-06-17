@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.LinearInterpolator
 import android.view.animation.OvershootInterpolator
@@ -13,6 +14,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import android.media.MediaPlayer
 
 class OpeningScreen : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,6 +25,17 @@ class OpeningScreen : BaseActivity() {
         // Start the egg drop animation
         val egg = findViewById<ImageView>(R.id.fried_egg)
         val dropAnim = AnimationUtils.loadAnimation(this, R.anim.egg_drop)
+
+        dropAnim.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation?) {
+                // Play sound here
+                val mp = MediaPlayer.create(this@OpeningScreen, R.raw.fall_down)
+                mp.start()
+            }
+            override fun onAnimationEnd(animation: Animation?) {}
+            override fun onAnimationRepeat(animation: Animation?) {}
+        })
+
         egg.startAnimation(dropAnim)
 
         // Start the teeter animation
@@ -44,7 +57,6 @@ class OpeningScreen : BaseActivity() {
         val greenBaby = findViewById<ImageView>(R.id.green_baby)
         greenBaby.post {
 
-            // Option 2: Stop at custom dp offset from left
             val offsetPx = (120 * resources.displayMetrics.density)
             val endX = offsetPx
 
