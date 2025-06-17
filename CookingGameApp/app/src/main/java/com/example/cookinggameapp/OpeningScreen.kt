@@ -13,6 +13,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import android.media.MediaPlayer
+import android.view.animation.Animation
 
 class OpeningScreen : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,6 +25,17 @@ class OpeningScreen : BaseActivity() {
         // Start the egg drop animation
         val egg = findViewById<ImageView>(R.id.fried_egg)
         val dropAnim = AnimationUtils.loadAnimation(this, R.anim.egg_drop)
+
+        dropAnim.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation?) {
+                // Play sound here
+                val mp = MediaPlayer.create(this@OpeningScreen, R.raw.fall_down)
+                mp.start()
+            }
+            override fun onAnimationEnd(animation: Animation?) {}
+            override fun onAnimationRepeat(animation: Animation?) {}
+        })
+
         egg.startAnimation(dropAnim)
 
         // Start the teeter animation
