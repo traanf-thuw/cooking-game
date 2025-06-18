@@ -126,16 +126,6 @@ class PlayGameActivity : BaseActivity() {
 
         allItems = listOf(chicken, avocado, lemon, knife, cuttingBoard, pot, stove, spoon)
 
-        // Enable drag for items this player should have
-        allItems.forEach { item ->
-            if (shouldPlayerHaveItem(item.tag.toString())) {
-                enableDrag(item)
-                item.visibility = View.VISIBLE
-            } else {
-                item.visibility = View.INVISIBLE
-            }
-        }
-
         listenToRoomState()
 
         currentRecipe = GameRecipes.allRecipes.random()
@@ -154,7 +144,6 @@ class PlayGameActivity : BaseActivity() {
     private fun initializePlayerPositions() {
         Log.d("DEBUG_TRACE", "🔥 initializePlayerPositions() called")
 
-        // Get player list from Firebase and determine positions
         db.collection("rooms").document(roomCode).get()
             .addOnSuccessListener { document ->
                 Log.d("DEBUG_TRACE", "🔥 Firebase document retrieved successfully")
@@ -168,14 +157,25 @@ class PlayGameActivity : BaseActivity() {
                 playerPosition = playerIds.indexOf(currentPlayerId)
                 if (playerPosition == -1) playerPosition = 0
 
-                // Calculate neighbors in circular arrangement
                 val totalPlayers = playerIds.size
                 leftNeighborId = playerIds[(playerPosition - 1 + totalPlayers) % totalPlayers]
                 rightNeighborId = playerIds[(playerPosition + 1) % totalPlayers]
 
                 Log.d("DEBUG_TRACE", "Player $currentPlayerId at position $playerPosition")
                 Log.d("DEBUG_TRACE", "Left neighbor: $leftNeighborId, Right neighbor: $rightNeighborId")
-                Log.d("DEBUG_TRACE", "Total players: $totalPlayers")
+
+                // ✅ Distribute items now that playerPosition is available
+                distributeItemsBasedOnRole()
+
+                allItems.forEach { item ->
+                    if (shouldPlayerHaveItem(item.tag.toString())) {
+                        enableDrag(item)
+                        item.visibility = View.VISIBLE
+                    } else {
+                        item.visibility = View.INVISIBLE
+                    }
+                }
+
             }
             .addOnFailureListener { e ->
                 Log.e("DEBUG_TRACE", "❌ Failed to get player positions", e)
@@ -185,26 +185,26 @@ class PlayGameActivity : BaseActivity() {
     private fun distributeItemsBasedOnRole() {
         when (playerPosition) {
             0 -> { // Host - has pot and ingredients
-                scatterViewsWithoutOverlap(listOf(chicken, avocado, lemon, pot))
+                scatterViewsWithoutOverlap(listOf(chicken, lemon, pot, spoon))
             }
             1 -> { // Player 1 - has knife and cutting board
                 scatterViewsWithoutOverlap(listOf(knife, cuttingBoard))
             }
             2 -> { // Player 2 - has spoon (for stirring)
-                scatterViewsWithoutOverlap(listOf(spoon))
+                scatterViewsWithoutOverlap(listOf(stove))
             }
             3 -> { // Player 3 - has stove
-                scatterViewsWithoutOverlap(listOf(stove))
+                scatterViewsWithoutOverlap(listOf(avocado))
             }
         }
     }
 
     private fun shouldPlayerHaveItem(itemTag: String): Boolean {
         return when (playerPosition) {
-            0 -> itemTag in listOf("chicken", "avocado", "lemon", "pot") // Host
+            0 -> itemTag in listOf("chicken", "lemon", "pot", "spoon") // Host
             1 -> itemTag in listOf("knife", "cuttingboard") // Player 1
-            2 -> itemTag in listOf("spoon") // Player 2
-            3 -> itemTag in listOf("stove") // Player 3
+            2 -> itemTag in listOf("stove") // Player 2
+            3 -> itemTag in listOf("avocado") // Player 3
             else -> false
         }
     }
@@ -646,41 +646,80 @@ class PlayGameActivity : BaseActivity() {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setupChopping() {
+        Log.d("DEBUG_CHOPPING", "Setting up chopping for player $playerPosition")
+
         // Only setup chopping if this player should have the knife
-        if (!shouldPlayerHaveItem("knife")) return
+        if (!shouldPlayerHaveItem("knife")) {
+            Log.d("DEBUG_CHOPPING", "Player $playerPosition should not have knife, skipping chopping setup")
+            return
+        }
+
+        Log.d("DEBUG_CHOPPING", "Player $playerPosition setting up chopping with knife")
 
         knife.setOnTouchListener { view, event ->
+            Log.d("DEBUG_CHOPPING", "Knife touch event: ${event.action}")
+
             when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    Log.d("DEBUG_CHOPPING", "Knife touched down")
+                    true
+                }
+
                 MotionEvent.ACTION_MOVE -> {
+                    Log.d("DEBUG_CHOPPING", "Knife moving")
                     val parent = view.parent as View
                     val maxX = parent.width - view.width
                     val maxY = parent.height - view.height
                     view.translationX = (event.rawX - view.width / 2).coerceIn(0f, maxX.toFloat())
                     view.translationY = (event.rawY - view.height / 2).coerceIn(0f, maxY.toFloat())
+                    true
                 }
 
                 MotionEvent.ACTION_UP -> {
-                    val targets = listOf(avocado, lemon, chicken).filter { it.visibility == View.VISIBLE }
-                    currentChopTarget = targets.firstOrNull { isViewOverlapping(knife, it) }
+                    Log.d("DEBUG_CHOPPING", "Knife released")
+
+                    // Find all visible choppable items
+                    val targets = listOf(avocado, lemon, chicken).filter {
+                        it.visibility == View.VISIBLE
+                    }
+
+                    Log.d("DEBUG_CHOPPING", "Available targets: ${targets.map { it.tag }}")
+
+                    currentChopTarget = targets.firstOrNull { target ->
+                        val isOverlapping = isViewOverlapping(knife, target)
+                        Log.d("DEBUG_CHOPPING", "Checking ${target.tag}: overlapping = $isOverlapping")
+                        isOverlapping
+                    }
 
                     if (currentChopTarget != null) {
                         chopCount++
+                        Log.d("DEBUG_CHOPPING", "Chopping ${currentChopTarget?.tag}, count: $chopCount")
+                        Toast.makeText(this@PlayGameActivity, "Chopping ${currentChopTarget?.tag}... ($chopCount/2)", Toast.LENGTH_SHORT).show()
+
                         if (chopCount >= 2) {
+                            Log.d("DEBUG_CHOPPING", "Chopping complete!")
                             currentChopTarget?.setImageResource(R.drawable.chickenleg)
                             vibrateDevice()
+
                             if (isCurrentStepInvolves("chopping")) {
+                                Log.d("DEBUG_CHOPPING", "Advancing to next step")
                                 advanceToNextStep()
                             }
                             chopCount = 0
+                            currentChopTarget = null
                         }
                     } else {
-                        Toast.makeText(this, "Place knife over an item to chop", Toast.LENGTH_SHORT).show()
+                        Log.d("DEBUG_CHOPPING", "No target found for chopping")
+                        Toast.makeText(this@PlayGameActivity, "Place knife over an item to chop", Toast.LENGTH_SHORT).show()
                         chopCount = 0
                     }
+                    true
                 }
+
+                else -> false
             }
-            true
         }
     }
 
