@@ -151,6 +151,36 @@ class DatabaseHandler {
             }
     }
 
+    fun transferItem(roomCode: String, fromPlayerId: String, toPlayerId: String, itemId: String) {
+        getPlayersMap(roomCode) { updatedPlayers ->
+            val fromItems = updatedPlayers[fromPlayerId]
+            val toItems = updatedPlayers[toPlayerId]
+
+            if (fromItems?.contains(itemId) == true) {
+                fromItems.remove(itemId)
+                toItems?.add(itemId)
+                updatePlayers(roomCode, updatedPlayers)
+            }
+        }
+    }
+
+    fun getAdjacentPlayers(
+        roomCode: String,
+        playerId: String,
+        onResult: (leftPlayer: String, rightPlayer: String) -> Unit
+    ) {
+        getPlayersMap(roomCode) { players ->
+            val playerList = players.keys.toList()
+            val index = playerList.indexOf(playerId)
+            if (index == -1 || playerList.size < 2) return@getPlayersMap
+
+            val leftIndex = if (index - 1 < 0) playerList.lastIndex else index - 1
+            val rightIndex = (index + 1) % playerList.size
+
+            onResult(playerList[leftIndex], playerList[rightIndex])
+        }
+    }
+
     private fun updatePlayers(roomCode: String, players: Map<String, List<String>>) {
         db.collection("rooms").document(roomCode)
             .update("players", players)

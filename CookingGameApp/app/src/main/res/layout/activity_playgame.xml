@@ -67,6 +67,18 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"/>
 
+    <TextView
+        android:id="@+id/textRecipeStep"
+        android:layout_width="670dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="#ffc1c1"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="Step will appear here"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+
     <FrameLayout
         android:id="@+id/potContainer"
         android:layout_width="wrap_content"

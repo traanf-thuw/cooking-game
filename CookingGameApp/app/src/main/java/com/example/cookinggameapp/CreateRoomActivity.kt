@@ -16,11 +16,13 @@ class CreateRoomActivity : BaseActivity() {
     private lateinit var roomCode: String
     private lateinit var db: FirebaseFirestore
     private lateinit var selectedDifficulty: String
+    private lateinit var currentPlayerId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_hostplayerpage)
 
+        currentPlayerId = intent.getStringExtra("playerId") ?: "Player 1"
         db = FirebaseFirestore.getInstance()
 
         // Get difficulty from previous screen
@@ -47,9 +49,11 @@ class CreateRoomActivity : BaseActivity() {
     private fun createRoomInFirestore(code: String) {
         val roomData = hashMapOf(
             "createdAt" to System.currentTimeMillis(),
-            "players" to listOf("Host"),
+            "players" to listOf(currentPlayerId),  // add host playerId here
+            "host" to currentPlayerId,             // store host id explicitly
             "gameStarted" to false,
-            "chickenDropped" to false
+            "chickenDropped" to false,
+            "currentStepIndex" to 0
         )
 
         db.collection("rooms").document(code)
@@ -104,6 +108,7 @@ class CreateRoomActivity : BaseActivity() {
             val intent = Intent(this, PlayGameActivity::class.java)
             intent.putExtra("roomCode", roomCode)
             intent.putExtra("isHost", true)
+            intent.putExtra("playerId", currentPlayerId)
             intent.putExtra("difficulty", selectedDifficulty)
             startActivity(intent)
             finish()
