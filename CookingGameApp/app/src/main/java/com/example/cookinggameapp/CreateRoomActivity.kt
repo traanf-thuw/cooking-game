@@ -22,7 +22,7 @@ class CreateRoomActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_hostplayerpage)
 
-        currentPlayerId = intent.getStringExtra("playerId") ?: generatePlayerId() // fallback just in case
+        currentPlayerId = intent.getStringExtra("playerId") ?: "Player 1"
         db = FirebaseFirestore.getInstance()
 
         // Get difficulty from previous screen
@@ -65,10 +65,10 @@ class CreateRoomActivity : BaseActivity() {
             }
     }
 
-    private fun generatePlayerId(): String {
-        // Generate a unique ID for this player
-        return "Player_${System.currentTimeMillis()}_${(1000..9999).random()}"
-    }
+//    private fun generatePlayerId(): String {
+//        // Generate a unique ID for this player
+//        return "Player_${(1000..9999).random()}"
+//    }
 
     private fun listenForPlayerUpdates(code: String) {
         db.collection("rooms").document(code)

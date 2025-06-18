@@ -16,19 +16,19 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_menu)
 
         // ✅ Generate player ID once per app launch
-        currentPlayerId = generatePlayerId()
+//        currentPlayerId = generatePlayerId()
 
         val createRoomButton = findViewById<ImageButton>(R.id.buttonCreateRoom)
         createRoomButton.setOnClickListener {
             val intent = Intent(this, SelectDifficultyActivity::class.java)
-            intent.putExtra("playerId", currentPlayerId) // ✅ pass it to next screen
+//            intent.putExtra("playerId", currentPlayerId) // ✅ pass it to next screen
             startActivity(intent)
         }
 
         val joinButton = findViewById<ImageButton>(R.id.buttonJoin)
         joinButton.setOnClickListener {
             val intent = Intent(this, JoinRoomActivity::class.java)
-            intent.putExtra("playerId", currentPlayerId) // ✅ fixed
+//            intent.putExtra("playerId", currentPlayerId) // ✅ fixed
             startActivity(intent)
         }
 
@@ -51,8 +51,8 @@ class MainActivity : BaseActivity() {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
     }
-
-    private fun generatePlayerId(): String {
-        return "Player_${System.currentTimeMillis()}_${(1000..9999).random()}"
-    }
+//
+//    private fun generatePlayerId(): String {
+//        return "Player ${(2..4).random()}"
+//    }
 }

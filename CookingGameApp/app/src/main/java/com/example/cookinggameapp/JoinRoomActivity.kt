@@ -17,7 +17,6 @@ class JoinRoomActivity : BaseActivity() {
         setContentView(R.layout.activity_enter_room)
 
         db = FirebaseFirestore.getInstance()
-        currentPlayerId = intent.getStringExtra("playerId") ?: "ddbie"
 
         val joinButton = findViewById<ImageButton>(R.id.buttonStart)
         val inputRoomCode = findViewById<EditText>(R.id.editRoomCode)
@@ -31,28 +30,34 @@ class JoinRoomActivity : BaseActivity() {
     private fun joinRoom(roomCode: String) {
         val roomRef = db.collection("rooms").document(roomCode)
 
-        roomRef.get().addOnSuccessListener { doc ->
-            if (doc.exists()) {
-                val players = doc.get("players") as? List<String> ?: emptyList()
+        db.runTransaction { transaction ->
+            val snapshot = transaction.get(roomRef)
 
-                if (players.size < 4) {
-                    // Add this player to the room
-                    roomRef.update("players", players + currentPlayerId)
-
-                    val intent = Intent(this, WaitingActivity::class.java)
-                    intent.putExtra("roomCode", roomCode)
-                    intent.putExtra("playerId", currentPlayerId)
-                    intent.putExtra("isHost", false)
-                    startActivity(intent)
-                    finish()
-                } else {
-                    Toast.makeText(this, "Room is full", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Toast.makeText(this, "Room not found", Toast.LENGTH_SHORT).show()
+            if (!snapshot.exists()) {
+                throw Exception("Room not found")
             }
-        }.addOnFailureListener {
-            Toast.makeText(this, "Error joining room", Toast.LENGTH_SHORT).show()
+
+            val players = snapshot.get("players") as? List<String> ?: emptyList()
+
+            if (players.size >= 4) {
+                throw Exception("Room is full")
+            }
+
+            val newPlayerId = "Player ${players.size + 1}"
+            val updatedPlayers = players + newPlayerId
+            transaction.update(roomRef, "players", updatedPlayers)
+
+            newPlayerId // Return the new player ID for success callback
+        }.addOnSuccessListener { newPlayerId ->
+            currentPlayerId = newPlayerId
+            val intent = Intent(this, WaitingActivity::class.java)
+            intent.putExtra("roomCode", roomCode)
+            intent.putExtra("playerId", currentPlayerId)
+            intent.putExtra("isHost", false)
+            startActivity(intent)
+            finish()
+        }.addOnFailureListener { e ->
+            Toast.makeText(this, e.message ?: "Error joining room", Toast.LENGTH_SHORT).show()
         }
     }
 }

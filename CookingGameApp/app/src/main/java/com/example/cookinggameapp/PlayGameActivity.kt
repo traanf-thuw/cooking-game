@@ -93,7 +93,7 @@ class PlayGameActivity : BaseActivity() {
         currentPlayerId = intent.getStringExtra("playerId") ?: "PlayerUnknown"
 
         // ADD THESE DEBUG LOGS
-        Log.d("DEBUG_TRACE", "🔥 PlayGameActivity onCreate()")
+        Log.d("DEBUG_TRACE", "PlayGameActivity onCreate()")
         Log.d("DEBUG_TRACE", "roomCode: '$roomCode'")
         Log.d("DEBUG_TRACE", "currentPlayerId: '$currentPlayerId'")
         Log.d("DEBUG_TRACE", "isHost: $isHost")
@@ -134,7 +134,6 @@ class PlayGameActivity : BaseActivity() {
             setupShakeDetection()
         }
 
-        // ⚠️ IMPORTANT: Initialize player positions FIRST, then setup game mechanics
         initializePlayerPositions()
     }
 
@@ -161,7 +160,6 @@ class PlayGameActivity : BaseActivity() {
                 Log.d("DEBUG_TRACE", "Player $currentPlayerId at position $playerPosition")
                 Log.d("DEBUG_TRACE", "Left neighbor: $leftNeighborId, Right neighbor: $rightNeighborId")
 
-                // ✅ NOW set up everything that depends on playerPosition
                 setupPlayerSpecificContent()
 
             }
@@ -194,7 +192,6 @@ class PlayGameActivity : BaseActivity() {
             }
         }
 
-        // ✅ NOW setup game mechanics (after playerPosition is determined)
         setupAdvancedStirring()
         setupChopping()
 
