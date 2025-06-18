@@ -38,6 +38,7 @@ class PlayGameActivity : BaseActivity() {
     private lateinit var dbHandler: DatabaseHandler
     private lateinit var currentPlayerId: String
     private var playerPosition: Int = 0 // 0=Host, 1=Player1, 2=Player2, 3=Player3
+    private lateinit var recipeStepText: TextView
 
     private lateinit var chicken: ImageView
     private lateinit var avocado: ImageView
@@ -125,6 +126,7 @@ class PlayGameActivity : BaseActivity() {
         listenToRoomState()
 
         // Setup recipe
+        recipeStepText = findViewById(R.id.textRecipeStep)
         currentRecipe = GameRecipes.allRecipes.random()
         currentStepIndex = 0
         showNextRecipeStep()
@@ -332,7 +334,6 @@ class PlayGameActivity : BaseActivity() {
         val itemId = view.tag?.toString()
         if (itemId == null) {
             Log.w("DEBUG_TRACE", "⚠️ Warning: View with no tag dropped!")
-            Toast.makeText(this, "Invalid item!", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -346,7 +347,6 @@ class PlayGameActivity : BaseActivity() {
                 // Check if neighbors are initialized
                 if (!::rightNeighborId.isInitialized || rightNeighborId.isBlank()) {
                     Log.e("DEBUG_TRACE", "❌ Right neighbor ID not initialized!")
-                    Toast.makeText(this, "Neighbors not ready yet!", Toast.LENGTH_SHORT).show()
                     return
                 }
 
@@ -355,7 +355,6 @@ class PlayGameActivity : BaseActivity() {
                 animateIntoBasket(view)
                 lastDroppedItemTag = itemId
                 dropDirection = "right"
-                Toast.makeText(this, "Item ready to send to right player!", Toast.LENGTH_SHORT).show()
             }
 
             Rect.intersects(itemBox, leftBox) -> {
@@ -363,7 +362,6 @@ class PlayGameActivity : BaseActivity() {
                 // Check if neighbors are initialized
                 if (!::leftNeighborId.isInitialized || leftNeighborId.isBlank()) {
                     Log.e("DEBUG_TRACE", "❌ Left neighbor ID not initialized!")
-                    Toast.makeText(this, "Neighbors not ready yet!", Toast.LENGTH_SHORT).show()
                     return
                 }
 
@@ -372,7 +370,6 @@ class PlayGameActivity : BaseActivity() {
                 animateIntoBasket(view)
                 lastDroppedItemTag = itemId
                 dropDirection = "left"
-                Toast.makeText(this, "Item ready to send to left player!", Toast.LENGTH_SHORT).show()
             }
 
             else -> {
@@ -429,7 +426,6 @@ class PlayGameActivity : BaseActivity() {
             .addOnSuccessListener { documentReference ->
                 Log.d("DEBUG_TRACE", "✅ SUCCESS: Item $itemId sent from $currentPlayerId to $receiverId")
                 Log.d("DEBUG_TRACE", "Document ID: ${documentReference.id}")
-                Toast.makeText(this, "Transfer sent successfully!", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { e ->
                 Log.e("DEBUG_TRACE", "❌ FAILED to transfer item", e)
@@ -445,7 +441,6 @@ class PlayGameActivity : BaseActivity() {
             .setDuration(300)
             .withEndAction {
                 view.visibility = View.INVISIBLE
-                Toast.makeText(this, "Item prepared for transfer!", Toast.LENGTH_SHORT).show()
             }.start()
     }
 
@@ -467,6 +462,17 @@ class PlayGameActivity : BaseActivity() {
                         // Mark transfer as processed
 //                        change.document.reference.delete()
                     }
+                }
+            }
+        db.collection("rooms").document(roomCode)
+            .addSnapshotListener { snapshot, e ->
+                if (e != null || snapshot == null || !snapshot.exists()) return@addSnapshotListener
+
+                val newStepIndex = snapshot.getLong("currentStepIndex")?.toInt() ?: 0
+
+                if (newStepIndex != currentStepIndex) {
+                    currentStepIndex = newStepIndex
+                    showNextRecipeStep()
                 }
             }
     }
@@ -534,7 +540,6 @@ class PlayGameActivity : BaseActivity() {
         }
     }
 
-    // Keep all your existing methods for cooking, stirring, chopping, etc.
     private fun showFireSlider() {
         if (fireSeekBar.visibility == View.VISIBLE) return
 
@@ -548,7 +553,6 @@ class PlayGameActivity : BaseActivity() {
                     fireSeekBar.postDelayed({
                         if (fireSeekBar.progress == 2 && isCooking && currentCookingItem != null) {
                             isCookingDone = true
-                            Toast.makeText(this@PlayGameActivity, "Cooking done!", Toast.LENGTH_SHORT).show()
                             if (isCurrentStepInvolves("cooking")) {
                                 advanceToNextStep()
                             }
@@ -580,17 +584,20 @@ class PlayGameActivity : BaseActivity() {
     }
 
     private fun advanceToNextStep() {
-        currentStepIndex++
-        if (currentStepIndex >= currentRecipe.steps.size) {
-            Toast.makeText(this, "🎉 Recipe complete!", Toast.LENGTH_LONG).show()
-        } else {
-            showNextRecipeStep()
-        }
+        val newStepIndex = currentStepIndex + 1
+        db.collection("rooms").document(roomCode)
+            .update("currentStepIndex", newStepIndex)
+            .addOnSuccessListener {
+                Log.d("GAME", "Advanced to step $newStepIndex")
+            }
+            .addOnFailureListener {
+                Log.e("GAME", "Failed to update step", it)
+            }
     }
 
     private fun showNextRecipeStep() {
         val step = currentRecipe.steps[currentStepIndex]
-        Toast.makeText(this, "Next: ${step.step}", Toast.LENGTH_SHORT).show()
+        recipeStepText.text = "Step ${currentStepIndex + 1}: ${step.step}"
     }
 
     private fun isViewOverlapping(view1: View, view2: View): Boolean {
@@ -661,7 +668,6 @@ class PlayGameActivity : BaseActivity() {
     private fun triggerRedFill() {
         if (redFillImage.visibility != View.VISIBLE) {
             redFillImage.visibility = View.VISIBLE
-            Toast.makeText(this, "Stirring with spoon!", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -710,7 +716,6 @@ class PlayGameActivity : BaseActivity() {
 
                     if (targets.isEmpty()) {
                         Log.w("DEBUG_CHOPPING", "⚠️ No visible targets found!")
-                        Toast.makeText(this@PlayGameActivity, "No ingredients available to chop!", Toast.LENGTH_SHORT).show()
                         return@setOnTouchListener true
                     }
 
@@ -723,13 +728,11 @@ class PlayGameActivity : BaseActivity() {
                     if (currentChopTarget != null) {
                         chopCount++
                         Log.d("DEBUG_CHOPPING", "✅ Chopping ${currentChopTarget?.tag}, count: $chopCount/2")
-                        Toast.makeText(this@PlayGameActivity, "Chopping ${currentChopTarget?.tag}... ($chopCount/2)", Toast.LENGTH_SHORT).show()
                         vibrateDevice()
 
-                        if (chopCount >= 2) {
+                        if (chopCount >= 1) {
                             Log.d("DEBUG_CHOPPING", "🎉 Chopping complete!")
                             currentChopTarget?.setImageResource(R.drawable.chickenleg)
-                            Toast.makeText(this@PlayGameActivity, "Chopping complete!", Toast.LENGTH_SHORT).show()
 
                             if (isCurrentStepInvolves("chopping")) {
                                 Log.d("DEBUG_CHOPPING", "Advancing to next recipe step")
@@ -791,7 +794,6 @@ class PlayGameActivity : BaseActivity() {
     private fun confirmItemTransfer() {
         lastDroppedItemTag?.let { itemTag ->
             val receiverId = if (dropDirection == "right") rightNeighborId else leftNeighborId
-            Toast.makeText(this, "$itemTag sent to neighbor!", Toast.LENGTH_SHORT).show()
             vibrateDevice()
             lastDroppedItemTag = null
             dropDirection = null

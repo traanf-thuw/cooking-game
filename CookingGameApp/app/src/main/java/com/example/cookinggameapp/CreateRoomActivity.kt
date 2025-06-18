@@ -52,7 +52,8 @@ class CreateRoomActivity : BaseActivity() {
             "players" to listOf(currentPlayerId),  // add host playerId here
             "host" to currentPlayerId,             // store host id explicitly
             "gameStarted" to false,
-            "chickenDropped" to false
+            "chickenDropped" to false,
+            "currentStepIndex" to 0
         )
 
         db.collection("rooms").document(code)
@@ -64,11 +65,6 @@ class CreateRoomActivity : BaseActivity() {
                 Log.e("Firestore", "❌ Failed to create room", e)
             }
     }
-
-//    private fun generatePlayerId(): String {
-//        // Generate a unique ID for this player
-//        return "Player_${(1000..9999).random()}"
-//    }
 
     private fun listenForPlayerUpdates(code: String) {
         db.collection("rooms").document(code)
