@@ -40,7 +40,7 @@ CookingGameApp/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://your-repo-url/cooking-game.git
+git clone [[https://your-repo-url/cooking-game.git]
 cd cooking-game/cooking-game/CookingGameApp
 ```
 
