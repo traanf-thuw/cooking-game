@@ -56,6 +56,19 @@
                 </FrameLayout>
             </FrameLayout>
 
+            <!-- position.png made smaller (40% screen width) -->
+            <ImageView
+                android:id="@+id/positionImage"
+                android:layout_width="500dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/position"
+                android:contentDescription="Position Image" />
+
         </LinearLayout>
     </ScrollView>
 
