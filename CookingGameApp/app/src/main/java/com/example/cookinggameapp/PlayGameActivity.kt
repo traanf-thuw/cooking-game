@@ -84,23 +84,54 @@ class PlayGameActivity : BaseActivity() {
     private lateinit var leftNeighborId: String
     private lateinit var rightNeighborId: String
 
+    private val choppedImageMap = mapOf(
+        "chicken" to R.drawable.chickenbreast,
+        "lemon" to R.drawable.lemonslide,
+        "avocado" to R.drawable.avocadoslide
+    )
+
+    private var isGameInitialized = false
+    private var isRecipeLoaded = false
+    private var isPlayersLoaded = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_playgame)
 
-        db = FirebaseFirestore.getInstance()
-        roomCode = intent.getStringExtra("roomCode") ?: return
-        isHost = intent.getBooleanExtra("isHost", false)
-        dbHandler = DatabaseHandler()
-        currentPlayerId = intent.getStringExtra("playerId") ?: "PlayerUnknown"
+        try {
+            db = FirebaseFirestore.getInstance()
+            roomCode = intent.getStringExtra("roomCode") ?: run {
+                Log.e("DEBUG_TRACE", "❌ No room code provided!")
+                finish()
+                return
+            }
 
-        // ADD THESE DEBUG LOGS
-        Log.d("DEBUG_TRACE", "PlayGameActivity onCreate()")
-        Log.d("DEBUG_TRACE", "roomCode: '$roomCode'")
-        Log.d("DEBUG_TRACE", "currentPlayerId: '$currentPlayerId'")
-        Log.d("DEBUG_TRACE", "isHost: $isHost")
+            isHost = intent.getBooleanExtra("isHost", false)
+            dbHandler = DatabaseHandler()
+            currentPlayerId = intent.getStringExtra("playerId") ?: run {
+                Log.e("DEBUG_TRACE", "❌ No player ID provided!")
+                finish()
+                return
+            }
 
-        // Init references
+            Log.d("DEBUG_TRACE", "PlayGameActivity onCreate()")
+            Log.d("DEBUG_TRACE", "roomCode: '$roomCode'")
+            Log.d("DEBUG_TRACE", "currentPlayerId: '$currentPlayerId'")
+            Log.d("DEBUG_TRACE", "isHost: $isHost")
+
+            initializeViews()
+
+            // Load recipe and players in parallel, then initialize game
+            loadRecipeFromFirebase()
+            initializePlayerPositions()
+
+        } catch (e: Exception) {
+            Log.e("DEBUG_TRACE", "❌ Error in onCreate", e)
+            finish()
+        }
+    }
+
+    private fun initializeViews() {
         chicken = findViewById<ImageView>(R.id.imageChicken).apply { tag = "chicken" }
         avocado = findViewById<ImageView>(R.id.imageAvocado).apply { tag = "avocado" }
         lemon = findViewById<ImageView>(R.id.imageLemon).apply { tag = "lemon" }
@@ -113,6 +144,7 @@ class PlayGameActivity : BaseActivity() {
         basketLeft = findViewById(R.id.imageBasketLeft)
         basketRight = findViewById(R.id.imageBasketRight)
         countdownText = findViewById(R.id.countdownText)
+        recipeStepText = findViewById(R.id.textRecipeStep)
 
         fireSeekBar = findViewById(R.id.fireSeekBar)
         fireSeekBar.visibility = View.GONE
@@ -120,24 +152,59 @@ class PlayGameActivity : BaseActivity() {
 
         allItems = listOf(chicken, avocado, lemon, knife, cuttingBoard, pot, stove, spoon)
 
-        // Setup game timer
-        setupGameTimer()
-
-        // Listen to room state
-        listenToRoomState()
-
-        // Setup recipe
-        recipeStepText = findViewById(R.id.textRecipeStep)
-        currentRecipe = GameRecipes.allRecipes.random()
-        currentStepIndex = 0
-        showNextRecipeStep()
-
-        // Only host handles shake detection
-        if (isHost) {
-            setupShakeDetection()
+        val recipeButton = findViewById<ImageButton>(R.id.buttonRecipe)
+        recipeButton.setOnClickListener {
+            val intent = Intent(this, RecipeGameActivity::class.java)
+            startActivity(intent)
         }
+    }
 
-        initializePlayerPositions()
+    private fun loadRecipeFromFirebase() {
+        Log.d("DEBUG_RECIPE", "🔥 Loading recipe from Firebase...")
+
+        db.collection("rooms").document(roomCode).get()
+            .addOnSuccessListener { document ->
+                try {
+                    if (!document.exists()) {
+                        Log.e("DEBUG_RECIPE", "❌ Room document does not exist!")
+                        finish()
+                        return@addOnSuccessListener
+                    }
+
+                    val recipeData = document.get("recipe") as? Map<String, Any>
+
+                    if (recipeData != null) {
+                        val recipeName = recipeData["name"] as? String ?: "Unknown Recipe"
+                        val stepsData = recipeData["steps"] as? List<Map<String, Any>> ?: emptyList()
+
+                        val steps = stepsData.map { stepData ->
+                            RecipeStep(
+                                step = stepData["step"] as? String ?: "",
+                                involves = (stepData["involves"] as? List<String>) ?: emptyList()
+                            )
+                        }
+
+                        currentRecipe = Recipe(name = recipeName, steps = steps)
+                        isRecipeLoaded = true
+
+                        Log.d("DEBUG_RECIPE", "✅ Recipe loaded: ${currentRecipe.name}")
+
+                        // Check if we can initialize the game now
+                        checkAndInitializeGame()
+
+                    } else {
+                        Log.e("DEBUG_RECIPE", "❌ No recipe found in room data")
+                        finish()
+                    }
+                } catch (e: Exception) {
+                    Log.e("DEBUG_RECIPE", "❌ Error parsing recipe data", e)
+                    finish()
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("DEBUG_RECIPE", "❌ Failed to load recipe from Firebase", e)
+                finish()
+            }
     }
 
     private fun initializePlayerPositions() {
@@ -145,61 +212,208 @@ class PlayGameActivity : BaseActivity() {
 
         db.collection("rooms").document(roomCode).get()
             .addOnSuccessListener { document ->
-                Log.d("DEBUG_TRACE", "🔥 Firebase document retrieved successfully")
+                try {
+                    if (!document.exists()) {
+                        Log.e("DEBUG_TRACE", "❌ Room document does not exist!")
+                        finish()
+                        return@addOnSuccessListener
+                    }
 
-                val players = document.get("players") as? List<String> ?: return@addOnSuccessListener
-                Log.d("DEBUG_TRACE", "Players in room: $players")
+                    Log.d("DEBUG_TRACE", "🔥 Firebase document retrieved successfully")
 
-                playerIds.clear()
-                playerIds.addAll(players)
+                    val players = document.get("players") as? List<String> ?: run {
+                        Log.e("DEBUG_TRACE", "❌ No players found in room!")
+                        finish()
+                        return@addOnSuccessListener
+                    }
 
-                playerPosition = playerIds.indexOf(currentPlayerId)
-                if (playerPosition == -1) playerPosition = 0
+                    Log.d("DEBUG_TRACE", "Players in room: $players")
 
-                val totalPlayers = playerIds.size
-                leftNeighborId = playerIds[(playerPosition - 1 + totalPlayers) % totalPlayers]
-                rightNeighborId = playerIds[(playerPosition + 1) % totalPlayers]
+                    playerIds.clear()
+                    playerIds.addAll(players)
 
-                Log.d("DEBUG_TRACE", "Player $currentPlayerId at position $playerPosition")
-                Log.d("DEBUG_TRACE", "Left neighbor: $leftNeighborId, Right neighbor: $rightNeighborId")
+                    playerPosition = playerIds.indexOf(currentPlayerId)
+                    if (playerPosition == -1) {
+                        Log.e("DEBUG_TRACE", "❌ Current player not found in room!")
+                        finish()
+                        return@addOnSuccessListener
+                    }
 
-                setupPlayerSpecificContent()
+                    val totalPlayers = playerIds.size
+                    leftNeighborId = playerIds[(playerPosition - 1 + totalPlayers) % totalPlayers]
+                    rightNeighborId = playerIds[(playerPosition + 1) % totalPlayers]
 
+                    Log.d("DEBUG_TRACE", "Player $currentPlayerId at position $playerPosition")
+                    Log.d("DEBUG_TRACE", "Left neighbor: $leftNeighborId, Right neighbor: $rightNeighborId")
+
+                    isPlayersLoaded = true
+
+                    // Check if we can initialize the game now
+                    checkAndInitializeGame()
+
+                } catch (e: Exception) {
+                    Log.e("DEBUG_TRACE", "❌ Error processing player positions", e)
+                    finish()
+                }
             }
             .addOnFailureListener { e ->
                 Log.e("DEBUG_TRACE", "❌ Failed to get player positions", e)
+                finish()
+            }
+    }
+
+    // Only initialize game when both recipe and players are loaded
+    private fun checkAndInitializeGame() {
+        Log.d("DEBUG_INIT", "Checking initialization: recipe=$isRecipeLoaded, players=$isPlayersLoaded, game=$isGameInitialized")
+
+        if (isRecipeLoaded && isPlayersLoaded && !isGameInitialized) {
+            Log.d("DEBUG_INIT", "✅ All data loaded, initializing game...")
+            isGameInitialized = true
+
+            try {
+                // Now safely initialize everything that depends on Firebase data
+                setupPlayerSpecificContent()
+                showNextRecipeStep()
+                setupGameTimer()
+                listenToRoomState()
+
+                // Only host handles shake detection
+                if (isHost) {
+                    setupShakeDetection()
+                }
+
+                Log.d("DEBUG_INIT", "🎉 Game initialization complete!")
+
+            } catch (e: Exception) {
+                Log.e("DEBUG_INIT", "❌ Error during game initialization", e)
+                finish()
+            }
+        }
+    }
+
+    // Update showNextRecipeStep to be safer
+    private fun showNextRecipeStep() {
+        if (!::currentRecipe.isInitialized) {
+            Log.w("RECIPE_SYNC", "Recipe not loaded yet, skipping step display")
+            return
+        }
+
+        if (currentStepIndex < currentRecipe.steps.size) {
+            val step = currentRecipe.steps[currentStepIndex]
+            recipeStepText.text = "Step ${currentStepIndex + 1}: ${step.step}"
+        } else {
+            recipeStepText.text = "Recipe Complete!"
+        }
+    }
+
+    // Update setupPlayerSpecificContent to be safer
+    private fun setupPlayerSpecificContent() {
+        if (!isPlayersLoaded) {
+            Log.w("DEBUG_SETUP", "Players not loaded yet, skipping setup")
+            return
+        }
+
+        Log.d("DEBUG_SETUP", "🔥 setupPlayerSpecificContent() for player $playerPosition")
+
+        try {
+            // Distribute items based on player role
+            distributeItemsBasedOnRole()
+
+            // Set up visibility and interactions for items
+            allItems.forEach { item ->
+                val itemTag = item.tag?.toString() ?: ""
+                val shouldHave = shouldPlayerHaveItem(itemTag)
+
+                Log.d("DEBUG_ITEMS", "Item $itemTag: player $playerPosition should have = $shouldHave")
+
+                if (shouldHave) {
+                    enableDrag(item)
+                    item.visibility = View.VISIBLE
+                    Log.d("DEBUG_ITEMS", "Enabled drag and made visible: $itemTag")
+                } else {
+                    item.visibility = View.INVISIBLE
+                    Log.d("DEBUG_ITEMS", "Made invisible: $itemTag")
+                }
+            }
+
+            setupAdvancedStirring()
+            setupChopping()
+
+            Log.d("DEBUG_SETUP", "✅ All player-specific content setup complete")
+
+        } catch (e: Exception) {
+            Log.e("DEBUG_SETUP", "❌ Error in setupPlayerSpecificContent", e)
+            finish()
+        }
+    }
+
+    // Update passItemToPlayer with better error handling
+    private fun passItemToPlayer(itemId: String, receiverId: String, direction: String) {
+        Log.d("DEBUG_TRACE", "🔥 passItemToPlayer() CALLED!")
+
+        if (!isGameInitialized) {
+            Log.w("DEBUG_TRACE", "Game not initialized yet, ignoring item pass")
+            return
+        }
+
+        // Validate required fields FIRST
+        if (currentPlayerId.isBlank() || receiverId.isBlank() || roomCode.isBlank()) {
+            Log.e("DEBUG_TRACE", "❌ ERROR: Missing required IDs!")
+            Toast.makeText(this, "Player ID error!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val transferData = mapOf<String, Any>(
+            "from" to currentPlayerId,
+            "to" to receiverId,
+            "item" to itemId,
+            "direction" to direction,
+            "timestamp" to System.currentTimeMillis()
+        )
+
+        Log.d("DEBUG_TRACE", "Writing transfer: $transferData")
+
+        val transfersRef = db.collection("rooms").document(roomCode).collection("transfers")
+
+        transfersRef.add(transferData)
+            .addOnSuccessListener { documentReference ->
+                Log.d("DEBUG_TRACE", "✅ SUCCESS: Item $itemId sent from $currentPlayerId to $receiverId")
+            }
+            .addOnFailureListener { e ->
+                Log.e("DEBUG_TRACE", "❌ FAILED to transfer item", e)
+                Toast.makeText(this, "Transfer failed: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
     // New method that runs after Firebase returns
-    private fun setupPlayerSpecificContent() {
-        Log.d("DEBUG_SETUP", "🔥 setupPlayerSpecificContent() for player $playerPosition")
-
-        // Distribute items based on player role
-        distributeItemsBasedOnRole()
-
-        // Set up visibility and interactions for items
-        allItems.forEach { item ->
-            val itemTag = item.tag?.toString() ?: ""
-            val shouldHave = shouldPlayerHaveItem(itemTag)
-
-            Log.d("DEBUG_ITEMS", "Item $itemTag: player $playerPosition should have = $shouldHave")
-
-            if (shouldHave) {
-                enableDrag(item)
-                item.visibility = View.VISIBLE
-                Log.d("DEBUG_ITEMS", "Enabled drag and made visible: $itemTag")
-            } else {
-                item.visibility = View.INVISIBLE
-                Log.d("DEBUG_ITEMS", "Made invisible: $itemTag")
-            }
-        }
-
-        setupAdvancedStirring()
-        setupChopping()
-
-        Log.d("DEBUG_SETUP", "✅ All player-specific content setup complete")
-    }
+//    private fun setupPlayerSpecificContent() {
+//        Log.d("DEBUG_SETUP", "🔥 setupPlayerSpecificContent() for player $playerPosition")
+//
+//        // Distribute items based on player role
+//        distributeItemsBasedOnRole()
+//
+//        // Set up visibility and interactions for items
+//        allItems.forEach { item ->
+//            val itemTag = item.tag?.toString() ?: ""
+//            val shouldHave = shouldPlayerHaveItem(itemTag)
+//
+//            Log.d("DEBUG_ITEMS", "Item $itemTag: player $playerPosition should have = $shouldHave")
+//
+//            if (shouldHave) {
+//                enableDrag(item)
+//                item.visibility = View.VISIBLE
+//                Log.d("DEBUG_ITEMS", "Enabled drag and made visible: $itemTag")
+//            } else {
+//                item.visibility = View.INVISIBLE
+//                Log.d("DEBUG_ITEMS", "Made invisible: $itemTag")
+//            }
+//        }
+//
+//        setupAdvancedStirring()
+//        setupChopping()
+//
+//        Log.d("DEBUG_SETUP", "✅ All player-specific content setup complete")
+//    }
 
     private fun distributeItemsBasedOnRole() {
         when (playerPosition) {
@@ -390,61 +604,61 @@ class PlayGameActivity : BaseActivity() {
         }
     }
 
-    private fun passItemToPlayer(itemId: String, receiverId: String, direction: String) {
-        Log.d("DEBUG_TRACE", "🔥 passItemToPlayer() CALLED!")
-
-        // Validate required fields FIRST
-        if (currentPlayerId.isBlank()) {
-            Log.e("DEBUG_TRACE", "❌ ERROR: currentPlayerId is blank!")
-            Toast.makeText(this, "Player ID error!", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        if (receiverId.isBlank()) {
-            Log.e("DEBUG_TRACE", "❌ ERROR: receiverId is blank!")
-            Toast.makeText(this, "Receiver ID error!", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        if (roomCode.isBlank()) {
-            Log.e("DEBUG_TRACE", "❌ ERROR: roomCode is blank!")
-            Toast.makeText(this, "Room code error!", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        // Update Firebase with the item transfer
-        val transferData = mapOf<String, Any>(
-            "from" to currentPlayerId,
-            "to" to receiverId,
-            "item" to itemId,
-            "direction" to direction,
-            "timestamp" to System.currentTimeMillis()
-        )
-
-        Log.d("DEBUG_TRACE", "=== TRANSFER DEBUG INFO ===")
-        Log.d("DEBUG_TRACE", "currentPlayerId: '$currentPlayerId'")
-        Log.d("DEBUG_TRACE", "receiverId: '$receiverId'")
-        Log.d("DEBUG_TRACE", "itemId: '$itemId'")
-        Log.d("DEBUG_TRACE", "direction: '$direction'")
-        Log.d("DEBUG_TRACE", "roomCode: '$roomCode'")
-        Log.d("DEBUG_TRACE", "transferData: $transferData")
-        Log.d("DEBUG_TRACE", "=============================")
-
-        val transfersRef = db.collection("rooms").document(roomCode).collection("transfers")
-        Log.d("DEBUG_TRACE", "Writing to Firebase path: rooms/$roomCode/transfers")
-
-        transfersRef.add(transferData)
-            .addOnSuccessListener { documentReference ->
-                Log.d("DEBUG_TRACE", "✅ SUCCESS: Item $itemId sent from $currentPlayerId to $receiverId")
-                Log.d("DEBUG_TRACE", "Document ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.e("DEBUG_TRACE", "❌ FAILED to transfer item", e)
-                Log.e("DEBUG_TRACE", "Error message: ${e.message}")
-                Log.e("DEBUG_TRACE", "Error cause: ${e.cause}")
-                Toast.makeText(this, "Transfer failed: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
+//    private fun passItemToPlayer(itemId: String, receiverId: String, direction: String) {
+//        Log.d("DEBUG_TRACE", "🔥 passItemToPlayer() CALLED!")
+//
+//        // Validate required fields FIRST
+//        if (currentPlayerId.isBlank()) {
+//            Log.e("DEBUG_TRACE", "❌ ERROR: currentPlayerId is blank!")
+//            Toast.makeText(this, "Player ID error!", Toast.LENGTH_SHORT).show()
+//            return
+//        }
+//
+//        if (receiverId.isBlank()) {
+//            Log.e("DEBUG_TRACE", "❌ ERROR: receiverId is blank!")
+//            Toast.makeText(this, "Receiver ID error!", Toast.LENGTH_SHORT).show()
+//            return
+//        }
+//
+//        if (roomCode.isBlank()) {
+//            Log.e("DEBUG_TRACE", "❌ ERROR: roomCode is blank!")
+//            Toast.makeText(this, "Room code error!", Toast.LENGTH_SHORT).show()
+//            return
+//        }
+//
+//        // Update Firebase with the item transfer
+//        val transferData = mapOf<String, Any>(
+//            "from" to currentPlayerId,
+//            "to" to receiverId,
+//            "item" to itemId,
+//            "direction" to direction,
+//            "timestamp" to System.currentTimeMillis()
+//        )
+//
+//        Log.d("DEBUG_TRACE", "=== TRANSFER DEBUG INFO ===")
+//        Log.d("DEBUG_TRACE", "currentPlayerId: '$currentPlayerId'")
+//        Log.d("DEBUG_TRACE", "receiverId: '$receiverId'")
+//        Log.d("DEBUG_TRACE", "itemId: '$itemId'")
+//        Log.d("DEBUG_TRACE", "direction: '$direction'")
+//        Log.d("DEBUG_TRACE", "roomCode: '$roomCode'")
+//        Log.d("DEBUG_TRACE", "transferData: $transferData")
+//        Log.d("DEBUG_TRACE", "=============================")
+//
+//        val transfersRef = db.collection("rooms").document(roomCode).collection("transfers")
+//        Log.d("DEBUG_TRACE", "Writing to Firebase path: rooms/$roomCode/transfers")
+//
+//        transfersRef.add(transferData)
+//            .addOnSuccessListener { documentReference ->
+//                Log.d("DEBUG_TRACE", "✅ SUCCESS: Item $itemId sent from $currentPlayerId to $receiverId")
+//                Log.d("DEBUG_TRACE", "Document ID: ${documentReference.id}")
+//            }
+//            .addOnFailureListener { e ->
+//                Log.e("DEBUG_TRACE", "❌ FAILED to transfer item", e)
+//                Log.e("DEBUG_TRACE", "Error message: ${e.message}")
+//                Log.e("DEBUG_TRACE", "Error cause: ${e.cause}")
+//                Toast.makeText(this, "Transfer failed: ${e.message}", Toast.LENGTH_SHORT).show()
+//            }
+//    }
 
     private fun animateIntoBasket(view: View) {
         view.animate()
@@ -606,10 +820,10 @@ class PlayGameActivity : BaseActivity() {
             }
     }
 
-    private fun showNextRecipeStep() {
-        val step = currentRecipe.steps[currentStepIndex]
-        recipeStepText.text = "Step ${currentStepIndex + 1}: ${step.step}"
-    }
+//    private fun showNextRecipeStep() {
+//        val step = currentRecipe.steps[currentStepIndex]
+//        recipeStepText.text = "Step ${currentStepIndex + 1}: ${step.step}"
+//    }
 
     private fun isViewOverlapping(view1: View, view2: View): Boolean {
         val rect1 = Rect()
@@ -742,13 +956,21 @@ class PlayGameActivity : BaseActivity() {
                         vibrateDevice()
 
                         if (chopCount >= 1) {
-                            Log.d("DEBUG_CHOPPING", "🎉 Chopping complete!")
-                            currentChopTarget?.setImageResource(R.drawable.chickenleg)
+                            val tag = currentChopTarget?.tag as? String
+                            val newImageRes = choppedImageMap[tag]
+
+                            if (newImageRes != null) {
+                                currentChopTarget?.setImageResource(newImageRes)
+                                Log.d("DEBUG_CHOPPING", "🎉 $tag chopped into new form!")
+                            } else {
+                                Log.w("DEBUG_CHOPPING", "No transformed image found for $tag")
+                            }
 
                             if (isCurrentStepInvolves("chopping")) {
                                 Log.d("DEBUG_CHOPPING", "Advancing to next recipe step")
                                 advanceToNextStep()
                             }
+
                             chopCount = 0
                             currentChopTarget = null
                         }

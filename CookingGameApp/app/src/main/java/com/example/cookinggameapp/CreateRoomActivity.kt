@@ -47,13 +47,24 @@ class CreateRoomActivity : BaseActivity() {
     }
 
     private fun createRoomInFirestore(code: String) {
+        val selectedRecipe = GameRecipes.allRecipes.random()
+
         val roomData = hashMapOf(
             "createdAt" to System.currentTimeMillis(),
             "players" to listOf(currentPlayerId),  // add host playerId here
             "host" to currentPlayerId,             // store host id explicitly
             "gameStarted" to false,
             "chickenDropped" to false,
-            "currentStepIndex" to 0
+            "currentStepIndex" to 0,
+            "recipe" to mapOf(
+                "name" to selectedRecipe.name,
+                "steps" to selectedRecipe.steps.map { step ->
+                    mapOf(
+                        "step" to step.step,
+                        "involves" to step.involves
+                    )
+                }
+            )
         )
 
         db.collection("rooms").document(code)
