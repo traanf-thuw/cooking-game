@@ -7,8 +7,8 @@
 
     <ImageButton
         android:id="@+id/menuImageButton"
-        android:layout_width="200dp"
-        android:layout_height="300dp"
+        android:layout_width="300dp"
+        android:layout_height="350dp"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:background="@null"

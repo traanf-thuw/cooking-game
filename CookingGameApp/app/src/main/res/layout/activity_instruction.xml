@@ -1,50 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/instructionRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FEDEB7"
-    tools:context=".InstructionActivity">
+    android:background="#FEDEB7">
 
-    <ImageView
-        android:id="@+id/recipeBoard"
+    <!-- Scrollable content -->
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:src="@drawable/recipebackground"
-        android:contentDescription="@null"
-        android:scaleType="fitCenter"
+        android:fillViewport="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="1"
-        app:layout_constraintHeight_percent="0.8" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/instructionContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/recipeBoard"
-        app:layout_constraintBottom_toBottomOf="@id/recipeBoard"
-        app:layout_constraintStart_toStartOf="@id/recipeBoard"
-        app:layout_constraintEnd_toEndOf="@id/recipeBoard"
-        app:layout_constraintVertical_bias="0.6">
+        <LinearLayout
+            android:id="@+id/instructionCardContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="24dp">
 
-        <include layout="@layout/reusable_instruction_block" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <!-- Recipe board and reusable instruction block -->
+            <FrameLayout
+                android:layout_width="500dp"
+                android:layout_height="wrap_content">
 
+                <ImageView
+                    android:id="@+id/recipeBoard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/recipebackground"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@null" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginTop="12dp">
+
+                        <include layout="@layout/reusable_instruction_block" />
+                    </LinearLayout>
+                </FrameLayout>
+            </FrameLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Floating back button (not part of scroll) -->
     <ImageButton
         android:id="@+id/backButton"
-        android:layout_width="120dp"
-        android:layout_height="60dp"
+        android:layout_width="110dp"
+        android:layout_height="50dp"
         android:background="@null"
         android:src="@drawable/back"
         android:scaleType="fitCenter"
         android:contentDescription="Back"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="20dp" />
-
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="30dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

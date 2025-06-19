@@ -1,0 +1,22 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Outer pink rounded background -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#FECBD4" /> <!-- Pink -->
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+
+    <!-- Inner cream rounded box taking ~60% height -->
+    <item
+        android:left="16dp"
+        android:top="16dp"
+        android:right="16dp"
+        android:bottom="100dp"> <!-- Adjust this to tune 60% height -->
+        <shape android:shape="rectangle">
+            <solid android:color="#FFF3D8" /> <!-- Cream -->
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+</layer-list>
