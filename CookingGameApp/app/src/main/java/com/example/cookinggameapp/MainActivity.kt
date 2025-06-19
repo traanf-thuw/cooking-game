@@ -9,50 +9,27 @@ import android.Manifest
 
 class MainActivity : BaseActivity() {
 
-    private lateinit var currentPlayerId: String
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
 
-        // ✅ Generate player ID once per app launch
-//        currentPlayerId = generatePlayerId()
+        val buttonNavigationMap = mapOf(
+            R.id.buttonCreateRoom to SelectDifficultyActivity::class.java,
+            R.id.buttonJoin to JoinRoomActivity::class.java,
+            R.id.buttonInstruction to InstructionActivity::class.java,
+            R.id.buttonSettings to SettingsActivity::class.java
+        )
 
-        val createRoomButton = findViewById<ImageButton>(R.id.buttonCreateRoom)
-        createRoomButton.setOnClickListener {
-            val intent = Intent(this, SelectDifficultyActivity::class.java)
-//            intent.putExtra("playerId", currentPlayerId) // ✅ pass it to next screen
-            startActivity(intent)
+        buttonNavigationMap.forEach { (buttonId, activityClass) ->
+            findViewById<ImageButton>(buttonId).setOnClickListener {
+                startActivity(Intent(this, activityClass))
+            }
         }
 
-        val joinButton = findViewById<ImageButton>(R.id.buttonJoin)
-        joinButton.setOnClickListener {
-            val intent = Intent(this, JoinRoomActivity::class.java)
-//            intent.putExtra("playerId", currentPlayerId) // ✅ fixed
-            startActivity(intent)
-        }
-
-        // Request location permission
         ActivityCompat.requestPermissions(
             this,
             arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
             1
         )
-
-        // Instruction button → InstructionActivity
-        val instructionButton = findViewById<ImageButton>(R.id.buttonInstruction)
-        instructionButton.setOnClickListener {
-            val intent = Intent(this, InstructionActivity::class.java)
-            startActivity(intent)
-        }
-
-        // Settings button → SettingsActivity
-        findViewById<ImageButton>(R.id.buttonSettings).setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java))
-        }
     }
-//
-//    private fun generatePlayerId(): String {
-//        return "Player ${(2..4).random()}"
-//    }
 }

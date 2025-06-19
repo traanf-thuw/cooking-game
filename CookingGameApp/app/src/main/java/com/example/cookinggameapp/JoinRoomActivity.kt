@@ -18,46 +18,28 @@ class JoinRoomActivity : BaseActivity() {
 
         db = FirebaseFirestore.getInstance()
 
-        val joinButton = findViewById<ImageButton>(R.id.buttonStart)
         val inputRoomCode = findViewById<EditText>(R.id.editRoomCode)
-
-        joinButton.setOnClickListener {
+        findViewById<ImageButton>(R.id.buttonStart).setOnClickListener {
             val roomCode = inputRoomCode.text.toString().trim().uppercase()
             joinRoom(roomCode)
         }
     }
 
     private fun joinRoom(roomCode: String) {
-        val roomRef = db.collection("rooms").document(roomCode)
-
-        db.runTransaction { transaction ->
-            val snapshot = transaction.get(roomRef)
-
-            if (!snapshot.exists()) {
-                throw Exception("Room not found")
+        RoomManager.joinRoom(db, roomCode,
+            onSuccess = { newPlayerId ->
+                currentPlayerId = newPlayerId
+                val intent = Intent(this, WaitingActivity::class.java).apply {
+                    putExtra("roomCode", roomCode)
+                    putExtra("playerId", currentPlayerId)
+                    putExtra("isHost", false)
+                }
+                startActivity(intent)
+                finish()
+            },
+            onFailure = { e ->
+                Toast.makeText(this, e.message ?: "Error joining room", Toast.LENGTH_SHORT).show()
             }
-
-            val players = snapshot.get("players") as? List<String> ?: emptyList()
-
-            if (players.size >= 4) {
-                throw Exception("Room is full")
-            }
-
-            val newPlayerId = "Player ${players.size + 1}"
-            val updatedPlayers = players + newPlayerId
-            transaction.update(roomRef, "players", updatedPlayers)
-
-            newPlayerId // Return the new player ID for success callback
-        }.addOnSuccessListener { newPlayerId ->
-            currentPlayerId = newPlayerId
-            val intent = Intent(this, WaitingActivity::class.java)
-            intent.putExtra("roomCode", roomCode)
-            intent.putExtra("playerId", currentPlayerId)
-            intent.putExtra("isHost", false)
-            startActivity(intent)
-            finish()
-        }.addOnFailureListener { e ->
-            Toast.makeText(this, e.message ?: "Error joining room", Toast.LENGTH_SHORT).show()
-        }
+        )
     }
 }

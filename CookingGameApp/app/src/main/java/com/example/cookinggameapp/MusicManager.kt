@@ -5,46 +5,34 @@ import android.media.MediaPlayer
 
 object MusicManager {
     private var mediaPlayer: MediaPlayer? = null
-    private var currentTrack: Int? = null
-    private var volume = 0.5f
-    private var isPaused = false
+    private var currentTrackResId: Int? = null
 
-    fun start(context: Context, trackResId: Int) {
-        if (mediaPlayer != null && currentTrack == trackResId && !isPaused) return
+    fun start(context: Context, resId: Int) {
+        if (mediaPlayer?.isPlaying == true && resId == currentTrackResId) return
 
         stop()
-        mediaPlayer = MediaPlayer.create(context.applicationContext, trackResId).apply {
+        mediaPlayer = MediaPlayer.create(context.applicationContext, resId).apply {
             isLooping = true
-            setVolume(volume, volume)
             start()
         }
-        currentTrack = trackResId
-        isPaused = false
-    }
-
-    fun setVolume(vol: Float) {
-        volume = vol
-        mediaPlayer?.setVolume(volume, volume)
+        currentTrackResId = resId
     }
 
     fun pause() {
-        if (mediaPlayer?.isPlaying == true) {
-            mediaPlayer?.pause()
-            isPaused = true
-        }
+        mediaPlayer?.pause()
     }
 
     fun resume() {
-        if (isPaused) {
-            mediaPlayer?.start()
-            isPaused = false
-        }
+        mediaPlayer?.start()
     }
 
     fun stop() {
         mediaPlayer?.release()
         mediaPlayer = null
-        currentTrack = null
-        isPaused = false
+        currentTrackResId = null
+    }
+
+    fun setVolume(volume: Float) {
+        mediaPlayer?.setVolume(volume, volume)
     }
 }

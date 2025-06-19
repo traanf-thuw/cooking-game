@@ -6,9 +6,6 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.firestore.FirebaseFirestore
 
 class CreateRoomActivity : BaseActivity() {
@@ -23,81 +20,40 @@ class CreateRoomActivity : BaseActivity() {
         setContentView(R.layout.activity_hostplayerpage)
 
         currentPlayerId = intent.getStringExtra("playerId") ?: "Player 1"
+        selectedDifficulty = intent.getStringExtra("difficulty") ?: "easy"
         db = FirebaseFirestore.getInstance()
 
-        // Get difficulty from previous screen
-        selectedDifficulty = intent.getStringExtra("difficulty") ?: "easy"
+        roomCode = RoomManager.generateRoomCode()
+        val recipe = GameRecipes.allRecipes.random()
 
-        // 1. Generate unique room code
-        roomCode = generateRoomCode()
-        createRoomInFirestore(roomCode)
+        RoomManager.createRoom(
+            db,
+            roomCode,
+            currentPlayerId,
+            recipe,
+            onSuccess = { findViewById<TextView>(R.id.textRoomCode).text = roomCode },
+            onFailure = { Log.e("Firestore", "❌ Failed to create room", it) }
+        )
 
-        // 2. Listen for joined players
-        listenForPlayerUpdates(roomCode)
+        RoomManager.listenForPlayers(db, roomCode) { players ->
+            updatePlayersUI(players)
+        }
 
-        // 3. Start game when host clicks start
         findViewById<ImageButton>(R.id.buttonStart).setOnClickListener {
             startGame()
         }
     }
 
-    private fun generateRoomCode(): String {
-        val chars = ('A'..'Z') + ('0'..'9')
-        return (1..6).map { chars.random() }.joinToString("")
-    }
-
-    private fun createRoomInFirestore(code: String) {
-        val selectedRecipe = GameRecipes.allRecipes.random()
-
-        val roomData = hashMapOf(
-            "createdAt" to System.currentTimeMillis(),
-            "players" to listOf(currentPlayerId),  // add host playerId here
-            "host" to currentPlayerId,             // store host id explicitly
-            "gameStarted" to false,
-            "chickenDropped" to false,
-            "currentStepIndex" to 0,
-            "recipe" to mapOf(
-                "name" to selectedRecipe.name,
-                "steps" to selectedRecipe.steps.map { step ->
-                    mapOf(
-                        "step" to step.step,
-                        "involves" to step.involves
-                    )
-                }
-            )
-        )
-
-        db.collection("rooms").document(code)
-            .set(roomData)
-            .addOnSuccessListener {
-                findViewById<TextView>(R.id.textRoomCode).text = code
-            }
-            .addOnFailureListener { e ->
-                Log.e("Firestore", "❌ Failed to create room", e)
-            }
-    }
-
-    private fun listenForPlayerUpdates(code: String) {
-        db.collection("rooms").document(code)
-            .addSnapshotListener { snapshot, _ ->
-                val players = snapshot?.get("players") as? List<*> ?: return@addSnapshotListener
-                updatePlayersUI(players)
-            }
-    }
-
-    private fun updatePlayersUI(players: List<*>) {
+    private fun updatePlayersUI(players: List<String>) {
         findViewById<TextView>(R.id.textPlayersJoined).text = "${players.size} players joined"
 
         val playerViews = listOf(
-            findViewById<TextView>(R.id.player1Button),
-            findViewById<TextView>(R.id.player2Button),
-            findViewById<TextView>(R.id.player3Button),
-            findViewById<TextView>(R.id.player4Button)
-        )
+            R.id.player1Button, R.id.player2Button, R.id.player3Button, R.id.player4Button
+        ).map { findViewById<TextView>(it) }
 
         playerViews.forEachIndexed { index, view ->
             if (index < players.size) {
-                view.text = players[index].toString()
+                view.text = players[index]
                 view.visibility = View.VISIBLE
             } else {
                 view.visibility = View.INVISIBLE
@@ -106,26 +62,22 @@ class CreateRoomActivity : BaseActivity() {
     }
 
     private fun startGame() {
-        val ref = db.collection("rooms").document(roomCode)
-        val startTime = System.currentTimeMillis()
-
-        ref.update(
+        db.collection("rooms").document(roomCode).update(
             mapOf(
                 "gameStarted" to true,
-                "start_time" to startTime,
+                "start_time" to System.currentTimeMillis(),
                 "difficulty" to selectedDifficulty
             )
         ).addOnSuccessListener {
-            val intent = Intent(this, PlayGameActivity::class.java)
-            intent.putExtra("roomCode", roomCode)
-            intent.putExtra("isHost", true)
-            intent.putExtra("playerId", currentPlayerId)
-            intent.putExtra("difficulty", selectedDifficulty)
-            startActivity(intent)
+            startActivity(Intent(this, PlayGameActivity::class.java).apply {
+                putExtra("roomCode", roomCode)
+                putExtra("isHost", true)
+                putExtra("playerId", currentPlayerId)
+                putExtra("difficulty", selectedDifficulty)
+            })
             finish()
         }.addOnFailureListener {
-            Log.e("CreateRoom", " Failed to start game", it)
+            Log.e("CreateRoom", "Failed to start game", it)
         }
     }
-
 }

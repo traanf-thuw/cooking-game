@@ -202,4 +202,32 @@ class DatabaseHandler {
                 Log.e("Firebase", "Error deleting room $roomCode: ${e.message}")
             }
     }
+
+    fun joinRoom(
+        db: FirebaseFirestore,
+        roomCode: String,
+        onSuccess: (String) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val roomRef = db.collection("rooms").document(roomCode)
+
+        db.runTransaction { transaction ->
+            val snapshot = transaction.get(roomRef)
+
+            if (!snapshot.exists()) throw Exception("Room not found")
+
+            val players = snapshot.get("players") as? List<String> ?: emptyList()
+            if (players.size >= 4) throw Exception("Room is full")
+
+            val newPlayerId = "Player ${players.size + 1}"
+            val updatedPlayers = players + newPlayerId
+            transaction.update(roomRef, "players", updatedPlayers)
+
+            newPlayerId
+        }.addOnSuccessListener { newPlayerId ->
+            onSuccess(newPlayerId)
+        }.addOnFailureListener { e ->
+            onFailure(e)
+        }
+    }
 }

@@ -17,36 +17,39 @@ class WaitingActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_waiting)
 
-        // 🔗 Initialize Firestore
         db = FirebaseFirestore.getInstance()
 
-        // 🔐 Get room code and host info from previous screen
         roomCode = intent.getStringExtra("roomCode") ?: return
         isHost = intent.getBooleanExtra("isHost", false)
         currentPlayerId = intent.getStringExtra("playerId") ?: "Unknown"
 
-        // 👂 Start listening to game start signal from Firebase
+        listenForGameStart()
+    }
+
+    private fun listenForGameStart() {
         val roomRef = db.collection("rooms").document(roomCode)
         listener = roomRef.addSnapshotListener { snapshot, _ ->
             val gameStarted = snapshot?.getBoolean("gameStarted") ?: false
-
             if (gameStarted) {
                 listener?.remove()
-
-                // 🚀 Launch game and pass room + host info
-                val intent = Intent(this, PlayGameActivity::class.java)
-                intent.putExtra("roomCode", roomCode)
-                intent.putExtra("isHost", isHost)
-                intent.putExtra("playerId", currentPlayerId)
-                startActivity(intent)
-                finish()
+                startGame()
             }
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        // 🧹 Remove listener to avoid memory leaks
+    private fun startGame() {
+        val intent = Intent(this, PlayGameActivity::class.java).apply {
+            putExtra("roomCode", roomCode)
+            putExtra("isHost", isHost)
+            putExtra("playerId", currentPlayerId)
+        }
+        startActivity(intent)
+        finish()
+    }
+
+    override fun onStop() {
+        super.onStop()
         listener?.remove()
+        listener = null
     }
 }
