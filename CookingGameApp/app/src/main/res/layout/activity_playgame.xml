@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gameCanvas"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <!-- Background -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:contentDescription="@null"
+        android:src="@drawable/background" />
+
+    <!-- Recipe Button (Top Right) -->
+    <ImageButton
+        android:id="@+id/buttonRecipe"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@null"
+        android:src="@drawable/recipebutton"
+        android:scaleType="fitCenter"
+        android:contentDescription="Recipe" />
+
+    <!-- Draggable Items -->
+    <ImageView
+        android:id="@+id/imageCuttingboard"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/cuttingboard"
+        android:contentDescription="Cutting Board" />
+
+    <ImageView
+        android:id="@+id/imageAvocado"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/avocado"
+        android:contentDescription="Avocado" />
+
+<!--    <ImageView-->
+<!--        android:id="@+id/avocadoSlide"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:src="@drawable/avocado"-->
+<!--        android:contentDescription="Avocado" />-->
+
+    <ImageView
+        android:id="@+id/imageChicken"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/chicken"
+        android:layout_margin="8dp"
+        android:visibility="visible"
+        android:contentDescription="Chicken" />
+
+    <ImageView
+        android:id="@+id/imageKnife"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/knife"
+        android:contentDescription="Knife" />
+
+    <SeekBar
+        android:id="@+id/fireSeekBar"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:max="2"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/textRecipeStep"
+        android:layout_width="670dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="#ffc1c1"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="Step will appear here"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+
+    <FrameLayout
+        android:id="@+id/potContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <ImageView
+            android:id="@+id/imagePot"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/pot"
+            android:layout_gravity="center" />
+
+        <ImageView
+            android:id="@+id/imageRedFill"
+            android:layout_width="70dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:src="@drawable/filler"
+            android:translationY="-25dp"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/imageSpoon"
+            android:layout_width="50dp"
+            android:layout_height="70dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ladle" />
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/imageLemon"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/lemon"
+        android:contentDescription="Lemon" />
+
+<!--    <ImageView-->
+<!--        android:id="@+id/lemonslide"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:src="@drawable/lemonslide"-->
+<!--        android:contentDescription="Lemon Slide" />-->
+
+    <ImageView
+        android:id="@+id/imageStove"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/stove"
+        android:contentDescription="Stove" />
+
+    <!-- Timer Section -->
+    <FrameLayout
+        android:layout_width="250dp"
+        android:layout_height="160dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="30dp">
+
+        <ImageView
+            android:id="@+id/imageTimer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/gamenameandtimer"
+            android:scaleType="fitCenter"
+            android:contentDescription="Timer" />
+
+        <TextView
+            android:id="@+id/player3Label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="22dp"
+            android:layout_marginRight="14dp"
+            android:text="Player 4"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:fontFamily="@font/baloo" />
+
+        <TextView
+            android:id="@+id/countdownText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="57dp"
+            android:layout_marginRight="5dp"
+            android:fontFamily="@font/baloo"
+            android:gravity="right"
+            android:text="00:15"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <!-- Basket Left -->
+    <FrameLayout
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="20dp">
+
+        <ImageView
+            android:id="@+id/imageBasketLeft"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/basket"
+            android:scaleType="fitCenter"
+            android:contentDescription="Basket Left" />
+
+        <TextView
+            android:id="@+id/player1Label"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Player 1"
+            android:gravity="bottom|center"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/baloo"
+            android:shadowColor="#9C1D2E"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="2" />
+    </FrameLayout>
+
+    <!-- Basket Right -->
+    <FrameLayout
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp">
+
+        <ImageView
+            android:id="@+id/imageBasketRight"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/basket"
+            android:scaleType="fitCenter"
+            android:contentDescription="Basket Right" />
+
+        <TextView
+            android:id="@+id/player2Label"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Player 3"
+            android:gravity="bottom|center"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/baloo"
+            android:shadowColor="#9C1D2E"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="2" />
+    </FrameLayout>
+
+</FrameLayout>

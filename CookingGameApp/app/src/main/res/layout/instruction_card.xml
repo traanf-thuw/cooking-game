@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="680dp"
+    android:layout_height="350dp"
+    android:layout_marginTop="32dp">
+
+    <!-- Background -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/instruction_card_background"
+        android:scaleType="fitXY"
+        android:contentDescription="@null" />
+
+    <!-- Main content -->
+    <LinearLayout
+        android:id="@+id/cardContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:paddingTop="24dp"
+        android:paddingBottom="16dp"
+        android:paddingHorizontal="24dp" />
+
+    <!-- Label container placed LAST to appear on top -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/cardLabel"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:layout_gravity="top|start"
+            android:adjustViewBounds="true"
+            android:contentDescription="Instruction Type"
+            android:elevation="10dp" />
+    </FrameLayout>
+</FrameLayout>

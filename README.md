@@ -160,10 +160,4 @@ Use:
 
 
 ## 👨‍🍳 Contributors
-
-- Yaroslav Oleinychenko 
-- Bocheng Peng 
-- Daryl Genove 
-- Thu Tran 
-- Derakhshan Radbareh 
-
+Thu Tran - Yaroslav Oleinychenko - Derakhshan Radbare - Bocheng Peng - Daryl Genove 

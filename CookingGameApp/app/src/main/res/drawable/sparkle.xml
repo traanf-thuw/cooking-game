@@ -1,0 +1,7 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:drawable="@drawable/sparkle_vector">
+
+    <target android:name="vector"
+        android:animation="@animator/sparkle_animator"/>
+</animated-vector>

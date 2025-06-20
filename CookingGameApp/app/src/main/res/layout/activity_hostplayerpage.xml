@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MenuActivity">
+
+    <!-- Background -->
+    <ImageView
+        android:id="@+id/imageBackground"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/hostbackground"
+        android:contentDescription="@null"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Start Button -->
+    <ImageButton
+        android:id="@+id/buttonStart"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginStart="24dp"
+        android:translationY="-80dp"
+        android:src="@drawable/start"
+        android:scaleType="fitXY"
+        android:background="@null"
+        android:contentDescription="Start"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <!-- Big Kirby on Right -->
+    <ImageView
+        android:id="@+id/imageKirby"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/kirby"
+        android:scaleType="fitCenter"
+        android:contentDescription="Kirby Character"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <!-- Room Code Block -->
+    <LinearLayout
+        android:id="@+id/roomCodeBlock"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/textRoomLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your Room Code"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:textColor="#FF5722"
+            android:fontFamily="@font/baloo" />
+
+        <TextView
+            android:id="@+id/textRoomCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PDFGKH"
+            android:textSize="30sp"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/baloo"
+            android:background="@drawable/rounded_room_code_bg"
+            android:padding="10dp"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
+
+    <!-- Full Bottom Row -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomRowContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Green Kirby Left -->
+        <ImageView
+            android:id="@+id/imageGreenKirbyBottom"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/greenkirby"
+            android:scaleType="fitCenter"
+            android:contentDescription="Green Kirby Bottom"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- Players Joined Overlay -->
+        <TextView
+            android:id="@+id/textPlayersJoined"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4 players\njoined"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/baloo"
+            android:maxWidth="60dp"
+            android:gravity="center"
+            android:padding="4dp"
+            android:lineSpacingExtra="0dp"
+            android:lineSpacingMultiplier="1.0"
+            app:layout_constraintTop_toTopOf="@id/imageGreenKirbyBottom"
+            app:layout_constraintEnd_toEndOf="@id/imageGreenKirbyBottom"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="12dp" />
+
+        <!-- Player Buttons Row -->
+        <LinearLayout
+            android:id="@+id/playerButtonRow"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:weightSum="4"
+            app:layout_constraintStart_toEndOf="@id/imageGreenKirbyBottom"
+            app:layout_constraintEnd_toStartOf="@id/imageBlueKirbyBottom"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:id="@+id/player1Button"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@drawable/rounded_button"
+                android:text="Player 1"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:fontFamily="@font/baloo"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/player2Button"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:gravity="center"
+                android:background="@drawable/rounded_button"
+                android:text="Player 2"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:fontFamily="@font/baloo"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/player3Button"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:gravity="center"
+                android:background="@drawable/rounded_button"
+                android:text="Player 3"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:fontFamily="@font/baloo"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/player4Button"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:gravity="center"
+                android:background="@drawable/rounded_button"
+                android:text="Player 4"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:fontFamily="@font/baloo"
+                android:clickable="true"
+                android:focusable="true" />
+        </LinearLayout>
+
+        <!-- Blue Kirby Right -->
+        <ImageView
+            android:id="@+id/imageBlueKirbyBottom"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/bluekirby"
+            android:scaleType="fitCenter"
+            android:contentDescription="Blue Kirby Bottom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
