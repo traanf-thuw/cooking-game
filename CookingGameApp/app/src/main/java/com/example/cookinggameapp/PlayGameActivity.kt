@@ -51,6 +51,7 @@ class PlayGameActivity : BaseActivity() {
     private lateinit var fireSeekBar: SeekBar
     private lateinit var stove: ImageView
     private lateinit var pot: ImageView
+    private lateinit var mixture: ImageView
 
     private var chopCount = 0
     private var currentChopTarget: ImageView? = null
@@ -167,6 +168,7 @@ class PlayGameActivity : BaseActivity() {
         pot = findViewById<ImageView>(R.id.imagePot).apply { tag = "pot" }
         stove = findViewById<ImageView>(R.id.imageStove).apply { tag = "stove" }
         spoon = findViewById<ImageView>(R.id.imageSpoon).apply { tag = "spoon" }
+        mixture = findViewById<ImageView>(R.id.imageMixture).apply { tag = "mixture" }
 
         val chickenMeat = findViewById<ImageView>(R.id.imageChickenMeat).apply {
             tag = "chicken_meat"
@@ -198,7 +200,7 @@ class PlayGameActivity : BaseActivity() {
         allItems = listOf(
             chicken, avocado, lemon,
             chickenMeat, lemonSliced, avocadoSliced,
-            knife, cuttingBoard, pot, stove, spoon
+            knife, cuttingBoard, pot, stove, spoon, mixture
         )
 
         val recipeButton = findViewById<ImageButton>(R.id.buttonRecipe)
@@ -596,7 +598,7 @@ class PlayGameActivity : BaseActivity() {
                             if (isCurrentStepInvolves("cooking")) {
                                 advanceToNextStep()
                             }
-                            currentCookingItem?.setImageResource(R.drawable.carrot)
+                            currentCookingItem?.setImageResource(R.drawable.dish)
                             vibrateDevice()
                             hideFireSlider()
                         }
@@ -649,6 +651,7 @@ class PlayGameActivity : BaseActivity() {
             spoon = spoon,
             pot = pot,
             redFillImage = redFillImage,
+            stirMixture = mixture,
             shouldPlayerHaveSpoon = shouldPlayerHaveItem("spoon"),
             vibrate = ::vibrateDevice,
             isCurrentStepInvolves = ::isCurrentStepInvolves,

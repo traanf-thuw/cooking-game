@@ -60,6 +60,13 @@
         android:src="@drawable/lemonslide" />
 
     <ImageView
+        android:id="@+id/imageMixture"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:visibility="invisible"
+        android:src="@drawable/dinner" />
+
+    <ImageView
         android:id="@+id/imageAvocadoSliced"
         android:layout_width="100dp"
         android:layout_height="100dp"

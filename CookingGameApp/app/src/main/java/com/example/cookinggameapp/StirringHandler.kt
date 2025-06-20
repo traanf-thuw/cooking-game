@@ -12,6 +12,7 @@ class StirringHandler(
     private val spoon: ImageView,
     private val pot: ImageView,
     private val redFillImage: ImageView,
+    private val stirMixture: ImageView,
     private val shouldPlayerHaveSpoon: Boolean,
     private val vibrate: () -> Unit,
     private val isCurrentStepInvolves: (String) -> Boolean,
@@ -55,7 +56,11 @@ class StirringHandler(
                         }
                     } else {
                         stirStartTime = 0
-                        if (!hasFilled) redFillImage.visibility = View.INVISIBLE
+                        if (!hasFilled) {
+                            redFillImage.visibility = View.INVISIBLE
+                            stirMixture.visibility = View.INVISIBLE
+                        }
+
                     }
                 }
             }
@@ -73,6 +78,7 @@ class StirringHandler(
 
     private fun triggerRedFill() {
         if (redFillImage.visibility != View.VISIBLE) {
+            stirMixture.visibility = View.VISIBLE
             redFillImage.visibility = View.VISIBLE
         }
     }
