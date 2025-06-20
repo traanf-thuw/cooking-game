@@ -6,7 +6,6 @@ import android.view.Gravity
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import com.example.cookinggameapp.view.InstructionCardView
 
 class InstructionActivity : BaseActivity() {
@@ -78,5 +77,21 @@ class InstructionActivity : BaseActivity() {
             )
         )
         container.addView(stirCard)
+
+        // 🔽 NEW CARD HERE 🔽
+        val mixCard = InstructionCardView(this)
+        mixCard.layoutParams = centeredParams
+        mixCard.setupCard(
+            R.drawable.how_to_pass,
+            listOf(
+                R.drawable.step1_pass to "Step 1: Place the item in the basket",
+                R.drawable.arrow to "",
+                R.drawable.step2_pass to "Step 2: Shake the phone to pass the item",
+                R.drawable.arrow to "",
+                R.drawable.step3_pass to "Step 3: The item is transferred to the other player"
+            )
+        )
+        container.addView(mixCard)
+
     }
 }
