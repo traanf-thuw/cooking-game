@@ -129,7 +129,7 @@ Make sure you grant permissions when asked.
 
 - **Firebase Firestore** – Realtime database
 - **AndroidX** – UI components and backward compatibility
-- **Kotlin Coroutines** – Background threading (if added)
+- **Kotlin Coroutines** – Background threading
 - **SensorManager** – Shake and motion detection
 - **VibratorManager** – Device feedback during gameplay
 
