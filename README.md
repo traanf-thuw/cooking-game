@@ -44,7 +44,7 @@ CookingGameApp/
 1. Clone the repository:
 ```bash
 git clone https://github.com/traanf-thuw/cooking-game.git
-cd cooking-game/cooking-game/CookingGameApp
+cd cooking-game/CookingGameApp
 ```
 
 2.  Open in Android Studio
