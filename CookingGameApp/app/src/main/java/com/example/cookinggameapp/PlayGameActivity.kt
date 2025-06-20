@@ -28,6 +28,7 @@ import android.os.Handler
 import android.os.Looper
 import android.content.Intent
 import com.google.firebase.firestore.DocumentChange
+import androidx.core.view.doOnLayout
 
 class PlayGameActivity : BaseActivity() {
 
@@ -104,6 +105,8 @@ class PlayGameActivity : BaseActivity() {
     private lateinit var recipeLoader: RecipeLoader
     private lateinit var viewScatterer: ViewScatterer
 
+    private var playerItemTags: Set<String> = emptySet()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -146,6 +149,7 @@ class PlayGameActivity : BaseActivity() {
             )
             recipeLoader.load()
             loadPlayerPositions()
+
 
         } catch (e: Exception) {
             Log.e("DEBUG_TRACE", "❌ Error in onCreate", e)
@@ -204,7 +208,6 @@ class PlayGameActivity : BaseActivity() {
         }
     }
 
-
     private fun loadPlayerPositions() {
         val manager = PlayerPositionManager(
             context = this,
@@ -218,6 +221,15 @@ class PlayGameActivity : BaseActivity() {
                 leftNeighborId = leftId
                 rightNeighborId = rightId
                 isPlayersLoaded = true
+
+                // ✅ Distribute items AFTER playerIds is populated
+                if (isHost) {
+                    saveDistributedItemsToFirestore(
+                        ingredients = listOf("chicken", "lemon", "avocado"),
+                        tools = listOf("knife", "cuttingboard", "stove"),
+                        players = playerIds
+                    )
+                }
 
                 when (playerIds.size) {
                     1 -> {
@@ -265,6 +277,16 @@ class PlayGameActivity : BaseActivity() {
             isGameInitialized = true
 
             try {
+                if (isHost) {
+                    saveDistributedItemsToFirestore(
+                        ingredients = listOf("chicken", "lemon", "avocado"),
+                        tools = listOf("knife", "cuttingboard", "stove"),
+                        players = playerIds
+                    )
+                }
+
+                distributeItemsFromFirestore()
+
                 setupPlayerSpecificContent()
                 showNextRecipeStep()
                 setupGameTimer()
@@ -308,7 +330,8 @@ class PlayGameActivity : BaseActivity() {
                     db.collection("rooms").document(roomCode).get().addOnSuccessListener { doc ->
                         if (!doc.contains("start_time")) {
                             val startTime = System.currentTimeMillis()
-                            db.collection("rooms").document(roomCode).update("start_time", startTime)
+                            db.collection("rooms").document(roomCode)
+                                .update("start_time", startTime)
                         }
                     }
                 }
@@ -338,6 +361,22 @@ class PlayGameActivity : BaseActivity() {
         }
     }
 
+    private fun setupGameTimer() {
+        gameTimerHandler = GameTimerHandler(
+            context = this,
+            db = db,
+            roomCode = roomCode,
+            countdownText = countdownText
+        ) {
+            vibrateDevice()
+            Handler(Looper.getMainLooper()).postDelayed({
+                startActivity(Intent(this@PlayGameActivity, CongratsActivity::class.java))
+            }, 3000)
+        }
+
+        gameTimerHandler.start()
+    }
+
     // Update setupPlayerSpecificContent to be safer
     private fun setupPlayerSpecificContent() {
         if (!isPlayersLoaded) {
@@ -349,7 +388,8 @@ class PlayGameActivity : BaseActivity() {
 
         try {
             // Distribute items based on player role
-            distributeItemsBasedOnRole()
+            val ingredientViews = listOf(chicken, lemon, avocado)
+            val toolViews = listOf(knife, cuttingBoard, stove)
 
             // Set up visibility and interactions for items
             allItems.forEach { item ->
@@ -382,62 +422,95 @@ class PlayGameActivity : BaseActivity() {
         }
     }
 
-    private fun distributeItemsBasedOnRole() {
-        when (playerPosition) {
-            0 -> { // Host - has pot and ingredients
-                pot.visibility = View.VISIBLE
-                spoon.visibility = View.VISIBLE
-                scatterViewsWithoutOverlap(listOf(chicken, lemon))
-            }
-            1 -> { // Player 1 - has knife and cutting board
-                scatterViewsWithoutOverlap(listOf(knife, cuttingBoard))
-            }
-            2 -> { // Player 2 - has stove (or stirring tools)
-                scatterViewsWithoutOverlap(listOf(stove))
-            }
-            3 -> { // Player 3 - has avocado or other tools
-                scatterViewsWithoutOverlap(listOf(avocado))
-            }
+    private fun saveDistributedItemsToFirestore(
+        ingredients: List<String>,
+        tools: List<String>,
+        players: List<String>
+    ) {
+        val allPlayerIndices = players.indices.toList()
+        val nonHostIndices = allPlayerIndices.filter { it != 0 }
+
+        val ingredientRecipients =
+            if (allPlayerIndices.isNotEmpty()) allPlayerIndices else listOf(0)
+        val toolRecipients = if (nonHostIndices.isNotEmpty()) nonHostIndices else listOf(0)
+
+        val distribution = mutableMapOf<Int, MutableList<String>>().withDefault { mutableListOf() }
+
+        // Distribute ingredients
+        ingredients.shuffled().forEachIndexed { index, item ->
+            val assigned = ingredientRecipients[index % ingredientRecipients.size]
+            distribution.getOrPut(assigned) { mutableListOf() }.add(item)
         }
+
+        // Distribute tools
+        tools.shuffled().forEachIndexed { index, item ->
+            val assigned = toolRecipients[index % toolRecipients.size]
+            distribution.getOrPut(assigned) { mutableListOf() }.add(item)
+        }
+
+        // Host always has pot + spoon
+        distribution.getOrPut(0) { mutableListOf() }.addAll(listOf("pot", "spoon"))
+
+        val asMap = distribution.mapKeys { it.key.toString() }
+        db.collection("rooms").document(roomCode)
+            .update("itemDistribution", asMap)
     }
+
+    private fun distributeItemsFromFirestore() {
+        db.collection("rooms").document(roomCode).get()
+            .addOnSuccessListener { document ->
+                val distributionMap = document.get("itemDistribution") as? Map<String, List<String>> ?: return@addOnSuccessListener
+                val assignedTags = distributionMap[playerPosition.toString()] ?: return@addOnSuccessListener
+
+                val tagToView = mapOf(
+                    "chicken" to chicken,
+                    "lemon" to lemon,
+                    "avocado" to avocado,
+                    "knife" to knife,
+                    "cuttingboard" to cuttingBoard,
+                    "stove" to stove,
+                    "pot" to pot,
+                    "spoon" to spoon
+                )
+
+                val scatteredViews = mutableListOf<View>()
+
+                assignedTags.forEach { itemTag ->
+                    tagToView[itemTag]?.apply {
+                        tag = itemTag
+                        visibility = View.VISIBLE
+                        enableDrag(this)
+
+                        // Only scatter non-host tools
+                        if (itemTag != "pot" && itemTag != "spoon") {
+                            scatteredViews.add(this)
+                        } else {
+                            this.doOnLayout {
+                                val parentView = this.parent as View
+                                this.x = (parentView.width / 2f - this.width / 2f)
+                                this.y = (parentView.height / 2f - this.height / 2f)
+                                this.visibility = View.VISIBLE
+                                enableDrag(this)
+                                setupAdvancedStirring()
+                            }
+                        }
+                    }
+                }
+
+                playerItemTags = assignedTags.toSet()
+                scatterViewsWithoutOverlap(scatteredViews)
+                setupChopping()
+                setupAdvancedStirring()
+            }
+            .addOnFailureListener {
+                Log.e("DistributeItems", "❌ Failed to load item distribution", it)
+            }
+    }
+
 
     private fun shouldPlayerHaveItem(itemTag: String): Boolean {
-        val shouldHave = when (playerPosition) {
-            0 -> itemTag in listOf(
-                "chicken",
-                "lemon",
-                "pot",
-                "spoon"
-            ) // Host has ingredients and knife
-            1 -> itemTag in listOf("cuttingboard", "knife") // Player 1 has cutting board and spoon
-            2 -> itemTag in listOf("stove") // Player 2 has stove
-            3 -> itemTag in listOf("avocado") // Player 3 has additional items
-            else -> false
-        }
-
-        Log.d(
-            "DEBUG_ITEMS",
-            "shouldPlayerHaveItem($itemTag) for player $playerPosition = $shouldHave"
-        )
-        return shouldHave
+        return playerItemTags.contains(itemTag) || (playerPosition == 0 && (itemTag == "pot" || itemTag == "spoon"))
     }
-
-    private fun setupGameTimer() {
-        gameTimerHandler = GameTimerHandler(
-            context = this,
-            db = db,
-            roomCode = roomCode,
-            countdownText = countdownText
-        ) {
-            vibrateDevice()
-            Handler(Looper.getMainLooper()).postDelayed({
-                startActivity(Intent(this@PlayGameActivity, CongratsActivity::class.java))
-            }, 3000)
-        }
-
-        gameTimerHandler.start()
-    }
-
 
     private fun setupShakeDetection() {
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -497,6 +570,13 @@ class PlayGameActivity : BaseActivity() {
 
     private fun handleItemDrop(view: View) {
         val itemId = view.tag?.toString() ?: return
+
+        // Block transfer if it's a cooking tool
+        if (itemId in listOf("knife", "cuttingboard", "stove", "spoon", "pot")) {
+            Log.d("ITEM_TRANSFER", "❌ Tool $itemId cannot be transferred.")
+            return
+        }
+
         itemTransferHandler.handleItemDrop(view, itemId)
     }
 
