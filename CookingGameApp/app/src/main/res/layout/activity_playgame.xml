@@ -42,13 +42,6 @@
         android:src="@drawable/avocado"
         android:contentDescription="Avocado" />
 
-<!--    <ImageView-->
-<!--        android:id="@+id/avocadoSlide"-->
-<!--        android:layout_width="100dp"-->
-<!--        android:layout_height="100dp"-->
-<!--        android:src="@drawable/avocado"-->
-<!--        android:contentDescription="Avocado" />-->
-
     <ImageView
         android:id="@+id/imageChicken"
         android:layout_width="80dp"
@@ -72,20 +65,9 @@
         android:visibility="gone"
         android:max="2"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp" />
 
-    <TextView
-        android:id="@+id/textRecipeStep"
-        android:layout_width="670dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:background="#ffc1c1"
-        android:gravity="center"
-        android:padding="12dp"
-        android:text="Step will appear here"
-        android:textColor="@android:color/white"
-        android:textSize="18sp" />
-
+    <!-- Pot Container -->
     <FrameLayout
         android:id="@+id/potContainer"
         android:layout_width="wrap_content"
@@ -122,13 +104,6 @@
         android:layout_height="100dp"
         android:src="@drawable/lemon"
         android:contentDescription="Lemon" />
-
-<!--    <ImageView-->
-<!--        android:id="@+id/lemonslide"-->
-<!--        android:layout_width="100dp"-->
-<!--        android:layout_height="100dp"-->
-<!--        android:src="@drawable/lemonslide"-->
-<!--        android:contentDescription="Lemon Slide" />-->
 
     <ImageView
         android:id="@+id/imageStove"
@@ -181,36 +156,62 @@
             android:textStyle="bold" />
     </FrameLayout>
 
-    <!-- Basket Left -->
+    <!-- Basket Left with Step Text beside it -->
     <FrameLayout
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
         android:layout_marginStart="20dp"
         android:layout_marginBottom="20dp">
 
-        <ImageView
-            android:id="@+id/imageBasketLeft"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/basket"
-            android:scaleType="fitCenter"
-            android:contentDescription="Basket Left" />
+        <!-- Basket -->
+        <FrameLayout
+            android:layout_width="100dp"
+            android:layout_height="100dp">
+
+            <ImageView
+                android:id="@+id/imageBasketLeft"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/basket"
+                android:scaleType="fitCenter"
+                android:contentDescription="Basket Left" />
+
+            <TextView
+                android:id="@+id/player1Label"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Player 1"
+                android:gravity="bottom|center"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/baloo"
+                android:shadowColor="#9C1D2E"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="2" />
+        </FrameLayout>
 
         <TextView
-            android:id="@+id/player1Label"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Player 1"
-            android:gravity="bottom|center"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            android:id="@+id/textRecipeStep"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="110dp"
+            android:layout_gravity="center_vertical"
+            android:padding="12dp"
+            android:text="Step will appear here and wrap nicely across lines without overlapping others."
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
             android:fontFamily="@font/baloo"
+            android:textStyle="bold"
             android:shadowColor="#9C1D2E"
             android:shadowDx="0"
             android:shadowDy="0"
-            android:shadowRadius="2" />
+            android:shadowRadius="3"
+            android:maxLines="3"
+            android:ellipsize="end" />
+
     </FrameLayout>
 
     <!-- Basket Right -->

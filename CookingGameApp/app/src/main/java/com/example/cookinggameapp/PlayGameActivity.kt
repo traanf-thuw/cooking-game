@@ -287,6 +287,13 @@ class PlayGameActivity : BaseActivity() {
 
                 if (isHost) {
                     setupShakeDetection()
+
+                    db.collection("rooms").document(roomCode).get().addOnSuccessListener { doc ->
+                        if (!doc.contains("start_time")) {
+                            val startTime = System.currentTimeMillis()
+                            db.collection("rooms").document(roomCode).update("start_time", startTime)
+                        }
+                    }
                 }
 
                 Log.d("DEBUG_INIT", "🎉 Game initialization complete!")
