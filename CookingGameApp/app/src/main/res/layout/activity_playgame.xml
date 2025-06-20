@@ -76,15 +76,23 @@
 
     <TextView
         android:id="@+id/textRecipeStep"
-        android:layout_width="670dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:background="#ffc1c1"
-        android:gravity="center"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="130dp"
+        android:gravity="start"
         android:padding="12dp"
         android:text="Step will appear here"
         android:textColor="@android:color/white"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:fontFamily="@font/baloo"
+        android:textStyle="bold"
+        android:shadowColor="#9C1D2E"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="3" />
+
 
     <FrameLayout
         android:id="@+id/potContainer"
