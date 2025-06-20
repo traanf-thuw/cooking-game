@@ -26,10 +26,11 @@ class GameTimerHandler(
                 "easy" -> 300_000L    // 5 minutes
                 "medium" -> 240_000L  // 4 minutes
                 "hard" -> 120_000L    // 2 minutes
-                else -> 300_000L      // default to 5 minutes
+                else -> 300_000L
             }
 
-            val elapsed = System.currentTimeMillis() - startTime
+            val now = System.currentTimeMillis()
+            val elapsed = now - startTime
             val remaining = totalTimeMillis - elapsed
             val clampedRemaining = remaining.coerceAtLeast(0L)
             val remainingSeconds = ceil(clampedRemaining / 1000.0).toInt()
