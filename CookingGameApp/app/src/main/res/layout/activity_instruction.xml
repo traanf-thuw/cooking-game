@@ -7,72 +7,88 @@
     android:layout_height="match_parent"
     android:background="#FEDEB7">
 
-    <!-- Scrollable content -->
-    <ScrollView
-        android:id="@+id/scrollView"
+    <!-- Scrollable content inside FrameLayout with custom scrollbar -->
+    <FrameLayout
+        android:id="@+id/scrollContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:fillViewport="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <LinearLayout
-            android:id="@+id/instructionCardContainer"
+        <!-- ScrollView with vertical content -->
+        <ScrollView
+            android:id="@+id/scrollView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:padding="24dp">
+            android:layout_height="match_parent"
+            android:scrollbars="none"
+            android:fillViewport="true">
 
-            <!-- Recipe board and reusable instruction block -->
-            <FrameLayout
-                android:layout_width="500dp"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/recipeBoard"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/recipebackground"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@null" />
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:layout_marginTop="12dp">
-
-                        <include layout="@layout/reusable_instruction_block" />
-                    </LinearLayout>
-                </FrameLayout>
-            </FrameLayout>
-
-            <!-- position.png made smaller (40% screen width) -->
-            <ImageView
-                android:id="@+id/positionImage"
-                android:layout_width="500dp"
+            <LinearLayout
+                android:id="@+id/instructionCardContainer"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="24dp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:src="@drawable/position"
-                android:contentDescription="Position Image" />
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:padding="24dp">
 
-        </LinearLayout>
-    </ScrollView>
+                <!-- Recipe board and reusable instruction block -->
+                <FrameLayout
+                    android:layout_width="500dp"
+                    android:layout_height="wrap_content">
 
-    <!-- Floating back button (not part of scroll) -->
+                    <ImageView
+                        android:id="@+id/recipeBoard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/recipebackground"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="@null" />
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:layout_marginTop="12dp">
+
+                            <include layout="@layout/reusable_instruction_block" />
+                        </LinearLayout>
+                    </FrameLayout>
+                </FrameLayout>
+
+                <!-- position.png made smaller -->
+                <ImageView
+                    android:id="@+id/positionImage"
+                    android:layout_width="500dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="24dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/position"
+                    android:contentDescription="Position Image" />
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- 🟡 Custom scrollbar on the left -->
+        <View
+            android:id="@+id/customScrollbar"
+            android:layout_width="12dp"
+            android:layout_height="80dp"
+            android:layout_gravity="top|end"
+            android:layout_marginStart="4dp"
+            android:background="#444444" />
+    </FrameLayout>
+
+    <!-- Floating back button -->
     <ImageButton
         android:id="@+id/backButton"
         android:layout_width="110dp"
