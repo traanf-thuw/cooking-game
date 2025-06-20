@@ -57,7 +57,6 @@ class ItemTransferHandler(
         }
 
         if (direction == null) {
-            Toast.makeText(context, "Drop on a basket to pass to neighbors!", Toast.LENGTH_SHORT).show()
             return
         }
 
