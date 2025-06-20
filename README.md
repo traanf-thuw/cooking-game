@@ -57,8 +57,16 @@ cd cooking-game/cooking-game/CookingGameApp
 
 - Connect a physical Android device or start an emulator
 - Run the app from Android Studio
+- Or Build the APK:
+
+  In Android Studio:
+
+  Go to Build > Generate App Bundles or APKs
+
+  After the build finishes, click “locate” to find the APK
 
 ---
+
 
 ## 🎮 Game Flow
 
