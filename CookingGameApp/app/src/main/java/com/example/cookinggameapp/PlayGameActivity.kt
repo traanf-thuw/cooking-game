@@ -84,6 +84,10 @@ class PlayGameActivity : BaseActivity() {
     private lateinit var leftNeighborId: String
     private lateinit var rightNeighborId: String
 
+    private lateinit var player1Label: TextView
+    private lateinit var player2Label: TextView
+    private lateinit var player3Label: TextView
+
     private val choppedImageMap = mapOf(
         "chicken" to R.drawable.chickenbreast,
         "lemon" to R.drawable.lemonslide,
@@ -165,6 +169,11 @@ class PlayGameActivity : BaseActivity() {
         countdownText = findViewById(R.id.countdownText)
         recipeStepText = findViewById(R.id.textRecipeStep)
 
+        player1Label = findViewById(R.id.player1Label)
+        player2Label = findViewById(R.id.player2Label)
+        player3Label = findViewById(R.id.player3Label)
+
+
         fireSeekBar = findViewById(R.id.fireSeekBar)
         fireSeekBar.visibility = View.GONE
         redFillImage = findViewById(R.id.imageRedFill)
@@ -192,6 +201,32 @@ class PlayGameActivity : BaseActivity() {
                 leftNeighborId = leftId
                 rightNeighborId = rightId
                 isPlayersLoaded = true
+
+                when (playerIds.size) {
+                    1 -> {
+                        player1Label.text = "You"
+                        player2Label.text = "You"
+                    }
+
+                    2 -> {
+                        val neighborId =
+                            if (leftNeighborId == currentPlayerId) rightNeighborId else leftNeighborId
+                        val label = "Player ${playerIds.indexOf(neighborId) + 1}"
+                        player1Label.text = label
+                        player2Label.text = label
+                    }
+
+                    else -> {
+                        val leftLabel = "Player ${playerIds.indexOf(leftNeighborId) + 1}"
+                        val rightLabel = "Player ${playerIds.indexOf(rightNeighborId) + 1}"
+                        player1Label.text = leftLabel
+                        player2Label.text = rightLabel
+                    }
+                }
+
+                val currentPlayerNumber = playerIds.indexOf(currentPlayerId) + 1
+                player3Label.text = "You (Player $currentPlayerNumber)"
+
                 checkAndInitializeGame()
             },
             onFailure = {
@@ -262,7 +297,6 @@ class PlayGameActivity : BaseActivity() {
             }
         }
     }
-
 
 
     // Update showNextRecipeStep to be safer

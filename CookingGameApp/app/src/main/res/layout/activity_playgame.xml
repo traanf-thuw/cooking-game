@@ -159,7 +159,7 @@
             android:layout_gravity="top|center_horizontal"
             android:layout_marginTop="22dp"
             android:layout_marginRight="14dp"
-            android:text="Player 4"
+            android:text="You"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold"
