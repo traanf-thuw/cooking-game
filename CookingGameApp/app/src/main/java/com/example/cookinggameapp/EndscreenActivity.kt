@@ -40,7 +40,7 @@ class EndscreenActivity : BaseActivity() {
 
         setupPermissionsAndCamera()
         setupUIButtons()
-        setupCameraTapToCapture()
+        setupSelfieButton()
     }
 
     private fun setupUIButtons() {
@@ -54,12 +54,6 @@ class EndscreenActivity : BaseActivity() {
 
         buttonActions.forEach { (buttonId, action) ->
             findViewById<ImageButton>(buttonId).setOnClickListener { action() }
-        }
-    }
-
-    private fun setupCameraTapToCapture() {
-        cameraPreview.setOnClickListener {
-            takePhoto()
         }
     }
 
@@ -128,14 +122,6 @@ class EndscreenActivity : BaseActivity() {
         val imageCapture = this.imageCapture ?: return
         val fileName = buildFileName("selfie_", ".jpg")
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            savePhotoWithMediaStore(imageCapture, fileName)
-        } else {
-            savePhotoToFileSystem(imageCapture, fileName)
-        }
-    }
-
-    private fun savePhotoWithMediaStore(imageCapture: ImageCapture, fileName: String) {
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
@@ -149,13 +135,6 @@ class EndscreenActivity : BaseActivity() {
         ).build()
 
         imageCapture.takePicture(outputOptions, ContextCompat.getMainExecutor(this), getCallback())
-    }
-
-    private fun savePhotoToFileSystem(imageCapture: ImageCapture, fileName: String) {
-        val photoFile = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), fileName)
-        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
-
-        imageCapture.takePicture(outputOptions, ContextCompat.getMainExecutor(this), getCallback(photoFile))
     }
 
     private fun getCallback(photoFile: File? = null): ImageCapture.OnImageSavedCallback {
@@ -230,14 +209,13 @@ class EndscreenActivity : BaseActivity() {
     companion object {
         private const val TAG = "EndscreenActivity"
         private const val REQUEST_CODE_PERMISSIONS = 10
-        private val REQUIRED_PERMISSIONS = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
-        } else {
-            arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            )
+        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+    }
+
+    private fun setupSelfieButton() {
+        val selfieButton = findViewById<ImageButton>(R.id.takeSelfieBtn)
+        selfieButton.setOnClickListener {
+            takePhoto()
         }
     }
 }

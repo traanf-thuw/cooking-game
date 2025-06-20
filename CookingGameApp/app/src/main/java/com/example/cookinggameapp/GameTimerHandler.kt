@@ -1,10 +1,7 @@
 package com.example.cookinggameapp
 
 import android.content.Context
-import android.content.Intent
 import android.os.CountDownTimer
-import android.os.Handler
-import android.os.Looper
 import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
@@ -26,13 +23,14 @@ class GameTimerHandler(
             val difficulty = document.getString("difficulty") ?: "easy"
 
             val totalTimeMillis = when (difficulty.lowercase()) {
-                "easy" -> 60_000L
-                "medium" -> 45_000L
-                "hard" -> 30_000L
-                else -> 60_000L
+                "easy" -> 300_000L    // 5 minutes
+                "medium" -> 240_000L  // 4 minutes
+                "hard" -> 120_000L    // 2 minutes
+                else -> 300_000L
             }
 
-            val elapsed = System.currentTimeMillis() - startTime
+            val now = System.currentTimeMillis()
+            val elapsed = now - startTime
             val remaining = totalTimeMillis - elapsed
             val clampedRemaining = remaining.coerceAtLeast(0L)
             val remainingSeconds = ceil(clampedRemaining / 1000.0).toInt()
@@ -51,7 +49,9 @@ class GameTimerHandler(
         countdownTimer = object : CountDownTimer((seconds * 1000).toLong(), 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val secondsLeft = millisUntilFinished / 1000
-                countdownText.text = String.format("00:%02d", secondsLeft)
+                val minutes = secondsLeft / 60
+                val seconds = secondsLeft % 60
+                countdownText.text = String.format("%02d:%02d", minutes, seconds)
             }
 
             override fun onFinish() {

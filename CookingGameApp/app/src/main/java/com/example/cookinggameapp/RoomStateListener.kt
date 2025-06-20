@@ -44,6 +44,9 @@ class RoomStateListener(
                         val direction = data["direction"] as? String ?: return@forEach
 
                         onItemReceived(itemId, fromPlayer, direction)
+
+                        // Mark transfer as processed
+                        change.document.reference.delete()
                     }
                 }
             }

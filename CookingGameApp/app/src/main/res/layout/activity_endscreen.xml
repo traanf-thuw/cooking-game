@@ -16,12 +16,8 @@
         android:src="@drawable/hostbackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <!-- Camera Preview -->
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imgGreenBaby"
@@ -46,10 +42,8 @@
         android:useDefaultMargins="true"
         app:layout_constraintBottom_toTopOf="@+id/btnHome"
         app:layout_constraintEnd_toStartOf="@+id/cameraPreview"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgGreenBaby"
-        app:layout_constraintVertical_bias="0.477">
+        app:layout_constraintTop_toBottomOf="@+id/imgGreenBaby">
 
         <ImageButton
             android:id="@+id/btnShareTwitter"
@@ -86,19 +80,15 @@
 
     <androidx.camera.view.PreviewView
         android:id="@+id/cameraPreview"
-        android:layout_width="406dp"
-        android:layout_height="269dp"
+        android:layout_width="400dp"
+        android:layout_height="0dp"
         android:background="#C0C0C0"
         app:layout_constraintDimensionRatio="16:9"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintWidth_percent="0.9"
-        tools:layout_editor_absoluteY="71dp" />
-
-    <!-- Cloud with rainbow -->
-
-    <!-- Home button -->
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintWidth_percent="0.9" />
 
     <ImageView
         android:id="@+id/dish"
@@ -108,7 +98,6 @@
         android:layout_marginEnd="92dp"
         android:contentDescription="Dish"
         android:src="@drawable/dish"
-        app:layout_constraintDimensionRatio="1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.2" />
@@ -121,10 +110,9 @@
         android:layout_marginTop="16dp"
         android:contentDescription="Cloud with rainbow"
         android:src="@drawable/cloud"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.775"
         app:layout_constraintStart_toEndOf="@+id/imgGreenBaby"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.4" />
 
     <ImageButton
@@ -135,12 +123,11 @@
         android:background="@android:color/transparent"
         android:contentDescription="Selfie"
         android:src="@drawable/take_selfie_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/cameraPreview"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.498" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/cameraPreview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
 
     <ImageButton
         android:id="@+id/btnHome"

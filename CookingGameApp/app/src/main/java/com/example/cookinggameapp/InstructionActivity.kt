@@ -3,8 +3,10 @@ package com.example.cookinggameapp
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
+import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.cookinggameapp.view.InstructionCardView
@@ -15,8 +17,8 @@ class InstructionActivity : BaseActivity() {
         setContentView(R.layout.activity_instruction)
 
         // Set "How to Play?" content
-        findViewById<TextView>(R.id.instructionTitle).text = "How to Play?"
-        findViewById<TextView>(R.id.instructionSteps).text = """
+        findViewById<TextView>(R.id.instructionTitle)?.text = "How to Play?"
+        findViewById<TextView>(R.id.instructionSteps)?.text = """
             1. Host player creates a room
             2. Other players enter the game code
             3. Host player starts the game
@@ -24,7 +26,7 @@ class InstructionActivity : BaseActivity() {
         """.trimIndent()
 
         // Back button functionality
-        findViewById<ImageButton>(R.id.backButton).setOnClickListener {
+        findViewById<ImageButton>(R.id.backButton)?.setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
         }
 
@@ -78,5 +80,21 @@ class InstructionActivity : BaseActivity() {
             )
         )
         container.addView(stirCard)
+
+        // 🔄 Sync custom scrollbar with ScrollView
+        val scrollView = findViewById<ScrollView>(R.id.scrollView)
+        val scrollbar = findViewById<View>(R.id.customScrollbar)
+
+        scrollView.viewTreeObserver.addOnScrollChangedListener {
+            val scrollY = scrollView.scrollY
+            val content = scrollView.getChildAt(0)
+            val visibleHeight = scrollView.height
+            val totalHeight = content.height
+
+            val ratio = scrollY.toFloat() / (totalHeight - visibleHeight).coerceAtLeast(1)
+            val maxTranslation = visibleHeight - scrollbar.height
+
+            scrollbar.translationY = ratio * maxTranslation
+        }
     }
 }

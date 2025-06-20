@@ -12,7 +12,7 @@ class ChoppingHandler(
     private val context: Context,
     private val knife: ImageView,
     private val choppingTargets: List<ImageView>,
-    private val choppedImageMap: Map<String, Int>,
+    private val choppedImageMap: Map<String, Pair<String, Int>>,
     private val shouldPlayerHaveKnife: Boolean,
     private val isViewOverlapping: (View, View) -> Boolean,
     private val vibrate: () -> Unit,
@@ -53,9 +53,10 @@ class ChoppingHandler(
 
                         if (chopCount >= 1) {
                             val tag = currentChopTarget?.tag as? String
-                            val newImageRes = choppedImageMap[tag]
-                            newImageRes?.let {
-                                currentChopTarget?.setImageResource(it)
+                            val chopData = choppedImageMap[tag]
+                            chopData?.let { (newTag, newImageRes) ->
+                                currentChopTarget?.setImageResource(newImageRes)
+                                currentChopTarget?.tag = newTag
                             }
 
                             if (isCurrentStepInvolves("chopping")) {
@@ -65,6 +66,7 @@ class ChoppingHandler(
                             chopCount = 0
                             currentChopTarget = null
                         }
+
                     } else {
                         Toast.makeText(context, "Place knife over an ingredient to chop", Toast.LENGTH_SHORT).show()
                         chopCount = 0
@@ -74,6 +76,15 @@ class ChoppingHandler(
 
                 else -> false
             }
+        }
+    }
+
+    private fun getChoppedTag(originalTag: String?): String? {
+        return when (originalTag) {
+            "chicken" -> "chicken_meat"
+            "avocado" -> "avocado_sliced"
+            "lemon" -> "lemon_sliced"
+            else -> null
         }
     }
 }

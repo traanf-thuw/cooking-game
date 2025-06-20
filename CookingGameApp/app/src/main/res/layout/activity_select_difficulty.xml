@@ -66,14 +66,14 @@
             android:id="@+id/hardButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             android:layout_weight="1"
             android:adjustViewBounds="true"
-            android:maxHeight="300dp"
-            android:src="@drawable/hard"
-            android:scaleType="fitCenter"
             android:background="@null"
             android:contentDescription="Hard"
-            android:layout_margin="4dp" />
+            android:maxHeight="300dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/hard" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
