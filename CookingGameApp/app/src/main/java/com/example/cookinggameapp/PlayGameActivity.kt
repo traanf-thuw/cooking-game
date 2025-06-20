@@ -89,9 +89,9 @@ class PlayGameActivity : BaseActivity() {
     private lateinit var player3Label: TextView
 
     private val choppedImageMap = mapOf(
-        "chicken" to R.drawable.chickenbreast,
-        "lemon" to R.drawable.lemonslide,
-        "avocado" to R.drawable.avocadoslide
+        "chicken" to Pair("chicken_meat", R.drawable.chickenbreast),
+        "lemon" to Pair("lemon_sliced", R.drawable.lemonslide),
+        "avocado" to Pair("avocado_sliced", R.drawable.avocadoslide)
     )
 
     private var isGameInitialized = false
@@ -164,6 +164,19 @@ class PlayGameActivity : BaseActivity() {
         stove = findViewById<ImageView>(R.id.imageStove).apply { tag = "stove" }
         spoon = findViewById<ImageView>(R.id.imageSpoon).apply { tag = "spoon" }
 
+        val chickenMeat = findViewById<ImageView>(R.id.imageChickenMeat).apply {
+            tag = "chicken_meat"
+            visibility = View.INVISIBLE
+        }
+        val lemonSliced = findViewById<ImageView>(R.id.imageLemonSliced).apply {
+            tag = "lemon_sliced"
+            visibility = View.INVISIBLE
+        }
+        val avocadoSliced = findViewById<ImageView>(R.id.imageAvocadoSliced).apply {
+            tag = "avocado_sliced"
+            visibility = View.INVISIBLE
+        }
+
         basketLeft = findViewById(R.id.imageBasketLeft)
         basketRight = findViewById(R.id.imageBasketRight)
         countdownText = findViewById(R.id.countdownText)
@@ -178,7 +191,11 @@ class PlayGameActivity : BaseActivity() {
         fireSeekBar.visibility = View.GONE
         redFillImage = findViewById(R.id.imageRedFill)
 
-        allItems = listOf(chicken, avocado, lemon, knife, cuttingBoard, pot, stove, spoon)
+        allItems = listOf(
+            chicken, avocado, lemon,
+            chickenMeat, lemonSliced, avocadoSliced,
+            knife, cuttingBoard, pot, stove, spoon
+        )
 
         val recipeButton = findViewById<ImageButton>(R.id.buttonRecipe)
         recipeButton.setOnClickListener {

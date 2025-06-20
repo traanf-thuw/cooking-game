@@ -46,6 +46,27 @@
         android:contentDescription="Avocado" />
 
     <ImageView
+        android:id="@+id/imageChickenMeat"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:visibility="invisible"
+        android:src="@drawable/chickenbreast" />
+
+    <ImageView
+        android:id="@+id/imageLemonSliced"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:visibility="invisible"
+        android:src="@drawable/lemonslide" />
+
+    <ImageView
+        android:id="@+id/imageAvocadoSliced"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:visibility="invisible"
+        android:src="@drawable/avocadoslide" />
+
+    <ImageView
         android:id="@+id/imageChicken"
         android:layout_width="80dp"
         android:layout_height="80dp"
