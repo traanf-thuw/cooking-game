@@ -2,8 +2,6 @@ package com.example.cookinggameapp
 
 import android.content.Context
 import android.util.Log
-import com.example.cookinggameapp.Recipe
-import com.example.cookinggameapp.RecipeStep
 import com.google.firebase.firestore.FirebaseFirestore
 
 class RecipeLoader(
@@ -49,6 +47,42 @@ class RecipeLoader(
             }
             .addOnFailureListener {
                 Log.e("RecipeLoader", "❌ Firebase failure: $it")
+                onFailure()
+            }
+    }
+
+    fun loadRandom() {
+        db.collection("recipes").get()
+            .addOnSuccessListener { snapshot ->
+                try {
+                    val documents = snapshot.documents
+                    if (documents.isEmpty()) {
+                        Log.e("RecipeLoader", "❌ No recipes available")
+                        onFailure()
+                        return@addOnSuccessListener
+                    }
+
+                    val randomDoc = documents.random()
+                    val name = randomDoc.getString("name") ?: "Unnamed Recipe"
+                    val stepsData = randomDoc.get("steps") as? List<Map<String, Any>> ?: emptyList()
+
+                    val steps = stepsData.map {
+                        RecipeStep(
+                            step = it["step"] as? String ?: "",
+                            involves = it["involves"] as? List<String> ?: emptyList()
+                        )
+                    }
+
+                    val recipe = Recipe(name, steps)
+                    Log.d("RecipeLoader", "✅ Loaded random recipe: ${recipe.name}")
+                    onLoaded(recipe)
+                } catch (e: Exception) {
+                    Log.e("RecipeLoader", "❌ Error loading random recipe", e)
+                    onFailure()
+                }
+            }
+            .addOnFailureListener {
+                Log.e("RecipeLoader", "❌ Firebase failure in loadRandom: $it")
                 onFailure()
             }
     }

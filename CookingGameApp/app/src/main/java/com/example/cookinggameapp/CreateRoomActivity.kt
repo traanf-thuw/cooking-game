@@ -22,26 +22,33 @@ class CreateRoomActivity : BaseActivity() {
         currentPlayerId = intent.getStringExtra("playerId") ?: "Player 1"
         selectedDifficulty = intent.getStringExtra("difficulty") ?: "easy"
         db = FirebaseFirestore.getInstance()
-
         roomCode = RoomManager.generateRoomCode()
-        val recipe = GameRecipes.allRecipes.random()
 
-        RoomManager.createRoom(
-            db,
-            roomCode,
-            currentPlayerId,
-            recipe,
-            onSuccess = { findViewById<TextView>(R.id.textRoomCode).text = roomCode },
-            onFailure = { Log.e("Firestore", "❌ Failed to create room", it) }
+        val recipeLoader = RecipeLoader(
+            context = this,
+            db = db,
+            roomCode = roomCode,
+            onLoaded = { recipe ->
+                RoomManager.createRoom(
+                    db = db,
+                    code = roomCode,
+                    hostId = currentPlayerId,
+                    recipe = recipe,
+                    onSuccess = {
+                        findViewById<TextView>(R.id.textRoomCode).text = roomCode
+                        RoomManager.listenForPlayers(db, roomCode) { players -> updatePlayersUI(players) }
+                        findViewById<ImageButton>(R.id.buttonStart).setOnClickListener { startGame() }
+                    },
+                    onFailure = { Log.e("Firestore", "❌ Failed to create room", it) }
+                )
+            },
+            onFailure = {
+                Log.e("RecipeLoader", "❌ Failed to load random recipe")
+                finish()
+            }
         )
 
-        RoomManager.listenForPlayers(db, roomCode) { players ->
-            updatePlayersUI(players)
-        }
-
-        findViewById<ImageButton>(R.id.buttonStart).setOnClickListener {
-            startGame()
-        }
+        recipeLoader.loadRandom()
     }
 
     private fun updatePlayersUI(players: List<String>) {
