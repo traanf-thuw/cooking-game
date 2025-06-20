@@ -368,18 +368,17 @@ class PlayGameActivity : BaseActivity() {
     private fun distributeItemsBasedOnRole() {
         when (playerPosition) {
             0 -> { // Host - has pot and ingredients
-                scatterViewsWithoutOverlap(listOf(chicken, lemon, pot, spoon))
+                pot.visibility = View.VISIBLE
+                spoon.visibility = View.VISIBLE
+                scatterViewsWithoutOverlap(listOf(chicken, lemon))
             }
-
             1 -> { // Player 1 - has knife and cutting board
                 scatterViewsWithoutOverlap(listOf(knife, cuttingBoard))
             }
-
-            2 -> { // Player 2 - has spoon (for stirring)
+            2 -> { // Player 2 - has stove (or stirring tools)
                 scatterViewsWithoutOverlap(listOf(stove))
             }
-
-            3 -> { // Player 3 - has stove
+            3 -> { // Player 3 - has avocado or other tools
                 scatterViewsWithoutOverlap(listOf(avocado))
             }
         }
