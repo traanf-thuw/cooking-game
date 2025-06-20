@@ -128,11 +128,19 @@ class EndscreenActivity : BaseActivity() {
         val imageCapture = this.imageCapture ?: return
         val fileName = buildFileName("selfie_", ".jpg")
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            savePhotoWithMediaStore(imageCapture, fileName)
-        } else {
-            savePhotoToFileSystem(imageCapture, fileName)
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
         }
+
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(
+            contentResolver,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            contentValues
+        ).build()
+
+        imageCapture.takePicture(outputOptions, ContextCompat.getMainExecutor(this), getCallback())
     }
 
     private fun savePhotoWithMediaStore(imageCapture: ImageCapture, fileName: String) {
@@ -230,14 +238,6 @@ class EndscreenActivity : BaseActivity() {
     companion object {
         private const val TAG = "EndscreenActivity"
         private const val REQUEST_CODE_PERMISSIONS = 10
-        private val REQUIRED_PERMISSIONS = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
-        } else {
-            arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-        }
+        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
     }
 }
