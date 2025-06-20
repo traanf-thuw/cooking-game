@@ -1,6 +1,7 @@
+
 # 🍳 Cooking Game App (Kotlin - Android)
 
-A multiplayer cooking game where players complete recipe tasks using drag-and-drop, motion gestures, and real-time room-based sessions. Developed entirely in Kotlin for Android with Firebase integration.
+A multiplayer cooking game where players complete recipe tasks using drag-and-drop, motion gestures, and real-time communication. Built in Kotlin using Android SDK and Firebase Firestore for multiplayer sync.
 
 ---
 
@@ -12,10 +13,15 @@ CookingGameApp/
 │   ├── src/
 │   │   ├── main/
 │   │   │   ├── java/com/example/cookinggameapp/
+│   │   │   │   ├── MainActivity.kt
+│   │   │   │   ├── CreateRoomActivity.kt
+│   │   │   │   ├── JoinRoomActivity.kt
+│   │   │   │   ├── SelectDifficultyActivity.kt
+│   │   │   │   └── PlayGameActivity.kt
 │   │   │   ├── res/layout/
-│   │   │   ├── res/drawable/
-│   │   │   └── AndroidManifest.xml
-│   ├── build.gradle.kts
+│   │   │   │   └── activity_playgame.xml
+│   │   │   └── res/drawable/
+│   │   └── AndroidManifest.xml
 ├── build.gradle.kts
 ├── settings.gradle.kts
 └── README.md
@@ -27,137 +33,101 @@ CookingGameApp/
 
 ### 🧰 Prerequisites
 
-- Android Studio Hedgehog (or later)
+- Android Studio Hedgehog or newer
 - Android SDK 35+
-- Kotlin Plugin
-- Emulator or Android phone (API 24+)
-- Firebase project (with Firestore enabled)
+- Kotlin plugin
+- Emulator or physical device (API 24+)
+- Firebase Project with Firestore enabled
 
----
+### 🧪 Steps to Run the Project
 
-## 🧪 Steps to Run the Project
-
-### 1. Clone the Repository
-
+1. Clone the repository:
 ```bash
 git clone https://github.com/traanf-thuw/cooking-game.git
 cd cooking-game/cooking-game/CookingGameApp
 ```
 
-### 2. Open in Android Studio
+2.  Open in Android Studio
 
 - Open Android Studio
 - File → Open → Select the `CookingGameApp` folder
 - Wait for Gradle sync to complete
 
-### 3. Add Firebase Configuration
-
-1. Go to [Firebase Console](https://console.firebase.google.com)
-2. Create a new project (e.g., `CookingGameApp`)
-3. Register an Android app with package name: `com.example.cookinggameapp`
-4. Download the `google-services.json` file
-5. Place it in:
-
-```
-app/src/main/google-services.json
-```
-
-6. Enable Firestore in Firebase Console
-
-### 4. Build and Run
+3. Build and Run
 
 - Connect a physical Android device or start an emulator
 - Run the app from Android Studio
 
 ---
 
-## 🔑 Permissions Required
+## 🎮 Game Flow
 
-The game requests:
+### MainActivity.kt
+- Loads the main menu layout (`activity_menu.xml`)
+- Lets players **create** or **join** rooms
+- Hosts proceed to difficulty selection
 
-- `ACCESS_FINE_LOCATION` – Needed for Nearby communication
-- `INTERNET` – For Firebase
-- `CAMERA` – (optional) for future features
+### SelectDifficultyActivity.kt
+- Lets host pick between Easy, Medium, or Hard
+- Difficulty affects countdown timer in gameplay
+
+### CreateRoomActivity.kt & JoinRoomActivity.kt
+- `CreateRoomActivity` sets up a new room in Firestore
+- `JoinRoomActivity` connects to existing room via 6-letter code
+- Shared room ID + timestamp sync all players in real time
+
+### PlayGameActivity.kt
+- Main game screen logic
+- Implements:
+  - Drag-and-drop interaction
+  - Motion gesture input (device shake via SensorManager)
+  - Cooking animations
+  - Chopping and stirring detection
+  - Countdown timer using difficulty
+  - Firestore syncing for game state
+  - Vibration feedback
+
+---
+
+## 📦 Important Files
+
+| File                                      | Description                                |
+|-------------------------------------------|--------------------------------------------|
+| `MainActivity.kt`                         | Entry point with options to host/join      |
+| `SelectDifficultyActivity.kt`             | Game difficulty selection                  |
+| `CreateRoomActivity.kt`, `JoinRoomActivity.kt` | Multiplayer session logic             |
+| `PlayGameActivity.kt`                     | Core gameplay, UI + game loop              |
+| `activity_playgame.xml`                   | Layout for PlayGame screen                 |
+| `drawable/`                               | Game graphics: ingredients, tools, etc.    |
+
+---
+
+## 🔐 Permissions Required
+
+This app requires the following permissions for full functionality:
+
+- **Internet** – For multiplayer and network communication.
+- **Camera** – Used for the game feature of taking photo.
+- **Vibration** – Haptic feedback during gameplay.
+- **Wake Lock** – Keeps screen active during game sessions.
+- **Network State Access** – Checks online status before connecting.
+- **Read/Write External Storage** – Load or save user-generated content or assets.
 
 Make sure you grant permissions when asked.
 
 ---
 
-## 🎮 Game Flow
+## 📚 Libraries Used
 
-### MainActivity.kt
-
-- Loads `activity_menu.xml`
-- Lets player **create** or **join** rooms
-- Room creation triggers `SelectDifficultyActivity.kt`
-- Multiplayer sync is done using Firebase Firestore
-
-### PlayGameActivity.kt
-
-- Displays animated cooking tools
-- Implements drag-and-drop gestures
-- Responds to device shake, touch, and motion
-
-### Room Logic
-
-- `CreateRoomActivity` creates Firestore doc with timestamp
-- `JoinRoomActivity` reads from Firestore using room code
-- Shared room ID and timer used to synchronize gameplay
+- **Firebase Firestore** – Realtime database
+- **AndroidX** – UI components and backward compatibility
+- **Kotlin Coroutines** – Background threading (if added)
+- **SensorManager** – Shake and motion detection
+- **VibratorManager** – Device feedback during gameplay
 
 ---
 
-## 🧩 Important Files
+## 🛠️ Authors
 
-| File                                  | Description                         |
-|---------------------------------------|-------------------------------------|
-| `MainActivity.kt`                     | Entry screen with room options      |
-| `PlayGameActivity.kt`                 | Main gameplay logic                 |
-| `SelectDifficultyActivity.kt`         | Difficulty selection                |
-| `CreateRoomActivity.kt`, `JoinRoomActivity.kt` | Multiplayer session handling |
-| `activity_playgame.xml`              | Core UI layout for the game screen  |
-| `drawable/`                           | Game assets: food, tools, backgrounds |
-
----
-
-## 📦 Dependencies
-
-From `app/build.gradle.kts`:
-
-- `androidx.compose.material3`
-- `androidx.constraintlayout`
-- `androidx.camera:camera-core`
-- `com.google.firebase:firebase-firestore`
-- `com.google.android.gms:play-services-nearby`
-
-Firebase BOM ensures version alignment.
-
----
-
-## 🔬 Testing
-
-Testing is stubbed. Tests can be added in:
-
-```
-app/src/test/java/
-```
-
-Use:
-
-```bash
-./gradlew test
-```
-
----
-
-## 📝 Notes
-
-- All assets are stored in `res/drawable/`
-- Room code is alphanumeric, auto-generated
-- Game logic is centralized in `PlayGameActivity`
-- Device shake = sync action trigger (e.g. drop item)
-
----
-
-
-## 👨‍🍳 Contributors
 Thu Tran - Yaroslav Oleinychenko - Derakhshan Radbare - Bocheng Peng - Daryl Genove 
+
