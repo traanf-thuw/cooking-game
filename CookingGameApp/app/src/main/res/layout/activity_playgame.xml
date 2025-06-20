@@ -4,6 +4,9 @@
     android:id="@+id/gameCanvas"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:descendantFocusability="afterDescendants"
     tools:context=".MainActivity">
 
     <!-- Background -->
@@ -74,7 +77,9 @@
         android:layout_height="120dp"
         android:layout_gravity="center"
         android:layout_marginTop="60dp"
-        android:layout_marginBottom="100dp">
+        android:layout_marginBottom="100dp"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
         <ImageView
             android:id="@+id/imagePot"
@@ -92,13 +97,6 @@
             android:src="@drawable/filler"
             android:translationY="-25dp"
             android:visibility="invisible" />
-
-        <ImageView
-            android:id="@+id/imageSpoon"
-            android:layout_width="50dp"
-            android:layout_height="70dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ladle" />
     </FrameLayout>
 
     <ImageView
@@ -248,5 +246,13 @@
             android:shadowDy="0"
             android:shadowRadius="2" />
     </FrameLayout>
-
+    <ImageView
+        android:id="@+id/imageSpoon"
+        android:layout_width="50dp"
+        android:layout_height="70dp"
+        android:src="@drawable/ladle"
+        android:contentDescription="Spoon"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:focusable="true" />
 </FrameLayout>
