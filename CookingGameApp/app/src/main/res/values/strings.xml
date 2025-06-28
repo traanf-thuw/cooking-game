@@ -41,6 +41,22 @@
     <string name="recipe_name_display">Recipe Name</string>
     <string name="steps_display">Steps...</string>
     <string name="recipe_description">Recipe</string>
+    <string name="cutting_board">Cutting Board</string>
+    <string name="avocado">Avocado</string>
+    <string name="chicken">Chicken</string>
+    <string name="knife">Knife</string>
+    <string name="pot">Pot</string>
+    <string name="lemon">Lemon</string>
+    <string name="stove">Stove</string>
+    <string name="timer">Timer</string>
+    <string name="you">You</string>
+    <string name="_00_15">00:15</string>
+    <string name="basket_left">Basket Left</string>
+    <string name="player_1">Player 1</string>
+    <string name="step_will_appear_here_and_wrap_nicely_across_lines_without_overlapping_others">Step will appear here and wrap nicely across lines without overlapping others.</string>
+    <string name="basket_right">Basket Right</string>
+    <string name="player_3">Player 3</string>
+    <string name="spoon">Spoon</string>
     <string-array name="involves_options">
         <item>Select step type…</item>
         <item>chopping</item>
