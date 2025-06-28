@@ -51,12 +51,12 @@
                         android:layout_height="match_parent">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="217dp"
+                            android:layout_height="145dp"
                             android:layout_gravity="center"
-                            android:orientation="vertical"
+                            android:layout_marginTop="12dp"
                             android:gravity="center"
-                            android:layout_marginTop="12dp">
+                            android:orientation="vertical">
 
                             <include layout="@layout/reusable_instruction_block" />
                         </LinearLayout>

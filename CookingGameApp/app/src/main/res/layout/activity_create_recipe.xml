@@ -60,7 +60,7 @@
 
             <Spinner
                 android:id="@+id/spinnerStep1Involves"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:entries="@array/involves_options" />
 
@@ -91,7 +91,7 @@
 
             <Spinner
                 android:id="@+id/spinnerStep2Involves"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:entries="@array/involves_options" />
 
@@ -122,7 +122,7 @@
 
             <Spinner
                 android:id="@+id/spinnerStep3Involves"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:entries="@array/involves_options" />
 
@@ -153,7 +153,7 @@
 
             <Spinner
                 android:id="@+id/spinnerStep4Involves"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:entries="@array/involves_options" />
 
@@ -161,7 +161,9 @@
                 android:id="@+id/editStep4Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:autofillHints="what_to_do_4"
                 android:hint="@string/step_4_what_to_do"
+                android:inputType="text"
                 android:textColor="#000"
                 android:layout_marginTop="8dp"/>
         </LinearLayout>

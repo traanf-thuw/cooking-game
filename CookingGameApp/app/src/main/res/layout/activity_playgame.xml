@@ -28,7 +28,7 @@
         android:background="@null"
         android:src="@drawable/recipebutton"
         android:scaleType="fitCenter"
-        android:contentDescription="Recipe" />
+        android:contentDescription="@string/recipe_description" />
 
     <!-- Draggable Items -->
     <ImageView

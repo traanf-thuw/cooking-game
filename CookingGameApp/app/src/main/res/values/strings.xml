@@ -38,8 +38,11 @@
     <string name="add_delete_recipe">Add / Delete Recipe</string>
     <string name="add_recipe">Add Recipe</string>
     <string name="delete_recipe">Delete Recipe</string>
+    <string name="recipe_name_display">Recipe Name</string>
+    <string name="steps_display">Steps...</string>
+    <string name="recipe_description">Recipe</string>
     <string-array name="involves_options">
-        <item>Select step type...</item>
+        <item>Select step type…</item>
         <item>chopping</item>
         <item>cooking</item>
         <item>stirring</item>
