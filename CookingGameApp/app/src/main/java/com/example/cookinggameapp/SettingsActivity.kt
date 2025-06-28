@@ -36,10 +36,16 @@ class SettingsActivity : BaseActivity() {
         val savedVolume = MusicPreferences.getVolumeRaw(this)
         volumeSeekBar.progress = savedVolume
 
+        // Disable volume control if music is off
+        val isMusicOn = MusicPreferences.isMusicEnabled(this)
+        volumeSeekBar.isEnabled = isMusicOn
+
         volumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                MusicPreferences.setVolumeRaw(this@SettingsActivity, progress)
-                MusicManager.setVolume(progress / 100f)
+                if (isMusicOn) {
+                    MusicPreferences.setVolumeRaw(this@SettingsActivity, progress)
+                    MusicManager.setVolume(progress)
+                }
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -63,7 +69,7 @@ class SettingsActivity : BaseActivity() {
 
                 trackMap[selectedTrack]?.let { resId ->
                     MusicManager.start(applicationContext, resId)
-                    MusicManager.setVolume(volumeSeekBar.progress / 100f)
+                    MusicManager.setVolume(volumeSeekBar.progress)
                 }
 
                 Toast.makeText(applicationContext, "Playing: $selectedTrack", Toast.LENGTH_SHORT).show()

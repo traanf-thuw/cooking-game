@@ -45,7 +45,7 @@ open class BaseActivity : AppCompatActivity() {
         val resId = MusicLibrary.trackMap[selectedTrack]
 
         if (resId != null) {
-            MusicManager.setVolume(volume)
+            MusicManager.setVolume((volume * 100).toInt())
             MusicManager.start(this, resId)
         }
     }

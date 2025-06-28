@@ -1,12 +1,11 @@
 package com.example.cookinggameapp
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageButton
-import androidx.core.app.ActivityCompat
-import android.Manifest
 import androidx.appcompat.widget.SwitchCompat
-
+import androidx.core.app.ActivityCompat
 
 class MainActivity : BaseActivity() {
 
@@ -20,6 +19,7 @@ class MainActivity : BaseActivity() {
         // Restore saved preference
         val isMusicOn = MusicPreferences.isMusicEnabled(this)
         musicSwitch.isChecked = isMusicOn
+        MusicManager.isMusicOn = isMusicOn
 
         if (isMusicOn) {
             MusicManager.start(this, menuMusicResId)
@@ -27,11 +27,7 @@ class MainActivity : BaseActivity() {
 
         musicSwitch.setOnCheckedChangeListener { _, isChecked ->
             MusicPreferences.setMusicEnabled(this, isChecked)
-            if (isChecked) {
-                MusicManager.start(this, menuMusicResId)
-            } else {
-                MusicManager.pause()
-            }
+            MusicManager.toggleMusic(this, menuMusicResId, isChecked)
         }
 
         val buttonNavigationMap = mapOf(

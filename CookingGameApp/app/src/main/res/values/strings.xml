@@ -20,6 +20,11 @@
     <string name="animation_heading">Let Me Cook</string>
     <string name="kirby">Kirby</string>
     <string name="back">Back</string>
+    <string name="create_room">Create Room</string>
+    <string name="join">Join</string>
+    <string name="instructions">Instructions</string>
+    <string name="music_icon">Music Icon</string>
+    <string name="settings">Settings</string>
     <string-array name="involves_options">
         <item>Select step type...</item>
         <item>chopping</item>
