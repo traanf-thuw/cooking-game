@@ -9,6 +9,15 @@ open class BaseActivity : AppCompatActivity() {
         private var activityCount = 0
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (MusicPreferences.isMusicEnabled(this)) {
+            MusicManager.resume()
+        } else {
+            MusicManager.pause()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initializeMusicIfNeeded()

@@ -20,4 +20,11 @@
     <string name="animation_heading">Let Me Cook</string>
     <string name="kirby">Kirby</string>
     <string name="back">Back</string>
+    <string-array name="involves_options">
+        <item>Select step type...</item>
+        <item>chopping</item>
+        <item>cooking</item>
+        <item>stirring</item>
+        <item>none</item>
+    </string-array>
 </resources>

@@ -45,6 +45,7 @@
         <activity android:name=".CongratsActivity" android:exported="false" android:screenOrientation="sensorLandscape" />
         <activity android:name=".MainActivity" android:exported="false" android:screenOrientation="sensorLandscape" />
         <activity android:name=".RecipeGameActivity" android:exported="false" android:screenOrientation="sensorLandscape" />
+        <activity android:name=".CreateRecipeActivity" />
 
     </application>
 

@@ -1,5 +1,6 @@
 package com.example.cookinggameapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -22,6 +23,13 @@ class SettingsActivity : BaseActivity() {
 
         initVolumeControl()
         initMusicSpinner()
+
+        // handle Add Recipe button click
+        val addRecipeBtn: View = findViewById(R.id.addRecipeButton) // or R.id.addRecipeContainer
+        addRecipeBtn.setOnClickListener {
+            val intent = Intent(this, CreateRecipeActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun initVolumeControl() {
