@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/createRecipeLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@drawable/menubackground"
         android:padding="16dp"
         tools:context=".CreateRecipeActivity">
@@ -18,7 +18,7 @@
             android:id="@+id/titleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Create New Recipe"
+            android:text="@string/create_new_recipe"
             android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="#000"
@@ -31,8 +31,10 @@
             android:id="@+id/editRecipeName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Recipe Name"
+            android:autofillHints="Fill in Recipe Name"
+            android:hint="@string/recipe_name"
             android:background="@drawable/rounded_light_red"
+            android:inputType="text"
             android:padding="12dp"
             android:textColor="#000"
             app:layout_constraintTop_toBottomOf="@id/titleText"
@@ -41,7 +43,7 @@
             app:layout_constraintWidth_percent="0.95"
             android:layout_marginTop="16dp"/>
 
-        <!-- STEP BLOCK TEMPLATE (x4) -->
+        <!-- STEP BLOCK TEMPLATE -->
         <!-- Step 1 -->
         <LinearLayout
             android:id="@+id/step1Layout"
@@ -66,8 +68,10 @@
                 android:id="@+id/editStep1Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:autofillHints="what_to_do_1"
                 android:layout_marginTop="8dp"
-                android:hint="Step 1 - What to do?"
+                android:hint="@string/step_1_what_to_do"
+                android:inputType="text"
                 android:textColor="#000" />
         </LinearLayout>
 
@@ -95,7 +99,9 @@
                 android:id="@+id/editStep2Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Step 2 - What to do?"
+                android:autofillHints="what_to_do_2"
+                android:hint="@string/step_2_what_to_do"
+                android:inputType="text"
                 android:textColor="#000"
                 android:layout_marginTop="8dp"/>
         </LinearLayout>
@@ -124,7 +130,9 @@
                 android:id="@+id/editStep3Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Step 3 - What to do?"
+                android:autofillHints="what_to_do_3"
+                android:hint="@string/step_3_what_to_do"
+                android:inputType="text"
                 android:textColor="#000"
                 android:layout_marginTop="8dp"/>
         </LinearLayout>
@@ -153,7 +161,7 @@
                 android:id="@+id/editStep4Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Step 4 - What to do?"
+                android:hint="@string/step_4_what_to_do"
                 android:textColor="#000"
                 android:layout_marginTop="8dp"/>
         </LinearLayout>
@@ -163,7 +171,7 @@
             android:id="@+id/saveRecipeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SAVE RECIPE"
+            android:text="@string/save_recipe"
             android:layout_marginTop="16dp"
             android:backgroundTint="#AE8ADA"
             android:textColor="#FFF"
