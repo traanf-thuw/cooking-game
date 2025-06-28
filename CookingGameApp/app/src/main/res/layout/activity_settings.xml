@@ -13,7 +13,7 @@
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Settings"
+        android:text="@string/setting"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
@@ -26,6 +26,7 @@
         android:layout_width="606dp"
         android:layout_height="163dp"
         android:layout_marginTop="44dp"
+        android:baselineAligned="false"
         android:gravity="center"
         android:orientation="horizontal"
         android:weightSum="3"
@@ -51,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="Music Volume"
+                android:text="@string/music_volume"
                 android:textSize="16sp" />
 
             <SeekBar
@@ -77,7 +78,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="Select Music"
+                android:text="@string/select_music"
                 android:textSize="16sp" />
 
             <Spinner
@@ -103,7 +104,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="Add / Delete Recipe"
+                android:text="@string/add_delete_recipe"
                 android:textSize="16sp" />
 
             <LinearLayout
@@ -119,7 +120,7 @@
                     android:layout_height="60dp"
                     android:layout_marginEnd="20dp"
                     android:background="@android:color/transparent"
-                    android:contentDescription="Add Recipe"
+                    android:contentDescription="@string/add_recipe"
                     android:src="@drawable/add_recipe" />
 
                 <ImageButton
@@ -127,7 +128,7 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:background="@android:color/transparent"
-                    android:contentDescription="Delete Recipe"
+                    android:contentDescription="@string/delete_recipe"
                     android:src="@drawable/delete_recipe" />
             </LinearLayout>
 

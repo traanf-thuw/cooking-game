@@ -32,6 +32,12 @@
     <string name="step_3_what_to_do">Step 3 - What to do?</string>
     <string name="step_4_what_to_do">Step 4 - What to do?</string>
     <string name="save_recipe">SAVE RECIPE</string>
+    <string name="setting">Setting</string>
+    <string name="music_volume">Music Volume</string>
+    <string name="select_music">Select Music</string>
+    <string name="add_delete_recipe">Add / Delete Recipe</string>
+    <string name="add_recipe">Add Recipe</string>
+    <string name="delete_recipe">Delete Recipe</string>
     <string-array name="involves_options">
         <item>Select step type...</item>
         <item>chopping</item>
