@@ -65,7 +65,7 @@ class OpeningScreen : BaseActivity() {
     private fun animateGreenBaby() {
         val greenBaby = findViewById<ImageView>(R.id.green_baby)
         greenBaby.post {
-            val offsetPx = 120 * resources.displayMetrics.density
+            val offsetPx = 90 * resources.displayMetrics.density
             val startX = -greenBaby.width.toFloat()
             val endX = offsetPx
             applyWaveMotion(
@@ -85,7 +85,7 @@ class OpeningScreen : BaseActivity() {
             val parent = findViewById<View>(R.id.startPageLayout)
             val parentWidth = parent.width
             val startX = parentWidth.toFloat()
-            val endX = (parentWidth / 15f) - (pudding.width / 1f)
+            val endX = (parentWidth / 7f) - (pudding.width / 1f)
 
             applyWaveMotion(
                 view = pudding,

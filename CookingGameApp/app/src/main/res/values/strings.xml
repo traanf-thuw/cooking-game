@@ -57,6 +57,13 @@
     <string name="basket_right">Basket Right</string>
     <string name="player_3">Player 3</string>
     <string name="spoon">Spoon</string>
+    <string name="steps_placeholder">Steps Placeholder</string>
+    <string name="title_placeholder">Title Placeholder</string>
+    <string name="select_a_recipe_to_delete">Select a Recipe to Delete</string>
+    <string name="recipe_step_1">Step 1</string>
+    <string name="recipe_step_2">Step 2</string>
+    <string name="recipe_step_3">Step 3</string>
+    <string name="recipe_step_4">Step 4</string>
     <string-array name="involves_options">
         <item>Select step type…</item>
         <item>chopping</item>

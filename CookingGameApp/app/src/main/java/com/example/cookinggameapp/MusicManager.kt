@@ -39,10 +39,12 @@ object MusicManager {
         currentTrackResId = null
     }
 
-    fun toggleMusic(context: Context, resId: Int, enabled: Boolean) {
+    fun toggleMusic(context: Context, fallbackResId: Int, enabled: Boolean) {
         isMusicOn = enabled
         if (enabled) {
-            start(context, resId)
+            val selectedTrack = MusicPreferences.getSelectedTrack(context)
+            val selectedResId = MusicLibrary.trackMap[selectedTrack] ?: fallbackResId
+            start(context, selectedResId)
         } else {
             pause()
         }

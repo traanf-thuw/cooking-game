@@ -14,7 +14,8 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_menu)
 
         val musicSwitch = findViewById<SwitchCompat>(R.id.switchMusic)
-        val menuMusicResId = R.raw.track1
+        val selectedTrackName = MusicPreferences.getSelectedTrack(this)
+        val menuMusicResId = MusicLibrary.trackMap[selectedTrackName]
 
         // Restore saved preference
         val isMusicOn = MusicPreferences.isMusicEnabled(this)
@@ -22,12 +23,16 @@ class MainActivity : BaseActivity() {
         MusicManager.isMusicOn = isMusicOn
 
         if (isMusicOn) {
-            MusicManager.start(this, menuMusicResId)
+            if (menuMusicResId != null) {
+                MusicManager.start(this, menuMusicResId)
+            }
         }
 
         musicSwitch.setOnCheckedChangeListener { _, isChecked ->
             MusicPreferences.setMusicEnabled(this, isChecked)
-            MusicManager.toggleMusic(this, menuMusicResId, isChecked)
+            val selectedTrack = MusicPreferences.getSelectedTrack(this)
+            val resId = MusicLibrary.trackMap[selectedTrack] ?: R.raw.track1
+            MusicManager.toggleMusic(this, resId, isChecked)
         }
 
         val buttonNavigationMap = mapOf(

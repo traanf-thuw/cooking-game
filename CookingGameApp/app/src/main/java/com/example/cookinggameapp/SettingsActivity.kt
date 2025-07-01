@@ -30,6 +30,11 @@ class SettingsActivity : BaseActivity() {
             val intent = Intent(this, CreateRecipeActivity::class.java)
             startActivity(intent)
         }
+
+        findViewById<View>(R.id.deleteRecipeButton).setOnClickListener {
+            val intent = Intent(this, DeleteRecipeActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun initVolumeControl() {
@@ -61,18 +66,23 @@ class SettingsActivity : BaseActivity() {
         musicSpinner.setSelection(musicNames.indexOf(savedMusic))
 
         musicSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>, view: View?, position: Int, id: Long
-            ) {
-                val selectedTrack = musicNames[position]
-                MusicPreferences.setSelectedTrack(this@SettingsActivity, selectedTrack)
+            var initialized = false
 
-                trackMap[selectedTrack]?.let { resId ->
-                    MusicManager.start(applicationContext, resId)
-                    MusicManager.setVolume(volumeSeekBar.progress)
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                if (!initialized) {
+                    initialized = true
+                    return  // skip initial trigger
                 }
 
-                Toast.makeText(applicationContext, "Playing: $selectedTrack", Toast.LENGTH_SHORT).show()
+                val selectedTrack = musicNames[position]
+                if (selectedTrack != savedMusic) {
+                    MusicPreferences.setSelectedTrack(this@SettingsActivity, selectedTrack)
+                    trackMap[selectedTrack]?.let { resId ->
+                        MusicManager.start(applicationContext, resId)
+                        MusicManager.setVolume(volumeSeekBar.progress)
+                    }
+                    Toast.makeText(applicationContext, "Playing: $selectedTrack", Toast.LENGTH_SHORT).show()
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {}

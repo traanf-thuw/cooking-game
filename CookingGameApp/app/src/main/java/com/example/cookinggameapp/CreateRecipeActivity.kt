@@ -2,17 +2,15 @@ package com.example.cookinggameapp
 
 import android.os.Bundle
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
 
-class CreateRecipeActivity : AppCompatActivity() {
+class CreateRecipeActivity : BaseActivity() {
 
     private lateinit var recipeNameEditText: EditText
     private lateinit var involvesSpinners: List<Spinner>
     private lateinit var stepEditTexts: List<EditText>
     private lateinit var saveRecipeButton: Button
-
-    private val involvesOptions = listOf("Select step type...", "chopping", "cooking", "stirring", "none")
+    private val involvesOptions = listOf("Select step type", "chopping", "cooking", "stirring", "none")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,10 +73,10 @@ class CreateRecipeActivity : AppCompatActivity() {
         )
 
         FirebaseFirestore.getInstance().collection("recipes")
-            .document(recipeName) // use recipe name as the document ID
+            .document(recipeName)
             .set(recipeData)
             .addOnSuccessListener {
-                Toast.makeText(this, "Recipe saved!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Recipe has been created!", Toast.LENGTH_SHORT).show()
                 finish()
             }
             .addOnFailureListener { e ->

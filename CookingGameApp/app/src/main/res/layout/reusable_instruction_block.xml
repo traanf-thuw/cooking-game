@@ -1,25 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/reusableInstructionBlock"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@drawable/instruction_card_background">
+    android:gravity="center_horizontal">
 
     <TextView
         android:id="@+id/instructionTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/recipe_name_display"
-        android:textSize="20sp"
+        android:text="@string/title_placeholder"
+        android:textColor="#F75526"
+        android:textSize="32sp"
         android:textStyle="bold"
+        android:gravity="center"
+        android:fontFamily="@font/baloo"
         android:layout_marginBottom="8dp" />
 
     <TextView
         android:id="@+id/instructionSteps"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:text="@string/steps_display"
-        android:textSize="16sp"
-        android:lineSpacingExtra="6dp" />
+        android:layout_height="wrap_content"
+        android:text="@string/steps_placeholder"
+        android:textColor="#9D5A40"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:fontFamily="@font/baloo"
+        android:lineSpacingExtra="0dp"
+        android:lineSpacingMultiplier="1.0" />
 </LinearLayout>

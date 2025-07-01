@@ -5,14 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/menubackground"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context=".CreateRecipeActivity">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/createRecipeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/menubackground"
-        android:padding="16dp"
-        tools:context=".CreateRecipeActivity">
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/titleText"
@@ -21,7 +22,7 @@
             android:text="@string/create_new_recipe"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="#000"
+            android:textColor="#606060"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -31,19 +32,18 @@
             android:id="@+id/editRecipeName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:autofillHints="Fill in Recipe Name"
             android:hint="@string/recipe_name"
             android:background="@drawable/rounded_light_red"
             android:inputType="text"
             android:padding="12dp"
             android:textColor="#000"
+            android:autofillHints="none"
             app:layout_constraintTop_toBottomOf="@id/titleText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_percent="0.95"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="16dp" />
 
-        <!-- STEP BLOCK TEMPLATE -->
         <!-- Step 1 -->
         <LinearLayout
             android:id="@+id/step1Layout"
@@ -58,6 +58,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_percent="0.95">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/recipe_step_1"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:layout_marginBottom="8dp" />
+
             <Spinner
                 android:id="@+id/spinnerStep1Involves"
                 android:layout_width="wrap_content"
@@ -68,11 +76,11 @@
                 android:id="@+id/editStep1Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints="what_to_do_1"
-                android:layout_marginTop="8dp"
                 android:hint="@string/step_1_what_to_do"
                 android:inputType="text"
-                android:textColor="#000" />
+                android:textColor="#000"
+                android:layout_marginTop="8dp"
+                android:autofillHints="none" />
         </LinearLayout>
 
         <!-- Step 2 -->
@@ -89,6 +97,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_percent="0.95">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/recipe_step_2"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:layout_marginBottom="8dp" />
+
             <Spinner
                 android:id="@+id/spinnerStep2Involves"
                 android:layout_width="wrap_content"
@@ -99,11 +115,11 @@
                 android:id="@+id/editStep2Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints="what_to_do_2"
                 android:hint="@string/step_2_what_to_do"
                 android:inputType="text"
                 android:textColor="#000"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:autofillHints="none" />
         </LinearLayout>
 
         <!-- Step 3 -->
@@ -120,6 +136,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_percent="0.95">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/recipe_step_3"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:layout_marginBottom="8dp" />
+
             <Spinner
                 android:id="@+id/spinnerStep3Involves"
                 android:layout_width="wrap_content"
@@ -130,11 +154,11 @@
                 android:id="@+id/editStep3Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints="what_to_do_3"
                 android:hint="@string/step_3_what_to_do"
                 android:inputType="text"
                 android:textColor="#000"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:autofillHints="none" />
         </LinearLayout>
 
         <!-- Step 4 -->
@@ -151,6 +175,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_percent="0.95">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/recipe_step_4"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:layout_marginBottom="8dp" />
+
             <Spinner
                 android:id="@+id/spinnerStep4Involves"
                 android:layout_width="wrap_content"
@@ -161,11 +193,11 @@
                 android:id="@+id/editStep4Text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints="what_to_do_4"
                 android:hint="@string/step_4_what_to_do"
                 android:inputType="text"
                 android:textColor="#000"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:autofillHints="none" />
         </LinearLayout>
 
         <!-- Save Button -->
@@ -180,6 +212,7 @@
             app:layout_constraintTop_toBottomOf="@id/step4Layout"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
