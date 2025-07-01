@@ -64,6 +64,9 @@
     <string name="recipe_step_2">Step 2</string>
     <string name="recipe_step_3">Step 3</string>
     <string name="recipe_step_4">Step 4</string>
+    <string name="back_description">Back</string>
+    <string name="backbtn">Back</string>
+    <string name="position_image">Position Image</string>
     <string-array name="involves_options">
         <item>Select step type…</item>
         <item>chopping</item>

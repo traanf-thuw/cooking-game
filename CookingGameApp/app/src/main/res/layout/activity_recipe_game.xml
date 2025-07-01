@@ -41,7 +41,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginBottom="8dp"
         android:background="@null"
-        android:contentDescription="Back"
+        android:contentDescription="@string/back_description"
         android:scaleType="fitCenter"
         android:src="@drawable/back"
         app:layout_constraintBottom_toBottomOf="parent"
