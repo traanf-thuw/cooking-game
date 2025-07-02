@@ -203,8 +203,18 @@ class PlayGameActivity : BaseActivity() {
 
         val recipeButton = findViewById<ImageButton>(R.id.buttonRecipe)
         recipeButton.setOnClickListener {
-            val intent = Intent(this, RecipeGameActivity::class.java)
-            startActivity(intent)
+            if (::currentRecipe.isInitialized) {
+                val intent = Intent(this, RecipeGameActivity::class.java).apply {
+                    putExtra("recipe_name", currentRecipe.name)
+                    putStringArrayListExtra(
+                        "recipe_steps",
+                        ArrayList(currentRecipe.steps.map { it.step })
+                    )
+                }
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "Recipe not loaded yet", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -523,15 +533,8 @@ class PlayGameActivity : BaseActivity() {
         accelCurrent = SensorManager.GRAVITY_EARTH
         accelLast = SensorManager.GRAVITY_EARTH
 
-
         setupAdvancedStirring()
         setupChopping()
-
-        val recipeButton = findViewById<ImageButton>(R.id.buttonRecipe)
-        recipeButton.setOnClickListener {
-            val intent = Intent(this, RecipeGameActivity::class.java)
-            startActivity(intent)
-        }
     }
 
     @SuppressLint("ClickableViewAccessibility")

@@ -1,5 +1,6 @@
 package com.example.cookinggameapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -22,16 +23,34 @@ class SettingsActivity : BaseActivity() {
 
         initVolumeControl()
         initMusicSpinner()
+
+        // handle Add Recipe button click
+        val addRecipeBtn: View = findViewById(R.id.addRecipeButton) // or R.id.addRecipeContainer
+        addRecipeBtn.setOnClickListener {
+            val intent = Intent(this, CreateRecipeActivity::class.java)
+            startActivity(intent)
+        }
+
+        findViewById<View>(R.id.deleteRecipeButton).setOnClickListener {
+            val intent = Intent(this, DeleteRecipeActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun initVolumeControl() {
         val savedVolume = MusicPreferences.getVolumeRaw(this)
         volumeSeekBar.progress = savedVolume
 
+        // Disable volume control if music is off
+        val isMusicOn = MusicPreferences.isMusicEnabled(this)
+        volumeSeekBar.isEnabled = isMusicOn
+
         volumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                MusicPreferences.setVolumeRaw(this@SettingsActivity, progress)
-                MusicManager.setVolume(progress / 100f)
+                if (isMusicOn) {
+                    MusicPreferences.setVolumeRaw(this@SettingsActivity, progress)
+                    MusicManager.setVolume(progress)
+                }
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -47,18 +66,23 @@ class SettingsActivity : BaseActivity() {
         musicSpinner.setSelection(musicNames.indexOf(savedMusic))
 
         musicSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>, view: View?, position: Int, id: Long
-            ) {
-                val selectedTrack = musicNames[position]
-                MusicPreferences.setSelectedTrack(this@SettingsActivity, selectedTrack)
+            var initialized = false
 
-                trackMap[selectedTrack]?.let { resId ->
-                    MusicManager.start(applicationContext, resId)
-                    MusicManager.setVolume(volumeSeekBar.progress / 100f)
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                if (!initialized) {
+                    initialized = true
+                    return  // skip initial trigger
                 }
 
-                Toast.makeText(applicationContext, "Playing: $selectedTrack", Toast.LENGTH_SHORT).show()
+                val selectedTrack = musicNames[position]
+                if (selectedTrack != savedMusic) {
+                    MusicPreferences.setSelectedTrack(this@SettingsActivity, selectedTrack)
+                    trackMap[selectedTrack]?.let { resId ->
+                        MusicManager.start(applicationContext, resId)
+                        MusicManager.setVolume(volumeSeekBar.progress)
+                    }
+                    Toast.makeText(applicationContext, "Playing: $selectedTrack", Toast.LENGTH_SHORT).show()
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {}

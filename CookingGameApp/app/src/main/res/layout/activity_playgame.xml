@@ -28,7 +28,7 @@
         android:background="@null"
         android:src="@drawable/recipebutton"
         android:scaleType="fitCenter"
-        android:contentDescription="Recipe" />
+        android:contentDescription="@string/recipe_description" />
 
     <!-- Draggable Items -->
     <ImageView
@@ -36,14 +36,14 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@drawable/cuttingboard"
-        android:contentDescription="Cutting Board" />
+        android:contentDescription="@string/cutting_board" />
 
     <ImageView
         android:id="@+id/imageAvocado"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@drawable/avocado"
-        android:contentDescription="Avocado" />
+        android:contentDescription="@string/avocado" />
 
     <ImageView
         android:id="@+id/imageChickenMeat"
@@ -73,14 +73,14 @@
         android:src="@drawable/chicken"
         android:layout_margin="8dp"
         android:visibility="visible"
-        android:contentDescription="Chicken" />
+        android:contentDescription="@string/chicken" />
 
     <ImageView
         android:id="@+id/imageKnife"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@drawable/knife"
-        android:contentDescription="Knife" />
+        android:contentDescription="@string/knife" />
 
     <SeekBar
         android:id="@+id/fireSeekBar"
@@ -108,7 +108,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:src="@drawable/pot"
-            android:contentDescription="Pot" />
+            android:contentDescription="@string/pot" />
 
         <ImageView
             android:id="@+id/imageRedFill"
@@ -125,14 +125,14 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@drawable/lemon"
-        android:contentDescription="Lemon" />
+        android:contentDescription="@string/lemon" />
 
     <ImageView
         android:id="@+id/imageStove"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@drawable/stove"
-        android:contentDescription="Stove" />
+        android:contentDescription="@string/stove" />
 
     <!-- Timer Section -->
     <FrameLayout
@@ -147,7 +147,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/gamenameandtimer"
             android:scaleType="fitCenter"
-            android:contentDescription="Timer" />
+            android:contentDescription="@string/timer" />
 
         <TextView
             android:id="@+id/player3Label"
@@ -156,7 +156,7 @@
             android:layout_gravity="top|center_horizontal"
             android:layout_marginTop="22dp"
             android:layout_marginRight="14dp"
-            android:text="You"
+            android:text="@string/you"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -172,7 +172,7 @@
             android:layout_marginRight="5dp"
             android:fontFamily="@font/baloo"
             android:gravity="right"
-            android:text="00:15"
+            android:text="@string/_00_15"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -202,13 +202,13 @@
                     android:layout_height="match_parent"
                     android:src="@drawable/basket"
                     android:scaleType="fitCenter"
-                    android:contentDescription="Basket Left" />
+                    android:contentDescription="@string/basket_left" />
 
                 <TextView
                     android:id="@+id/player1Label"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Player 1"
+                    android:text="@string/player_1"
                     android:gravity="bottom|center"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp"
@@ -226,7 +226,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:padding="15dp"
-                android:text="Step will appear here and wrap nicely across lines without overlapping others."
+                android:text="@string/step_will_appear_here_and_wrap_nicely_across_lines_without_overlapping_others"
                 android:textColor="@android:color/white"
                 android:textSize="15sp"
                 android:fontFamily="@font/baloo"
@@ -254,13 +254,13 @@
             android:layout_height="match_parent"
             android:src="@drawable/basket"
             android:scaleType="fitCenter"
-            android:contentDescription="Basket Right" />
+            android:contentDescription="@string/basket_right" />
 
         <TextView
             android:id="@+id/player2Label"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Player 3"
+            android:text="@string/player_3"
             android:gravity="bottom|center"
             android:textColor="#FFFFFF"
             android:textSize="20sp"
@@ -277,7 +277,7 @@
         android:layout_width="50dp"
         android:layout_height="70dp"
         android:src="@drawable/ladle"
-        android:contentDescription="Spoon"
+        android:contentDescription="@string/spoon"
         android:layout_gravity="center"
         android:clickable="true"
         android:focusable="true" />

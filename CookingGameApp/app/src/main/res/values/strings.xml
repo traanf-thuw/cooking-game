@@ -20,4 +20,58 @@
     <string name="animation_heading">Let Me Cook</string>
     <string name="kirby">Kirby</string>
     <string name="back">Back</string>
+    <string name="create_room">Create Room</string>
+    <string name="join">Join</string>
+    <string name="instructions">Instructions</string>
+    <string name="music_icon">Music Icon</string>
+    <string name="settings">Settings</string>
+    <string name="create_new_recipe">Create New Recipe</string>
+    <string name="recipe_name">Recipe Name</string>
+    <string name="step_1_what_to_do">Step 1 - What to do?</string>
+    <string name="step_2_what_to_do">Step 2 - What to do?</string>
+    <string name="step_3_what_to_do">Step 3 - What to do?</string>
+    <string name="step_4_what_to_do">Step 4 - What to do?</string>
+    <string name="save_recipe">SAVE RECIPE</string>
+    <string name="setting">Setting</string>
+    <string name="music_volume">Music Volume</string>
+    <string name="select_music">Select Music</string>
+    <string name="add_delete_recipe">Add / Delete Recipe</string>
+    <string name="add_recipe">Add Recipe</string>
+    <string name="delete_recipe">Delete Recipe</string>
+    <string name="recipe_name_display">Recipe Name</string>
+    <string name="steps_display">Steps...</string>
+    <string name="recipe_description">Recipe</string>
+    <string name="cutting_board">Cutting Board</string>
+    <string name="avocado">Avocado</string>
+    <string name="chicken">Chicken</string>
+    <string name="knife">Knife</string>
+    <string name="pot">Pot</string>
+    <string name="lemon">Lemon</string>
+    <string name="stove">Stove</string>
+    <string name="timer">Timer</string>
+    <string name="you">You</string>
+    <string name="_00_15">00:15</string>
+    <string name="basket_left">Basket Left</string>
+    <string name="player_1">Player 1</string>
+    <string name="step_will_appear_here_and_wrap_nicely_across_lines_without_overlapping_others">Step will appear here and wrap nicely across lines without overlapping others.</string>
+    <string name="basket_right">Basket Right</string>
+    <string name="player_3">Player 3</string>
+    <string name="spoon">Spoon</string>
+    <string name="steps_placeholder">Steps Placeholder</string>
+    <string name="title_placeholder">Title Placeholder</string>
+    <string name="select_a_recipe_to_delete">Select a Recipe to Delete</string>
+    <string name="recipe_step_1">Step 1</string>
+    <string name="recipe_step_2">Step 2</string>
+    <string name="recipe_step_3">Step 3</string>
+    <string name="recipe_step_4">Step 4</string>
+    <string name="back_description">Back</string>
+    <string name="backbtn">Back</string>
+    <string name="position_image">Position Image</string>
+    <string-array name="involves_options">
+        <item>Select step type…</item>
+        <item>chopping</item>
+        <item>cooking</item>
+        <item>stirring</item>
+        <item>none</item>
+    </string-array>
 </resources>

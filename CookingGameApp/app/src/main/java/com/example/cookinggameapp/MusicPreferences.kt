@@ -6,6 +6,7 @@ object MusicPreferences {
     private const val PREF_NAME = "AppSettingsPrefs"
     private const val KEY_VOLUME = "volume_level"
     private const val KEY_TRACK = "music_selection"
+    private const val KEY_MUSIC_ENABLED = "music_enabled"
 
     fun getVolumeRaw(context: Context): Int {
         return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
@@ -32,6 +33,18 @@ object MusicPreferences {
         context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
             .edit()
             .putString(KEY_TRACK, trackName)
+            .apply()
+    }
+
+    fun isMusicEnabled(context: Context): Boolean {
+        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+            .getBoolean(KEY_MUSIC_ENABLED, true)
+    }
+
+    fun setMusicEnabled(context: Context, enabled: Boolean) {
+        context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(KEY_MUSIC_ENABLED, enabled)
             .apply()
     }
 }
