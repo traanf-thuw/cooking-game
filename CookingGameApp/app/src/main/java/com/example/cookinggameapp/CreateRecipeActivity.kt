@@ -10,7 +10,7 @@ class CreateRecipeActivity : BaseActivity() {
     private lateinit var involvesSpinners: List<Spinner>
     private lateinit var stepEditTexts: List<EditText>
     private lateinit var saveRecipeButton: Button
-    private val involvesOptions = listOf("Select step type", "chopping", "cooking", "stirring", "none")
+    private val involvesOptions = listOf("Select action type", "chopping", "cooking", "stirring", "none")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +57,11 @@ class CreateRecipeActivity : BaseActivity() {
 
             if (stepText.isEmpty()) {
                 Toast.makeText(this, "Please fill in all step descriptions", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            if (involves == "Select action type") {
+                Toast.makeText(this, "Please select an action type for Step ${i + 1}", Toast.LENGTH_SHORT).show()
                 return
             }
 
